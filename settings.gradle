@@ -1,0 +1,35 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Quilt'
+            url = uri("https://maven.quiltmc.org/repository/release")
+        }
+        maven {
+            name = 'Fabric'
+            url = uri("https://maven.fabricmc.net/")
+        }
+        maven {
+            name = 'TheModdingInquisition'
+            url = 'https://maven.moddinginquisition.org/releases'
+        }
+        maven {
+            name = 'Minecraft Forge'
+            url = 'https://maven.minecraftforge.net'
+        }
+        maven {
+            name = 'ParchmentMC'
+            url = 'https://maven.parchmentmc.org'
+        }
+        maven {
+            name = 'Sponge Snapshots'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'Multiloader-Groovy-Template'
+
+include 'Common'
+include 'Quilt'
+include 'Forge'

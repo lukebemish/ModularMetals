@@ -1,0 +1,70 @@
+plugins {
+    alias libs.plugins.quilt.loom
+    id 'idea'
+}
+
+archivesBaseName = "${mod_id}-${libs.versions.minecraft.get()}-quilt"
+
+loom {
+    runs {
+        client {
+            client()
+            setConfigName("Quilt Client")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+        server {
+            server()
+            setConfigName("Quilt Server")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+    }
+}
+
+dependencies {
+    minecraft libs.minecraft
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${libs.versions.parchment.minecraft.get()}:${libs.versions.parchment.mappings.get()}@zip")
+    }
+
+    //DO NOT USE IN PROJECT
+    //Provides necessary stuff for project to compile
+    modImplementation libs.quilt.loader
+
+    modImplementation libs.qsl
+
+    // GroovyDuvet allows for loading groovy mods, and has wrappers around minecraft and QSL code for ease of development.
+    modImplementation libs.groovyduvet.all
+    runtimeOnly libs.groovyduvet.groovy
+
+    compileOnly project(path: ":Common", configuration: "namedElements")
+
+    compileOnly libs.autoservice
+    annotationProcessor libs.autoservice
+}
+
+tasks.withType(GroovyCompile) {
+    source project(":Common").sourceSets.main.allGroovy
+}
+
+tasks.withType(JavaCompile) {
+    source project(":Common").sourceSets.main.allJava
+}
+
+processResources {
+    from project(':Common').sourceSets.main.resources
+    exclude 'mods.groovy'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = project.group
+            artifactId = "${mod_id}-${libs.versions.minecraft.get()}-quilt"
+            version = project.version
+            from components.java
+        }
+    }
+}
