@@ -1,0 +1,50 @@
+{
+  type: "modularmetals:pickaxe",
+  texturing: {
+    template: "modularmetals:item/pickaxe_base",
+    generator: {
+      type: "dynamic_asset_generator:animation_splitter",
+      sources: {
+        handle: {
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "modularmetals:item/pickaxe_handle"
+          },
+          scale: 1,
+        },
+        resolved: {
+          source: {
+            type: "modularmetals:resolved"
+          },
+          scale: 1
+        }
+      },
+      generator: {
+        type: "dynamic_asset_generator:overlay",
+        inputs: [
+          {
+            type: "dynamic_asset_generator:frame_capture",
+            capture: "handle"
+          },
+          {
+            type: "dynamic_asset_generator:frame_capture",
+            capture: "resolved"
+          }
+        ]
+      }
+    },
+    model: {
+      parent: "minecraft:item/handheld",
+      textures: {
+        layer0: "${textures}"
+      }
+    }
+  },
+  default_enabled: true,
+  name: "Pickaxe",
+  tags: [
+    "fabric:pickaxes"
+  ],
+  attackModifier: 1.5,
+  speedModifier: -3.0,
+}

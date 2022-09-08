@@ -1,0 +1,16 @@
+package io.github.lukebemish.modularmetals.data.variant
+
+import com.mojang.serialization.Codec
+import groovy.transform.CompileStatic
+import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposeCodec
+import io.github.lukebemish.modularmetals.PsuedoRegisters
+import io.github.lukebemish.modularmetals.util.CodecAware
+import io.github.lukebemish.modularmetals.util.CodecMapCodec
+
+@CompileStatic
+abstract class Variant implements CodecAware {
+    @ExposeCodec
+    static final Codec<Variant> CODEC = CodecMapCodec.dispatch(PsuedoRegisters.VARIANT_TYPES, "variant")
+
+    abstract boolean isEnabledByDefault()
+}

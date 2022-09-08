@@ -2,8 +2,8 @@ ModsDotGroovy.make {
     modLoader = 'gml'
     loaderVersion = '[1,)'
 
-    license = 'CC0-1.0'
-    issueTrackerUrl = 'https://github.com/lukebemish/Multiloader-Groovy-Template/issues'
+    license = 'LGPL-3.0-or-later'
+    issueTrackerUrl = 'https://github.com/lukebemish/ModularMetals/issues'
 
     mod {
         modId = this.buildProperties['mod_id']
@@ -11,9 +11,9 @@ ModsDotGroovy.make {
         version = this.version
         group = this.group
         intermediate_mappings = 'net.fabricmc:intermediary'
-        displayUrl = 'https://github.com/lukebemish/Multiloader-Groovy-Template'
+        displayUrl = 'https://github.com/lukebemish/ModularMetals'
 
-        description = "A template for multiloader groovy mods"
+        description = "Adds modularly defined metals"
         authors = [this.buildProperties['mod_author']]
 
         dependencies {
@@ -43,9 +43,12 @@ ModsDotGroovy.make {
             init = [
                     adapted {
                         adapter = 'groovyduvet'
-                        value = 'org.example.examplemod.quilt.ExampleMod'
+                        value = 'io.github.lukebemish.modularmetals.quilt.ModularMetalsQuilt'
                     }
             ]
         }
+    }
+    onQuilt {
+        access_widener = 'modularmetals.accesswidener'
     }
 }

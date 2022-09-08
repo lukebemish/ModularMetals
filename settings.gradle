@@ -28,7 +28,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'Multiloader-Groovy-Template'
+rootProject.name = 'ModularMetals'
 
 include 'Common'
 include 'Quilt'

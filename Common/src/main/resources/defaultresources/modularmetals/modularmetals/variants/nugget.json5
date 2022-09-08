@@ -1,0 +1,13 @@
+{
+  type: "modularmetals:item",
+  texturing: {
+    template: "modularmetals:item/nugget_base"
+  },
+  default_enabled: true,
+  name: "Nugget",
+  tags: [
+    "forge:nuggets/%s",
+    "c:%s_nuggets",
+    "c:nuggets/%s"
+  ]
+}

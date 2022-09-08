@@ -1,0 +1,13 @@
+{
+  type: "modularmetals:item",
+  texturing: {
+    template: "modularmetals:item/ingot_base"
+  },
+  default_enabled: true,
+  name: "Ingot",
+  tags: [
+    "forge:ingots/%s",
+    "c:%s_ingots",
+    "c:ingots/%s"
+  ]
+}

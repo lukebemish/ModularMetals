@@ -8,6 +8,7 @@ loom {
     runConfigs.configureEach {
         ideConfigGenerated = false
     }
+    accessWidenerPath = file("${project(':Quilt').projectDir.path}/src/main/resources/modularmetals.accesswidener")
 }
 
 dependencies {
@@ -22,6 +23,13 @@ dependencies {
     modCompileOnly libs.quilt.loader
 
     modCompileOnly libs.cgl.common
+
+    modCompileOnly libs.dynassetgen.common
+    modCompileOnly libs.defaultresources.common
+
+    modCompileOnly(libs.excavatedvariants.common){
+        transitive = false
+    }
 }
 
 import net.fabricmc.loom.task.AbstractRemapJarTask

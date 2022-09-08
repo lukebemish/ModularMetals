@@ -66,20 +66,28 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 repositories {
 }
 
+jarJar.enable()
+
 dependencies {
     minecraft libs.forge
-
-    compileOnly libs.autoservice
-    annotationProcessor libs.autoservice
 
     annotationProcessor "org.spongepowered:mixin:${libs.versions.mixin.get()}:processor"
 
     implementation fg.deobf(libs.cgl.forge.get())
+    compileOnly libs.jankson
 
-    compileOnly libs.gml
-    runtimeOnly("com.matyrobbrt.gml:gml:${libs.versions.gml.get()}:all") {
+    compileOnly "com.matyrobbrt.gml:gml:${libs.versions.gml.get()}:all"
+    runtimeOnly(fg.deobf("com.matyrobbrt.gml:gml:${libs.versions.gml.get()}:all")) {
         exclude module: 'transform'
     }
+
+    implementation fg.deobf(libs.dynassetgen.forge.get())
+    implementation fg.deobf(libs.defaultresources.forge.get())
+    jarJar("io.github.lukebemish.defaultresources:defaultresources-forge-1.19.2:[${libs.versions.defaultresources.get()},)") {
+        jarJar.pin(it, "${libs.versions.defaultresources.get()}")
+    }
+
+    compileOnly fg.deobf(libs.excavatedvariants.forge.get())
 
     compileOnly project(path: ":Common", configuration: "namedElements")
 }
@@ -97,7 +105,21 @@ processResources {
     exclude 'mods.groovy'
 }
 
-jar.finalizedBy('reobfJar')
+jar {
+    classifier 'partial'
+    finalizedBy('reobfJar')
+}
+
+tasks.build.dependsOn tasks.jarJar
+
+reobf {
+    jarJar {}
+}
+
+tasks.jarJar {
+    classifier ''
+    finalizedBy tasks.reobfJarJar
+}
 
 publishing {
     publications {
@@ -105,7 +127,7 @@ publishing {
             groupId = project.group
             artifactId = "${mod_id}-${libs.versions.minecraft.get()}-forge"
             version = project.version
-            from components.java
+            artifacts = [tasks.jarJar, sourcesJar]
         }
     }
 }

@@ -20,6 +20,7 @@ loom {
             runDir("run")
         }
     }
+    accessWidenerPath = file('src/main/resources/modularmetals.accesswidener')
 }
 
 dependencies {
@@ -29,20 +30,39 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-${libs.versions.parchment.minecraft.get()}:${libs.versions.parchment.mappings.get()}@zip")
     }
 
-    //DO NOT USE IN PROJECT
-    //Provides necessary stuff for project to compile
     modImplementation libs.quilt.loader
 
-    modImplementation libs.qsl
+    modImplementation libs.qfapi
+
+    modImplementation(libs.cgl.quilt) {
+        exclude group: 'org.quiltmc'
+    }
 
     // GroovyDuvet allows for loading groovy mods, and has wrappers around minecraft and QSL code for ease of development.
-    modImplementation libs.groovyduvet.all
-    runtimeOnly libs.groovyduvet.groovy
+    modImplementation(libs.groovyduvet.all) {
+        exclude group: 'org.quiltmc'
+    }
+    runtimeOnly(libs.groovyduvet.groovy) {
+        exclude group: 'org.quiltmc'
+    }
 
-    compileOnly project(path: ":Common", configuration: "namedElements")
+    modImplementation(libs.dynassetgen.quilt) {
+        exclude group: 'org.quiltmc'
+    }
+    modImplementation(libs.defaultresources.quilt) {
+        exclude group: 'org.quiltmc'
+    }
+    include(libs.defaultresources.quilt) {
+        exclude group: 'org.quiltmc'
+    }
 
-    compileOnly libs.autoservice
-    annotationProcessor libs.autoservice
+    modCompileOnly(libs.excavatedvariants.quilt) {
+        exclude group: 'org.quiltmc'
+    }
+
+    compileOnly(project(path: ":Common", configuration: "namedElements")) {
+        exclude group: 'org.quiltmc'
+    }
 }
 
 tasks.withType(GroovyCompile) {
