@@ -1,0 +1,19 @@
+{
+  type: "modularmetals:template",
+  template: {
+    type: "minecraft:crafting_shapeless",
+    ingredients: [
+      {
+        tag: "${platform == 'forge' ? ('forge:ingots/'+metal.path) : ('c:'+metal.path+'_ingots')}"
+      }
+    ],
+    result: {
+      count: 9,
+      item: "${items['modularmetals:nugget']}"
+    }
+  },
+  required_variants: [
+    "modularmetals:ingot",
+    "modularmetals:nugget"
+  ]
+}

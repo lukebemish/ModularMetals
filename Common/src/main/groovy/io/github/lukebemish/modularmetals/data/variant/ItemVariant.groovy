@@ -5,7 +5,9 @@ import com.mojang.serialization.Codec
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.reg.RegistryObject
+import io.github.lukebemish.dynamic_asset_generator.api.DataResourceCache
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
+import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.Metal
@@ -20,7 +22,7 @@ class ItemVariant extends Variant {
     final ItemVariantTexturing texturing
     final Optional<Boolean> defaultEnabled
     final String name
-    final Optional<List<ResourceLocation>> tags
+    final Optional<List<String>> tags
 
     @Override
     Codec getCodec() {
@@ -41,10 +43,13 @@ class ItemVariant extends Variant {
     }
 
     RegistryObject<? extends Item> registerItem(String location, Metal metal, ResourceLocation metalRl) {
+        getItemTags(metalRl).each {
+            DataResourceCache.INSTANCE.planTag(new ResourceLocation(it.namespace, "items/${it.path}"), () -> Set.of(new ResourceLocation(Constants.MOD_ID, location)))
+        }
         return ModularMetalsCommon.ITEMS.register(location, {->new Item(new Item.Properties().tab(Services.PLATFORM.getItemTab()))})
     }
 
     List<ResourceLocation> getItemTags(ResourceLocation metalRl) {
-        return (tags.orElse([])).collect {new ResourceLocation(it.namespace, it.path.replaceAll(/%s/, metalRl.path))}
+        return (tags.orElse([])).collect {ResourceLocation.of(it.replaceAll(/%s/, metalRl.path), ':' as char)}
     }
 }

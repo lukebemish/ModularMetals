@@ -4,7 +4,9 @@ import com.mojang.serialization.Codec
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.reg.RegistryObject
+import io.github.lukebemish.dynamic_asset_generator.api.DataResourceCache
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
+import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.Metal
@@ -50,6 +52,9 @@ class BlockVariant extends ItemVariant {
     }
 
     RegistryObject<? extends Block> registerBlock(String location, Metal metal, ResourceLocation metalRl) {
+        getItemTags(metalRl).each {
+            DataResourceCache.INSTANCE.planTag(new ResourceLocation(it.namespace, "blocks/${it.path}"), () -> Set.of(new ResourceLocation(Constants.MOD_ID, location)))
+        }
         return ModularMetalsCommon.BLOCKS.register(location, {->
             Block block = new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_GRAY))
             BLOCKS.put(location, block)

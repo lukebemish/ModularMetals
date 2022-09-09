@@ -1,10 +1,12 @@
 package io.github.lukebemish.modularmetals.forge.platform
 
 import groovy.transform.CompileStatic
+import groovy.transform.Memoized
 import io.github.lukebemish.modularmetals.forge.ModularMetalsForge
 import io.github.lukebemish.modularmetals.services.IPlatformHelper
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.loading.FMLLoader
 import net.minecraftforge.fml.loading.FMLPaths
 
@@ -41,5 +43,11 @@ class PlatformHelperImpl implements IPlatformHelper {
     @Override
     Platform getPlatform() {
         return Platform.FORGE
+    }
+
+    @Override
+    @Memoized
+    boolean isModPresent(String modid) {
+        return ModList.get().mods.any {it.modId == modid}
     }
 }

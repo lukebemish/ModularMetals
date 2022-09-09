@@ -1,0 +1,24 @@
+{
+  type: "modularmetals:template",
+  template: {
+    type: "minecraft:crafting_shaped",
+    group: "${metal.path}_ingot",
+    key: {
+      "#": {
+        tag: "${platform == 'forge' ? ('forge:nuggets/'+metal.path) : ('c:'+metal.path+'_nuggets')}"
+      }
+    },
+    pattern: [
+      "###",
+      "###",
+      "###"
+    ],
+    result: {
+      item: "${items['modularmetals:ingot']}"
+    }
+  },
+  required_variants: [
+    "modularmetals:ingot",
+    "modularmetals:nugget"
+  ]
+}

@@ -3,6 +3,7 @@ package io.github.lukebemish.modularmetals
 import com.google.common.base.Suppliers
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.reg.RegistrationProvider
+import io.github.lukebemish.dynamic_asset_generator.api.DataResourceCache
 import io.github.lukebemish.modularmetals.client.ModularMetalsClient
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.ModConfig
@@ -33,6 +34,8 @@ final class ModularMetalsCommon {
         register()
         if (Services.PLATFORM.isClient())
             ModularMetalsClient.init()
+
+        DataResourceCache.INSTANCE.planSource(RecipePlanner.instance)
     }
 
     static ModConfig getConfig() {
@@ -52,6 +55,9 @@ final class ModularMetalsCommon {
                         variant.registerBlock(fullLocation.path, metal, metalRl)
                     }
                 }
+            }
+            config.recipes.each {recipeRl, recipe ->
+                recipe.register(metal, metalRl, recipeRl, variantRls)
             }
         }
     }

@@ -7,6 +7,8 @@ import groovy.transform.CompileStatic
 import groovy.transform.Memoized
 import groovy.transform.PackageScope
 import io.github.lukebemish.modularmetals.data.filter.*
+import io.github.lukebemish.modularmetals.data.recipe.Recipe
+import io.github.lukebemish.modularmetals.data.recipe.TemplateRecipe
 import io.github.lukebemish.modularmetals.data.variant.AxeVariant
 import io.github.lukebemish.modularmetals.data.variant.BlockVariant
 import io.github.lukebemish.modularmetals.data.variant.HoeVariant
@@ -23,6 +25,7 @@ final class PsuedoRegisters {
 
     static final BiMap<ResourceLocation, Codec<? extends Variant>> VARIANT_TYPES = HashBiMap.create()
     static final BiMap<ResourceLocation, Codec<? extends Filter>> FILTER_TYPES = HashBiMap.create()
+    static final BiMap<ResourceLocation, Codec<? extends Recipe>> RECIPE_TYPES = HashBiMap.create()
 
     @Memoized
     @PackageScope
@@ -40,6 +43,8 @@ final class PsuedoRegisters {
         FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "not"), NotFilter.$CODEC)
         FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "is"), IsFilter.$CODEC)
         FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "all"), AllFilter.CODEC)
+
+        RECIPE_TYPES.put(new ResourceLocation(Constants.MOD_ID, "template"), TemplateRecipe.$CODEC)
 
         return null
     }

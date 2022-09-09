@@ -19,11 +19,11 @@ import io.github.lukebemish.modularmetals.data.texsources.VariantTemplateSource
 import io.github.lukebemish.modularmetals.data.variant.BlockVariant
 import io.github.lukebemish.modularmetals.data.variant.ItemVariant
 import io.github.lukebemish.modularmetals.data.variant.Variant
+import io.github.lukebemish.modularmetals.util.MapUtil
 import net.minecraft.resources.ResourceLocation
 import org.apache.groovy.io.StringBuilderWriter
 import org.codehaus.groovy.control.CompilerConfiguration
 
-import java.util.function.Function
 import java.util.function.Supplier
 
 @CompileStatic
@@ -97,7 +97,7 @@ class ModularMetalsClient {
                     models.each {key, map ->
                         try {
                             ResourceLocation full = new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${key == '' ? '' : "_$key"}")
-                            Map out = replaceInMap(map, {
+                            Map out = MapUtil.replaceInMap(map, {
                                 var writer = new StringBuilderWriter()
                                 ENGINE.createTemplate(it).make(replacements).writeTo(writer)
                                 return writer.builder.toString()
@@ -120,10 +120,6 @@ class ModularMetalsClient {
         }
     }
 
-    static ResourceLocation getTemplate(ResourceLocation variantLocation, ResourceLocation variantTemplate, Metal metal, String resource) {
-
-    }
-
     static ITexSource getTemplateToUse(ResourceLocation variantRl, Metal metal, Either<ResourceLocation,Map<String,ResourceLocation>> either, String key) {
         if (metal.texturing.templateOverrides.containsKey(variantRl)) {
             Map<String,ResourceLocation> overrides = processEither(metal.texturing.templateOverrides.get(variantRl))
@@ -138,34 +134,5 @@ class ModularMetalsClient {
 
     static <T> Map<String, T> processEither(Either<T,Map<String,T>> either) {
         return either.map({['':it]},{it})
-    }
-
-    private static Map replaceInMap(Map map, Function<String, String> function) {
-        map.collectEntries {key, value ->
-            String strKey = key as String
-            if (value instanceof Map)
-                return [function.apply(strKey), replaceInMap(value, function)]
-            if (value instanceof List)
-                return [function.apply(strKey), replaceInList(value, function)]
-            if (value instanceof String)
-                return [function.apply(strKey), function.apply(value)]
-            if (value instanceof GString)
-                return [function.apply(strKey), function.apply(value as String)]
-            return [function.apply(strKey), value]
-        }
-    }
-
-    private static List replaceInList(List list, Function<String, String> function) {
-        list.collect {
-            if (it instanceof Map)
-                return replaceInMap(it, function)
-            if (it instanceof List)
-                return replaceInList(it, function)
-            if (it instanceof String)
-                return function.apply(it)
-            if (it instanceof GString)
-                return function.apply(it as String)
-            return it
-        }
     }
 }

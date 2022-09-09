@@ -23,4 +23,6 @@ interface IPlatformHelper {
         FORGE,
         QUILT
     }
+
+    boolean isModPresent(String modid)
 }

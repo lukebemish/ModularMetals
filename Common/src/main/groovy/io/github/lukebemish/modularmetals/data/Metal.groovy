@@ -18,6 +18,8 @@ class Metal {
     final Optional<Filter> allowedVariants
     final String name
     Map<ResourceLocation,ObjectHolder> properties = [:]
+    final Optional<Filter> disallowedRecipes
+    final Optional<Filter> allowedRecipes
 
     @Nullable ObjectHolder getPropertyFromMap(ResourceLocation rl) {
         return properties.get(rl)

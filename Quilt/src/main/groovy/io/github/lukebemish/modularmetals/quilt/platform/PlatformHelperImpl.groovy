@@ -2,6 +2,7 @@ package io.github.lukebemish.modularmetals.quilt.platform
 
 
 import groovy.transform.CompileStatic
+import groovy.transform.Memoized
 import io.github.lukebemish.modularmetals.quilt.ModularMetalsQuilt
 import io.github.lukebemish.modularmetals.services.IPlatformHelper
 import net.fabricmc.api.EnvType
@@ -42,5 +43,11 @@ class PlatformHelperImpl implements IPlatformHelper {
     @Override
     Platform getPlatform() {
         return Platform.QUILT
+    }
+
+    @Override
+    @Memoized
+    boolean isModPresent(String modid) {
+        return QuiltLoader.isModLoaded(modid)
     }
 }
