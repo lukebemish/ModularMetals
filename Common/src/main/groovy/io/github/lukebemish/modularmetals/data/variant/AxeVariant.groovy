@@ -8,7 +8,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.Tier
 
 @CompileStatic
-@CodecSerializable(property = "AXE_CODEC")
+@CodecSerializable(property = "AXE_CODEC", camelToSnake = true)
 @TupleConstructor(includeSuperProperties = true, callSuper = true)
 class AxeVariant extends ToolVariant {
     float attackModifier

@@ -32,7 +32,7 @@ class BlockVariant extends ItemVariant {
 
     @Override
     boolean isEnabledByDefault() {
-        return default_enabled.orElse(true)
+        return defaultEnabled.orElse(true)
     }
 
     @TupleConstructor(includeSuperProperties = true, callSuper = true)

@@ -45,6 +45,6 @@
   tags: [
     "fabric:pickaxes"
   ],
-  attackModifier: 1.5,
-  speedModifier: -3.0,
+  attack_modifier: 1,
+  speed_modifier: -2.8,
 }

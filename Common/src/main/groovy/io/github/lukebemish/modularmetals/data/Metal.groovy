@@ -1,5 +1,6 @@
 package io.github.lukebemish.modularmetals.data
 
+import com.mojang.datafixers.util.Either
 import groovy.transform.CompileStatic
 import groovy.transform.Immutable
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
@@ -8,21 +9,24 @@ import net.minecraft.resources.ResourceLocation
 import org.jetbrains.annotations.Nullable
 
 @CompileStatic
-@CodecSerializable
+@CodecSerializable(camelToSnake = true, allowDefaultValues = true)
 @Immutable(knownImmutableClasses = [Filter, Optional])
 class Metal {
-    final MapHolder texturing
+    final MetalTexturing texturing
     final Optional<Filter> disallowedVariants
     // Applied after disallowedVariants
     final Optional<Filter> allowedVariants
     final String name
-    final Optional<Map<ResourceLocation,ObjectHolder>> properties
+    Map<ResourceLocation,ObjectHolder> properties = [:]
 
     @Nullable ObjectHolder getPropertyFromMap(ResourceLocation rl) {
-        return properties.map {Optional.ofNullable(it.get(rl))}.orElse(Optional.empty()).orElse(null)
+        return properties.get(rl)
     }
 
-    Optional<ObjectHolder> getOptionalPropertyFromMap(ResourceLocation rl) {
-        return Optional.ofNullable(getPropertyFromMap(rl))
+    @Immutable(knownImmutableClasses = [Optional])
+    @CodecSerializable(camelToSnake = true, allowDefaultValues = true)
+    static class MetalTexturing {
+        final MapHolder generator
+        Map<ResourceLocation,Either<ResourceLocation, Map<String,ResourceLocation>>> templateOverrides = [:]
     }
 }

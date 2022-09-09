@@ -45,6 +45,6 @@
   tags: [
     "fabric:shovels"
   ],
-  attackModifier: 1.5,
-  speedModifier: -3.0,
+  attack_modifier: 1.5,
+  speed_modifier: -3.0,
 }

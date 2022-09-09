@@ -6,11 +6,10 @@ import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSeriali
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.WithCodec
 import net.minecraft.world.item.HoeItem
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.ShovelItem
 import net.minecraft.world.item.Tier
 
 @CompileStatic
-@CodecSerializable(property = "HOE_CODEC")
+@CodecSerializable(property = "HOE_CODEC", camelToSnake = true)
 @TupleConstructor(includeSuperProperties = true, callSuper = true)
 class HoeVariant extends ToolVariant {
     @WithCodec({ CODEC.INT.<Float>xmap({(float)it}, {(int)it}) })

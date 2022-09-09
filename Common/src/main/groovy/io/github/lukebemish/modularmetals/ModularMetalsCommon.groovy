@@ -9,6 +9,7 @@ import io.github.lukebemish.modularmetals.data.ModConfig
 import io.github.lukebemish.modularmetals.data.variant.BlockVariant
 import io.github.lukebemish.modularmetals.data.variant.ItemVariant
 import io.github.lukebemish.modularmetals.data.variant.Variant
+import io.github.lukebemish.modularmetals.services.IPlatformHelper
 import io.github.lukebemish.modularmetals.services.Services
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
@@ -67,4 +68,9 @@ final class ModularMetalsCommon {
     static ResourceLocation assembleMetalVariantName(ResourceLocation metal, ResourceLocation variant) {
         return new ResourceLocation(Constants.MOD_ID, "${metal.namespace}_${metal.path}_${variant.namespace}_${variant.path}")
     }
+
+    static final Map sharedEnvMap = Collections.unmodifiableMap(['platform':switch (Services.PLATFORM.platform) {
+        case IPlatformHelper.Platform.FORGE -> 'forge'
+        case IPlatformHelper.Platform.QUILT -> 'quilt'
+    }])
 }

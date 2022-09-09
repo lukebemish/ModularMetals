@@ -45,6 +45,6 @@
   tags: [
     "fabric:hoes"
   ],
-  attackModifier: 1.5,
-  speedModifier: -3.0,
+  attack_modifier: 0,
+  speed_modifier: -3.0,
 }

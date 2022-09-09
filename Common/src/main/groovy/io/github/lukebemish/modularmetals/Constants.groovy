@@ -32,18 +32,10 @@ class Constants {
         allowedImports = ['java.lang.Math']
         allowedStaticImports = []
         allowedStaticStarImports = []
-        allowedExpressions = [
-                ConstantExpression,
-                VariableExpression,
-                PropertyExpression,
-                UnaryMinusExpression,
-                UnaryPlusExpression,
-                BinaryExpression,
-                FieldExpression,
-                BooleanExpression,
-                GStringExpression,
-                MethodCallExpression,
-                ArgumentListExpression
+        disallowedExpressions = [
+                ClassExpression,
+                StaticMethodCallExpression,
+                MethodReferenceExpression
         ]
         addExpressionCheckers(new SecureASTCustomizer.ExpressionChecker() {
             @Override
@@ -51,6 +43,9 @@ class Constants {
                 if (expression instanceof MethodCallExpression) {
                     Expression object = expression.objectExpression
                     return expression.methodAsString == 'print' && object instanceof VariableExpression && object.name == 'out'
+                } else if (expression instanceof PropertyExpression) {
+                    if (expression.static)
+                        return false
                 }
                 return true
             }

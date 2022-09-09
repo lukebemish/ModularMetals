@@ -12,6 +12,7 @@ import io.github.lukebemish.dynamic_asset_generator.api.client.generators.texsou
 import io.github.lukebemish.dynamic_asset_generator.api.client.generators.texsources.TextureReader
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
+import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.texsources.EasyRecolorSource
 import io.github.lukebemish.modularmetals.data.texsources.ResolvedVariantSource
 import io.github.lukebemish.modularmetals.data.texsources.VariantTemplateSource
@@ -48,7 +49,7 @@ class ModularMetalsClient {
     protected static void registerTexturePlanners() {
         ModularMetalsCommon.config.metals.each {metalRl, metal ->
             Supplier<ITexSource> metalTexSource = Suppliers.<ITexSource>memoize {->
-                DataResult<ITexSource> result = metal.texturing.decode(ITexSource.CODEC)
+                DataResult<ITexSource> result = metal.texturing.generator.decode(ITexSource.CODEC)
                 return result.result().orElseGet({->new ErrorSource("Could not load texturing for metal ${metalRl}: ${result.error().get().message()}")})}
             Set<ResourceLocation> variantRls = ModularMetalsCommon.getVariants(metalRl)
             for (ResourceLocation variantRl : variantRls) {
@@ -74,7 +75,7 @@ class ModularMetalsClient {
                             ITexSource fullTex = fullTexSource.get()
                             TexSourceDataHolder data = new TexSourceDataHolder()
                             data.put(ResolvedVariantSource.ResolvedVariantData,new ResolvedVariantSource.ResolvedVariantData(metalTex))
-                            data.put(VariantTemplateSource.SingleVariantData,new VariantTemplateSource.SingleVariantData(getTemplateToUse(variant.texturing.template, key)))
+                            data.put(VariantTemplateSource.SingleVariantData,new VariantTemplateSource.SingleVariantData(getTemplateToUse(variantRl, metal, variant.texturing.template, key)))
                             return fullTex.getSupplier(data).get()
                         })
                     }
@@ -87,6 +88,7 @@ class ModularMetalsClient {
                             [it, new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${it == '' ? '' : "_$it"}").toString()]
                         }]
                     }
+                    replacements += ModularMetalsCommon.sharedEnvMap
 
                     Map<String, Map> models = variant.texturing.model.<Map<String, Map>>map {processEither(it).collectEntries {key,holder->
                         [key,holder.map]
@@ -118,7 +120,17 @@ class ModularMetalsClient {
         }
     }
 
-    static ITexSource getTemplateToUse(Either<ResourceLocation,Map<String,ResourceLocation>> either, String key) {
+    static ResourceLocation getTemplate(ResourceLocation variantLocation, ResourceLocation variantTemplate, Metal metal, String resource) {
+
+    }
+
+    static ITexSource getTemplateToUse(ResourceLocation variantRl, Metal metal, Either<ResourceLocation,Map<String,ResourceLocation>> either, String key) {
+        if (metal.texturing.templateOverrides.containsKey(variantRl)) {
+            Map<String,ResourceLocation> overrides = processEither(metal.texturing.templateOverrides.get(variantRl))
+            if (overrides.containsKey(key))
+                return new TextureReader(overrides.get(key))
+        }
+
         return either.<ITexSource>map({ new TextureReader(it) },{it.get(key)?.with{
             new TextureReader(it)
         }?:new ErrorSource("Model key $key does not have a matching template texture")})

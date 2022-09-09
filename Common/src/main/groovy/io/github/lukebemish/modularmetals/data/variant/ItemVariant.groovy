@@ -14,11 +14,11 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 
 @CompileStatic
-@CodecSerializable
+@CodecSerializable(camelToSnake = true)
 @TupleConstructor
 class ItemVariant extends Variant {
     final ItemVariantTexturing texturing
-    final Optional<Boolean> default_enabled
+    final Optional<Boolean> defaultEnabled
     final String name
     final Optional<List<ResourceLocation>> tags
 
@@ -29,7 +29,7 @@ class ItemVariant extends Variant {
 
     @Override
     boolean isEnabledByDefault() {
-        return default_enabled.orElse(true)
+        return defaultEnabled.orElse(true)
     }
 
     @TupleConstructor

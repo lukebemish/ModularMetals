@@ -8,7 +8,7 @@ import net.minecraft.world.item.ShovelItem
 import net.minecraft.world.item.Tier
 
 @CompileStatic
-@CodecSerializable(property = "SHOVEL_CODEC")
+@CodecSerializable(property = "SHOVEL_CODEC", camelToSnake = true)
 @TupleConstructor(includeSuperProperties = true, callSuper = true)
 class ShovelVariant extends ToolVariant {
     float attackModifier
