@@ -4,6 +4,8 @@ import com.mojang.datafixers.util.Either
 import groovy.transform.CompileStatic
 import groovy.transform.Immutable
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
+import io.github.lukebemish.modularmetals.Constants
+import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.filter.Filter
 import net.minecraft.resources.ResourceLocation
 import org.jetbrains.annotations.Nullable
@@ -25,10 +27,32 @@ class Metal {
         return properties.get(rl)
     }
 
-    @Immutable(knownImmutableClasses = [Optional])
+    @Immutable(knownImmutableClasses = [Optional, Either])
     @CodecSerializable(camelToSnake = true, allowDefaultValues = true)
     static class MetalTexturing {
         final MapHolder generator
-        Map<ResourceLocation,Either<ResourceLocation, Map<String,ResourceLocation>>> templateOverrides = [:]
+        Either<Map<ResourceLocation,Either<ResourceLocation, Map<String,ResourceLocation>>>,List<ResourceLocation>> templateOverrides = Either.left([:])
+
+        Map<String, ResourceLocation> getResolvedTemplateOverrides(ResourceLocation location) {
+            return templateOverrides.map({map ->
+                return map.get(location)?.map({
+                    return ['':it]
+                },{
+                    return it
+                })?:[:]
+            },{
+                Map<String, ResourceLocation> built = [:]
+                for (ResourceLocation l : it) {
+                    if (ModularMetalsCommon.config.templateSets.containsKey(l)) {
+                        Map<ResourceLocation, Map<String, ResourceLocation>> templateSet = ModularMetalsCommon.config.templateSets.get(l)
+                        if (templateSet.containsKey(location))
+                            built.putAll(templateSet.get(location))
+                    } else {
+                        Constants.LOGGER.warn("Missing referenced template set ${l}; ignoring.")
+                    }
+                }
+                return built
+            })
+        }
     }
 }

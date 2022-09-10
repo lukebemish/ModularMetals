@@ -5,6 +5,7 @@ import blue.endless.jankson.JsonObject
 import blue.endless.jankson.api.SyntaxError
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
+import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.Decoder
@@ -26,6 +27,18 @@ class ModConfig {
     HashBiMap<ResourceLocation, Metal> metals = HashBiMap.create()
     HashBiMap<ResourceLocation, Variant> variants = HashBiMap.create()
     HashBiMap<ResourceLocation, Recipe> recipes = HashBiMap.create()
+    HashBiMap<ResourceLocation, Map<ResourceLocation, Map<String,ResourceLocation>>> templateSets = HashBiMap.create()
+
+    static final Codec<Map<ResourceLocation, Map<String,ResourceLocation>>> TEMPLATE_SET_CODEC = Codec.<ResourceLocation, Map<String,ResourceLocation>>unboundedMap(ResourceLocation.CODEC,
+            Codec.<ResourceLocation, Map<String,ResourceLocation>>either(ResourceLocation.CODEC,Codec.<String, ResourceLocation>unboundedMap(Codec.STRING, ResourceLocation.CODEC)).<Map<String, ResourceLocation>>xmap({
+                return it.map({
+                    return ['':it]
+                },{
+                    return it
+                })
+            },{
+                return Either.<ResourceLocation, Map<String,ResourceLocation>>right(it)
+            }))
 
     static ModConfig getDefaultConfig() {
         return new ModConfig()
@@ -35,6 +48,7 @@ class ModConfig {
         try {
             ModConfig config = new ModConfig()
 
+            config.loadTemplateSets()
             config.loadMetals()
             config.loadVariants()
             config.loadRecipes()
@@ -105,6 +119,28 @@ class ModConfig {
                         }
                     } catch (RuntimeException | SyntaxError | IOException e) {
                         Constants.LOGGER.error("Issues loading resource: {}", rl, e)
+                    }
+                }
+            }
+        }
+    }
+
+    private void loadTemplateSets() {
+        var rls = ResourceProvider.instance().getResources(Constants.MOD_ID, "template_sets", rl -> true)
+
+        for (ResourceLocation rl : rls) {
+            try (var resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, rl)) {
+                Optional<? extends InputStream> optional = resources.findFirst()
+                if (optional.isPresent()) {
+                    try {
+                        if (rl.path.endsWith(".json") || rl.path.endsWith(".json5")) {
+                            ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('template_sets/'.length(),rl.path.lastIndexOf('.')))
+                            JsonObject json = Constants.JANKSON.load(optional.get())
+                            Map<ResourceLocation, Map<String,ResourceLocation>> resource = TEMPLATE_SET_CODEC.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
+                            this.templateSets.put(newRl, resource)
+                        }
+                    } catch (RuntimeException | SyntaxError | IOException e) {
+                        Constants.LOGGER.error("Issues loading template set: {}", rl, e)
                     }
                 }
             }

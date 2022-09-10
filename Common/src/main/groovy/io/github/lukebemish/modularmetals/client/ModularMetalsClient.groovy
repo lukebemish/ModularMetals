@@ -12,7 +12,7 @@ import io.github.lukebemish.dynamic_asset_generator.api.client.generators.texsou
 import io.github.lukebemish.dynamic_asset_generator.api.client.generators.texsources.TextureReader
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
-import io.github.lukebemish.modularmetals.data.Metal
+import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.texsources.EasyRecolorSource
 import io.github.lukebemish.modularmetals.data.texsources.ResolvedVariantSource
 import io.github.lukebemish.modularmetals.data.texsources.VariantTemplateSource
@@ -70,16 +70,28 @@ class ModularMetalsClient {
                             } as Supplier<ITexSource>]
                         }})
                     }).orElse(Map<String, Supplier<ITexSource>>.of('',metalTexSource))
+                    Map<String, ResourceLocation> templateMap = variant.texturing.template
+                            .<Map<String,ResourceLocation>>map({ ['':it] }, { it})+metal.texturing.getResolvedTemplateOverrides(variantRl)
                     textures.each {key, fullTexSource ->
+                        List<String> sourceLocations = []
+                        sourceLocations.addAll(MapUtil.findFieldsFromMatching('path',metal.texturing.generator.map, {it.get('type') == 'dynamic_asset_generator:texture'}))
+                        sourceLocations.addAll((Collection<String>) variant.texturing.generator.orElse(Either.<MapHolder, Map<String, MapHolder>> right([:])).<Collection<String>> map({ map ->
+                            MapUtil.findFieldsFromMatching('path', map.map, { it.get('type') == 'dynamic_asset_generator:texture' })
+                        }, {
+                            it.values().collectMany { map ->
+                                MapUtil.findFieldsFromMatching('path', map.map, { it.get('type') == 'dynamic_asset_generator:texture' })
+                            }
+                        }))
+                        sourceLocations.addAll((templateMap.containsKey(key) ? List.<ResourceLocation>of(templateMap.get(key)) : List.<ResourceLocation>of() ).collect {it.toString()})
                         ResourceLocation full = new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${key == '' ? '' : "_$key"}")
                         TexturePlanner.instance.plan(full, { ->
                             ITexSource metalTex = metalTexSource.get()
                             ITexSource fullTex = fullTexSource.get()
                             TexSourceDataHolder data = new TexSourceDataHolder()
                             data.put(ResolvedVariantSource.ResolvedVariantData,new ResolvedVariantSource.ResolvedVariantData(metalTex))
-                            data.put(VariantTemplateSource.SingleVariantData,new VariantTemplateSource.SingleVariantData(getTemplateToUse(variantRl, metal, variant.texturing.template, key)))
+                            data.put(VariantTemplateSource.SingleVariantData,new VariantTemplateSource.SingleVariantData((ITexSource) (templateMap.containsKey(key) ? new TextureReader(templateMap.get(key)) : new ErrorSource("Model key $key does not have a matching template texture"))))
                             return fullTex.getSupplier(data).get()
-                        })
+                        }, sourceLocations)
                     }
 
                     Map replacements
@@ -150,18 +162,6 @@ class ModularMetalsClient {
                 }
             }
         }
-    }
-
-    static ITexSource getTemplateToUse(ResourceLocation variantRl, Metal metal, Either<ResourceLocation,Map<String,ResourceLocation>> either, String key) {
-        if (metal.texturing.templateOverrides.containsKey(variantRl)) {
-            Map<String,ResourceLocation> overrides = processEither(metal.texturing.templateOverrides.get(variantRl))
-            if (overrides.containsKey(key))
-                return new TextureReader(overrides.get(key))
-        }
-
-        return either.<ITexSource>map({ new TextureReader(it) },{it.get(key)?.with{
-            new TextureReader(it)
-        }?:new ErrorSource("Model key $key does not have a matching template texture")})
     }
 
     static <T> Map<String, T> processEither(Either<T,Map<String,T>> either) {
