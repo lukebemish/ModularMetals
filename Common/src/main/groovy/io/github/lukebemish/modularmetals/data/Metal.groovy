@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Either
 import groovy.transform.CompileStatic
 import groovy.transform.Immutable
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
+import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.WithCodec
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.filter.Filter
@@ -31,28 +32,23 @@ class Metal {
     @CodecSerializable(camelToSnake = true, allowDefaultValues = true)
     static class MetalTexturing {
         final MapHolder generator
-        Either<Map<ResourceLocation,Either<ResourceLocation, Map<String,ResourceLocation>>>,List<ResourceLocation>> templateOverrides = Either.left([:])
+        @WithCodec(value = { ModConfig.TEMPLATE_SET_CODEC })
+        Map<ResourceLocation,Map<String,ResourceLocation>> templateOverrides = [:]
+        List<ResourceLocation> templateSets = []
 
         Map<String, ResourceLocation> getResolvedTemplateOverrides(ResourceLocation location) {
-            return templateOverrides.map({map ->
-                return map.get(location)?.map({
-                    return ['':it]
-                },{
-                    return it
-                })?:[:]
-            },{
-                Map<String, ResourceLocation> built = [:]
-                for (ResourceLocation l : it) {
-                    if (ModularMetalsCommon.config.templateSets.containsKey(l)) {
-                        Map<ResourceLocation, Map<String, ResourceLocation>> templateSet = ModularMetalsCommon.config.templateSets.get(l)
-                        if (templateSet.containsKey(location))
-                            built.putAll(templateSet.get(location))
-                    } else {
-                        Constants.LOGGER.warn("Missing referenced template set ${l}; ignoring.")
-                    }
+            Map<String, ResourceLocation> built = [:]
+            built.putAll(templateOverrides.get(location)?:[:])
+            for (ResourceLocation l : templateSets) {
+                if (ModularMetalsCommon.config.templateSets.containsKey(l)) {
+                    Map<ResourceLocation, Map<String, ResourceLocation>> templateSet = ModularMetalsCommon.config.templateSets.get(l)
+                    if (templateSet.containsKey(location))
+                        built.putAll(templateSet.get(location))
+                } else {
+                    Constants.LOGGER.warn("Missing referenced template set ${l}; ignoring.")
                 }
-                return built
-            })
+            }
+            return built
         }
     }
 }
