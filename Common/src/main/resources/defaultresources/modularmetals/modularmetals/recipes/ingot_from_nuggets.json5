@@ -14,11 +14,10 @@
       "###"
     ],
     result: {
-      item: "${items['modularmetals:ingot']}"
+      item: "${variants['modularmetals:ingot']}"
     }
   },
   required_variants: [
-    "modularmetals:ingot",
-    "modularmetals:nugget"
+    "modularmetals:ingot"
   ]
 }

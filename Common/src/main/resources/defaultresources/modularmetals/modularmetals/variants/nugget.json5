@@ -7,7 +7,9 @@
   name: "Nugget",
   tags: [
     "forge:nuggets/%s",
+    "forge:nuggets",
     "c:%s_nuggets",
-    "c:nuggets/%s"
+    "c:nuggets/%s",
+    "c:nuggets"
   ]
 }

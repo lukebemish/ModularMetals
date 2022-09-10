@@ -7,7 +7,9 @@
   name: "Ingot",
   tags: [
     "forge:ingots/%s",
+    "forge:ingots",
     "c:%s_ingots",
+    "c:ingots",
     "c:ingots/%s"
   ]
 }

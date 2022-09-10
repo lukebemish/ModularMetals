@@ -39,7 +39,7 @@ class EasyRecolorSource implements ITexSource {
                         new TextureReader(new ResourceLocation('dynamic_asset_generator','empty')),
                         new ColorSource(color),
                         new AnimationFrameCapture('template'),
-                        false, true, 0
+                        false, false, 0
                 )
         )
         return internal.getSupplier(data)

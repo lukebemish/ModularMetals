@@ -9,11 +9,10 @@
     ],
     result: {
       count: 9,
-      item: "${items['modularmetals:nugget']}"
+      item: "${variants['modularmetals:nugget']}"
     }
   },
   required_variants: [
-    "modularmetals:ingot",
     "modularmetals:nugget"
   ]
 }

@@ -3,7 +3,6 @@ package io.github.lukebemish.modularmetals.data.variant
 import com.mojang.serialization.Codec
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.groovymc.cgl.reg.RegistryObject
 import io.github.lukebemish.dynamic_asset_generator.api.DataResourceCache
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
 import io.github.lukebemish.modularmetals.Constants
@@ -21,20 +20,24 @@ import net.minecraft.world.level.material.MaterialColor
 
 @CompileStatic
 @CodecSerializable
-@TupleConstructor(includeSuperProperties = true, callSuper = true)
+@TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
 class BlockVariant extends ItemVariant {
     private static final Map<String, Block> BLOCKS = new HashMap<>()
 
-    final BlockVariantTexturing texturing
+    protected BlockVariantTexturing texturing
+
+    @Override
+    ItemVariantTexturing getTexturing() {
+        return this.@texturing
+    }
+
+    BlockVariantTexturing getBlockTexturing() {
+        return this.@texturing
+    }
 
     @Override
     Codec getCodec() {
         return $CODEC
-    }
-
-    @Override
-    boolean isEnabledByDefault() {
-        return defaultEnabled.orElse(true)
     }
 
     @TupleConstructor(includeSuperProperties = true, callSuper = true)
@@ -44,18 +47,25 @@ class BlockVariant extends ItemVariant {
     }
 
     @Override
-    RegistryObject<? extends Item> registerItem(String location, Metal metal, ResourceLocation metalRl) {
-        return ModularMetalsCommon.ITEMS.register(location, {->
+    void registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
+        ModularMetalsCommon.ITEMS.register(location, {->
             Block block = BLOCKS.get(location)
             return new BlockItem(block, new Item.Properties().tab(Services.PLATFORM.getBlockTab()))
         })
     }
 
-    RegistryObject<? extends Block> registerBlock(String location, Metal metal, ResourceLocation metalRl) {
+    @Override
+    void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation) {
+        String location = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation).path
+        registerBlock(location, variantLocation, metalLocation, metal)
+        super.register(metal, metalLocation, variantLocation)
+    }
+
+    void registerBlock(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
         getItemTags(metalRl).each {
             DataResourceCache.INSTANCE.planTag(new ResourceLocation(it.namespace, "blocks/${it.path}"), () -> Set.of(new ResourceLocation(Constants.MOD_ID, location)))
         }
-        return ModularMetalsCommon.BLOCKS.register(location, {->
+        ModularMetalsCommon.BLOCKS.register(location, {->
             Block block = new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_GRAY))
             BLOCKS.put(location, block)
             return block

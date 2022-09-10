@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.groovymc.cgl.reg.RegistryObject
 import io.github.lukebemish.dynamic_asset_generator.api.DataResourceCache
 import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
 import io.github.lukebemish.modularmetals.Constants
@@ -17,21 +16,20 @@ import net.minecraft.world.item.Item
 
 @CompileStatic
 @CodecSerializable(camelToSnake = true)
-@TupleConstructor
+@TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
 class ItemVariant extends Variant {
-    final ItemVariantTexturing texturing
-    final Optional<Boolean> defaultEnabled
+    protected ItemVariantTexturing texturing
     final String name
     final Optional<List<String>> tags
+    final Optional<List<String>> requiredMods
 
     @Override
     Codec getCodec() {
         return $CODEC
     }
 
-    @Override
-    boolean isEnabledByDefault() {
-        return defaultEnabled.orElse(true)
+    ItemVariantTexturing getTexturing() {
+        return this.@texturing
     }
 
     @TupleConstructor
@@ -42,11 +40,18 @@ class ItemVariant extends Variant {
         final Either<ResourceLocation,Map<String,ResourceLocation>> template
     }
 
-    RegistryObject<? extends Item> registerItem(String location, Metal metal, ResourceLocation metalRl) {
+    void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation) {
+        if (requiredMods.orElse([]).every {Services.PLATFORM.isModPresent(it)}) {
+            String location = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation).path
+            registerItem(location, variantLocation, metalLocation, metal)
+        }
+    }
+
+    void registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
         getItemTags(metalRl).each {
             DataResourceCache.INSTANCE.planTag(new ResourceLocation(it.namespace, "items/${it.path}"), () -> Set.of(new ResourceLocation(Constants.MOD_ID, location)))
         }
-        return ModularMetalsCommon.ITEMS.register(location, {->new Item(new Item.Properties().tab(Services.PLATFORM.getItemTab()))})
+        ModularMetalsCommon.ITEMS.register(location, {->new Item(new Item.Properties().tab(Services.PLATFORM.getItemTab()))})
     }
 
     List<ResourceLocation> getItemTags(ResourceLocation metalRl) {

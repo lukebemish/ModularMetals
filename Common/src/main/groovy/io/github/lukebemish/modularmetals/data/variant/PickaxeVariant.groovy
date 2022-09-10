@@ -10,7 +10,7 @@ import net.minecraft.world.item.Tier
 
 @CompileStatic
 @CodecSerializable(property = "PICKAXE_CODEC", camelToSnake = true)
-@TupleConstructor(includeSuperProperties = true, callSuper = true)
+@TupleConstructor(includeSuperProperties = true, callSuper = true, includeSuperFields = true)
 class PickaxeVariant extends ToolVariant {
     @WithCodec({ CODEC.INT.<Float>xmap({(float)it}, {(int)it}) })
     float attackModifier

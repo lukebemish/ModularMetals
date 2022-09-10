@@ -1,0 +1,14 @@
+{
+  type: "modularmetals:block",
+  texturing: {
+    template: "modularmetals:block/block_base"
+  },
+  default_enabled: true,
+  name: "Block",
+  tags: [
+    "forge:storage_blocks/%s",
+    "forge:storage_blocks",
+    "c:%s_blocks",
+    "c:blocks/%s"
+  ]
+}

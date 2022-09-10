@@ -31,7 +31,7 @@ class ModularMetalsForge {
         forgeBus.register(this)
 
         ModularTier.tiers.each {location, tier ->
-            TierSortingRegistry.registerTier(tier, location,new ArrayList<Object>(tier.after),new ArrayList<Object>(tier.before.orElse([])))
+            TierSortingRegistry.registerTier(tier, location,new ArrayList<Object>(tier.after),new ArrayList<Object>(tier.before))
         }
     }
 }

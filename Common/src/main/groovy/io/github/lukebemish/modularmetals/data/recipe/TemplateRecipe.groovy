@@ -21,14 +21,14 @@ import org.codehaus.groovy.control.CompilerConfiguration
 
 @CompileStatic
 @CodecSerializable(camelToSnake = true, allowDefaultValues = true)
-@TupleConstructor
+@TupleConstructor(includeSuperProperties = true, callSuper = true)
 class TemplateRecipe extends Recipe {
     private static final SimpleTemplateEngine ENGINE = new SimpleTemplateEngine(new GroovyShell(TemplateRecipe.classLoader,new CompilerConfiguration()
             .addCompilationCustomizers(Constants.MAP_ACCESS_IMPORT_CUSTOMIZER, Constants.MAP_ACCESS_AST_CUSTOMIZER)))
 
-    MapHolder template
-    List<ResourceLocation> requiredVariants
-    Optional<List<String>> requiredMods
+    final MapHolder template
+    final List<ResourceLocation> requiredVariants
+    final Optional<List<String>> requiredMods
 
     @Override
     Codec getCodec() {
@@ -42,7 +42,7 @@ class TemplateRecipe extends Recipe {
         if (!variantLocations.containsAll(requiredVariants))
             return
         Map map = this.template.map
-        Map replacements = ['items':requiredVariants.collectEntries {
+        Map replacements = ['variants':requiredVariants.collectEntries {
             [it.toString(), ModularMetalsCommon.assembleMetalVariantName(metalLocation, it)]
         },'metal':metalLocation]
         replacements += ModularMetalsCommon.sharedEnvMap

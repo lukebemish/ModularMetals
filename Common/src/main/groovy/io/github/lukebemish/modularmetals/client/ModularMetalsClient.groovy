@@ -24,6 +24,7 @@ import net.minecraft.resources.ResourceLocation
 import org.apache.groovy.io.StringBuilderWriter
 import org.codehaus.groovy.control.CompilerConfiguration
 
+import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Supplier
 
 @CompileStatic
@@ -41,6 +42,7 @@ class ModularMetalsClient {
 
         AssetResourceCache.INSTANCE.planSource(TexturePlanner.instance)
         AssetResourceCache.INSTANCE.planSource(ModelPlanner.instance)
+        AssetResourceCache.INSTANCE.planSource(BlockstatePlanner.instance)
         AssetResourceCache.INSTANCE.planSource(new ResourceLocation(Constants.MOD_ID, 'lang/en_us.json'), {it -> langBuilder.build()})
 
         registerTexturePlanners()
@@ -89,14 +91,44 @@ class ModularMetalsClient {
                         }]
                     }
                     replacements += ModularMetalsCommon.sharedEnvMap
+                    replacements += ['metal':metalRl,'location':fullLocation] as Map
 
                     Map<String, Map> models = variant.texturing.model.<Map<String, Map>>map {processEither(it).collectEntries {key,holder->
                         [key,holder.map]
-                    }}.orElse(Map.<String, Map>of('',['parent':'item/generated', 'textures':['layer0':'${textures}']]))
+                    }}.orElseGet({->
+                        if (variant instanceof BlockVariant)
+                            return Map.<String, Map>of('',['parent':'block/cube_all', 'textures':['all':'${textures}']])
+                        return Map.<String, Map>of('',['parent':'item/generated', 'textures':['layer0':'${textures}']])
+                    })
+
+                    if (variant instanceof BlockVariant) {
+                        AtomicReference<ResourceLocation> mainModel = new AtomicReference<>(new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}"))
+                        models = new HashMap<>(models)
+                        models.computeIfAbsent('item', {
+                            String key = models.keySet().sort().get(0)
+                            mainModel.set(new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${key == '' ? '' : "_$key"}"))
+                            return ['parent':mainModel.get().toString()]
+                        })
+
+                        Map map = variant.blockTexturing.blockstate.map {it.map}.orElseGet {->
+                            ['variants':['':[
+                                    'model': mainModel.get().toString()
+                            ]]]}
+                        try {
+                            Map out = MapUtil.replaceInMap(map, {
+                                var writer = new StringBuilderWriter()
+                                ENGINE.createTemplate(it).make(replacements).writeTo(writer)
+                                return writer.builder.toString()
+                            })
+                            BlockstatePlanner.instance.plan(fullLocation, out)
+                        } catch (Exception e) {
+                            Constants.LOGGER.error("Error writing blockstate for metal '${metalRl}', variant '${variantRl}':", e)
+                        }
+                    }
 
                     models.each {key, map ->
                         try {
-                            ResourceLocation full = new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${key == '' ? '' : "_$key"}")
+                            ResourceLocation full = new ResourceLocation(fullLocation.namespace, "${key == 'item' ? 'item' : header}/${fullLocation.path}${key == '' || key == 'item' ? '' : "_$key"}")
                             Map out = MapUtil.replaceInMap(map, {
                                 var writer = new StringBuilderWriter()
                                 ENGINE.createTemplate(it).make(replacements).writeTo(writer)

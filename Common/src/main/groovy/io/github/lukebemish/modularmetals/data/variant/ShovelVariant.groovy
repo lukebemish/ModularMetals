@@ -9,7 +9,7 @@ import net.minecraft.world.item.Tier
 
 @CompileStatic
 @CodecSerializable(property = "SHOVEL_CODEC", camelToSnake = true)
-@TupleConstructor(includeSuperProperties = true, callSuper = true)
+@TupleConstructor(includeSuperProperties = true, callSuper = true, includeSuperFields = true)
 class ShovelVariant extends ToolVariant {
     float attackModifier
     float speedModifier

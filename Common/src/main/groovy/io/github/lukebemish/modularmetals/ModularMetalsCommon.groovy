@@ -7,8 +7,6 @@ import io.github.lukebemish.dynamic_asset_generator.api.DataResourceCache
 import io.github.lukebemish.modularmetals.client.ModularMetalsClient
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.ModConfig
-import io.github.lukebemish.modularmetals.data.variant.BlockVariant
-import io.github.lukebemish.modularmetals.data.variant.ItemVariant
 import io.github.lukebemish.modularmetals.data.variant.Variant
 import io.github.lukebemish.modularmetals.services.IPlatformHelper
 import io.github.lukebemish.modularmetals.services.Services
@@ -28,7 +26,8 @@ final class ModularMetalsCommon {
 
     private ModularMetalsCommon() {}
 
-    static Set<ResourceLocation> enabledDefaultVariants = config.variants.findAll {it.value.enabledByDefault}.collect {it.key}.toSet()
+    static Set<ResourceLocation> enabledDefaultVariants = config.variants.findAll {it.value.defaultEnabled.orElse(true)}.collect {it.key}.toSet()
+    static Set<ResourceLocation> enabledDefaultRecipes = config.recipes.findAll {it.value.defaultEnabled.orElse(true)}.collect {it.key}.toSet()
 
     static void init() {
         register()
@@ -49,15 +48,11 @@ final class ModularMetalsCommon {
             for (ResourceLocation variantRl : variantRls) {
                 ResourceLocation fullLocation = assembleMetalVariantName(metalRl, variantRl)
                 Variant variant = config.variants.get(variantRl)
-                if (variant instanceof ItemVariant) {
-                    variant.registerItem(fullLocation.path, metal, metalRl)
-                    if (variant instanceof BlockVariant) {
-                        variant.registerBlock(fullLocation.path, metal, metalRl)
-                    }
-                }
+                variant.register(metal, metalRl, variantRl)
             }
-            config.recipes.each {recipeRl, recipe ->
-                recipe.register(metal, metalRl, recipeRl, variantRls)
+            Set<ResourceLocation> recipeRls = getRecipes(metalRl)
+            for (ResourceLocation recipeRl : recipeRls) {
+                config.recipes.get(recipeRl).register(metal, metalRl, recipeRl, variantRls)
             }
         }
     }
@@ -69,6 +64,15 @@ final class ModularMetalsCommon {
         variants.addAll(config.variants.keySet().findAll {m.allowedVariants.isPresent() && m.allowedVariants.get().matches(it)})
 
         return variants
+    }
+
+    static Set<ResourceLocation> getRecipes(ResourceLocation metal) {
+        Set<ResourceLocation> recipes = new HashSet<>(enabledDefaultRecipes)
+        Metal m = config.metals.get(metal)
+        recipes.removeAll {m.disallowedRecipes.isPresent() && m.disallowedRecipes.get().matches(it)}
+        recipes.addAll(config.recipes.keySet().findAll {m.allowedRecipes.isPresent() && m.allowedRecipes.get().matches(it)})
+
+        return recipes
     }
 
     static ResourceLocation assembleMetalVariantName(ResourceLocation metal, ResourceLocation variant) {
