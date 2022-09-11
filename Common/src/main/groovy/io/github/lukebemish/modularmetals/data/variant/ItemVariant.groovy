@@ -37,7 +37,7 @@ class ItemVariant extends Variant {
     static class ItemVariantTexturing {
         final Optional<Either<MapHolder,Map<String,MapHolder>>> generator
         final Optional<Either<MapHolder,Map<String,MapHolder>>> model
-        final Either<ResourceLocation,Map<String,ResourceLocation>> template
+        final Either<ResourceLocation,Map<String,Either<ResourceLocation,MapHolder>>> template
     }
 
     void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation) {

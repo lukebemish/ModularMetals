@@ -33,21 +33,21 @@ class Metal {
     static class MetalTexturing {
         final MapHolder generator
         @WithCodec(value = { ModConfig.TEMPLATE_SET_CODEC })
-        Map<ResourceLocation,Map<String,ResourceLocation>> templateOverrides = [:]
+        Map<ResourceLocation,Map<String,Either<ResourceLocation,MapHolder>>> templateOverrides = [:]
         List<ResourceLocation> templateSets = []
 
-        Map<String, ResourceLocation> getResolvedTemplateOverrides(ResourceLocation location) {
-            Map<String, ResourceLocation> built = [:]
-            built.putAll(templateOverrides.get(location)?:[:])
+        Map<String, Either<ResourceLocation,MapHolder>> getResolvedTemplateOverrides(ResourceLocation location) {
+            Map<String, Either<ResourceLocation,MapHolder>> built = [:]
             for (ResourceLocation l : templateSets) {
                 if (ModularMetalsCommon.config.templateSets.containsKey(l)) {
-                    Map<ResourceLocation, Map<String, ResourceLocation>> templateSet = ModularMetalsCommon.config.templateSets.get(l)
+                    Map<ResourceLocation, Map<String, Either<ResourceLocation,MapHolder>>> templateSet = ModularMetalsCommon.config.templateSets.get(l)
                     if (templateSet.containsKey(location))
                         built.putAll(templateSet.get(location))
                 } else {
                     Constants.LOGGER.warn("Missing referenced template set ${l}; ignoring.")
                 }
             }
+            built.putAll(templateOverrides.get(location)?:[:])
             return built
         }
     }

@@ -1,0 +1,29 @@
+{
+  "modularmetals:ingot": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/copper_ingot"
+      }
+    }
+  },
+  "modularmetals:nugget": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/iron_nugget"
+      }
+    }
+  },
+  "modularmetals:block": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/copper_block"
+      }
+    }
+  }
+}

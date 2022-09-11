@@ -70,8 +70,9 @@ class ModularMetalsClient {
                             } as Supplier<ITexSource>]
                         }})
                     }).orElse(Map<String, Supplier<ITexSource>>.of('',metalTexSource))
-                    Map<String, ResourceLocation> templateMap = variant.texturing.template
-                            .<Map<String,ResourceLocation>>map({ ['':it] }, { it})+metal.texturing.getResolvedTemplateOverrides(variantRl)
+                    Map<String, Either<ResourceLocation,MapHolder>> templateMap = variant.texturing.template
+                            .<Map<String,Either<ResourceLocation,MapHolder>>>map({ ['':Either.<ResourceLocation, MapHolder>left(it)] }, {new HashMap<>(it)})
+                    templateMap.putAll(metal.texturing.getResolvedTemplateOverrides(variantRl))
                     textures.each {key, fullTexSource ->
                         List<String> sourceLocations = []
                         sourceLocations.addAll(MapUtil.findFieldsFromMatching('path',metal.texturing.generator.map, {it.get('type') == 'dynamic_asset_generator:texture'}))
@@ -82,14 +83,23 @@ class ModularMetalsClient {
                                 MapUtil.findFieldsFromMatching('path', map.map, { it.get('type') == 'dynamic_asset_generator:texture' })
                             }
                         }))
-                        sourceLocations.addAll((templateMap.containsKey(key) ? List.<ResourceLocation>of(templateMap.get(key)) : List.<ResourceLocation>of() ).collect {it.toString()})
+                        sourceLocations.addAll(templateMap.containsKey(key) ? templateMap.get(key).<List<String>>map({
+                            List.<String>of(it.toString())
+                        },{map ->
+                            MapUtil.findFieldsFromMatching('path', map.map, { it.get('type') == 'dynamic_asset_generator:texture' })
+                        }) : List.<String>of())
                         ResourceLocation full = new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${key == '' ? '' : "_$key"}")
                         TexturePlanner.instance.plan(full, { ->
                             ITexSource metalTex = metalTexSource.get()
                             ITexSource fullTex = fullTexSource.get()
                             TexSourceDataHolder data = new TexSourceDataHolder()
                             data.put(ResolvedVariantSource.ResolvedVariantData,new ResolvedVariantSource.ResolvedVariantData(metalTex))
-                            data.put(VariantTemplateSource.SingleVariantData,new VariantTemplateSource.SingleVariantData((ITexSource) (templateMap.containsKey(key) ? new TextureReader(templateMap.get(key)) : new ErrorSource("Model key $key does not have a matching template texture"))))
+                            data.put(VariantTemplateSource.SingleVariantData,new VariantTemplateSource.SingleVariantData((ITexSource) (templateMap.containsKey(key) ? templateMap.get(key).<ITexSource>map({
+                                new TextureReader(it)
+                            },{
+                                DataResult<ITexSource> result = it.decode(ITexSource.CODEC)
+                                return result.result().orElseGet({->new ErrorSource("Could not load texturing for template '${key}', metal ${metalRl}, variant ${variantRl}: ${result.error().get().message()}")})
+                            }) : new ErrorSource("Model key $key does not have a matching template texture"))))
                             return fullTex.getSupplier(data).get()
                         }, sourceLocations)
                     }

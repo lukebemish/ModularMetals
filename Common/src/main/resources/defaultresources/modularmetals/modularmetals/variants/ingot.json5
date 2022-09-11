@@ -1,7 +1,15 @@
 {
   type: "modularmetals:item",
   texturing: {
-    template: "modularmetals:item/ingot_base"
+    template: {
+      "": {
+        type: "dynamic_asset_generator:palette_spread",
+        source: {
+          type: "dynamic_asset_generator:texture",
+          path: "minecraft:item/gold_ingot"
+        }
+      }
+    }
   },
   default_enabled: true,
   name: "Ingot",

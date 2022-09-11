@@ -1,7 +1,15 @@
 {
   type: "modularmetals:block",
   texturing: {
-    template: "modularmetals:block/block_base"
+    template: {
+      "": {
+        type: "dynamic_asset_generator:palette_spread",
+        source: {
+          type: "dynamic_asset_generator:texture",
+          path: "minecraft:block/gold_block"
+        }
+      }
+    }
   },
   default_enabled: true,
   name: "Block",

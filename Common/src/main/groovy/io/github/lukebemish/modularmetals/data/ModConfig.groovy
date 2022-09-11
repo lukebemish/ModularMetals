@@ -27,10 +27,10 @@ class ModConfig {
     HashBiMap<ResourceLocation, Metal> metals = HashBiMap.create()
     HashBiMap<ResourceLocation, Variant> variants = HashBiMap.create()
     HashBiMap<ResourceLocation, Recipe> recipes = HashBiMap.create()
-    HashBiMap<ResourceLocation, Map<ResourceLocation, Map<String,ResourceLocation>>> templateSets = HashBiMap.create()
+    HashBiMap<ResourceLocation, Map<ResourceLocation, Map<String,Either<ResourceLocation,MapHolder>>>> templateSets = HashBiMap.create()
 
-    static final Codec<Map<ResourceLocation, Map<String,ResourceLocation>>> TEMPLATE_SET_CODEC = Codec.<ResourceLocation, Map<String,ResourceLocation>>unboundedMap(ResourceLocation.CODEC,
-            Codec.<ResourceLocation, Map<String,ResourceLocation>>either(ResourceLocation.CODEC,Codec.<String, ResourceLocation>unboundedMap(Codec.STRING, ResourceLocation.CODEC)).<Map<String, ResourceLocation>>xmap({
+    static final Codec<Map<ResourceLocation, Map<String,Either<ResourceLocation,MapHolder>>>> TEMPLATE_SET_CODEC = Codec.<ResourceLocation, Map<String,Either<ResourceLocation,MapHolder>>>unboundedMap(ResourceLocation.CODEC,
+            Codec.<ResourceLocation, Map<String,Either<ResourceLocation,MapHolder>>>either(ResourceLocation.CODEC,Codec.<String, Either<ResourceLocation,MapHolder>>unboundedMap(Codec.STRING, Codec.either(ResourceLocation.CODEC, MapHolder.CODEC))).<Map<String, ResourceLocation>>xmap({
                 return it.map({
                     return ['':it]
                 },{
@@ -136,7 +136,7 @@ class ModConfig {
                         if (rl.path.endsWith(".json") || rl.path.endsWith(".json5")) {
                             ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('template_sets/'.length(),rl.path.lastIndexOf('.')))
                             JsonObject json = Constants.JANKSON.load(optional.get())
-                            Map<ResourceLocation, Map<String,ResourceLocation>> resource = TEMPLATE_SET_CODEC.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
+                            Map<ResourceLocation, Map<String,Either<ResourceLocation,MapHolder>>> resource = TEMPLATE_SET_CODEC.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
                             this.templateSets.put(newRl, resource)
                         }
                     } catch (RuntimeException | SyntaxError | IOException e) {
