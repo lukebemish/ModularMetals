@@ -14,8 +14,10 @@ import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.texsources.EasyRecolorSource
+import io.github.lukebemish.modularmetals.data.texsources.PropertyOrDefaultSource
 import io.github.lukebemish.modularmetals.data.texsources.ResolvedVariantSource
 import io.github.lukebemish.modularmetals.data.texsources.VariantTemplateSource
+import io.github.lukebemish.modularmetals.data.texsources.WithTemplateSource
 import io.github.lukebemish.modularmetals.data.variant.BlockVariant
 import io.github.lukebemish.modularmetals.data.variant.ItemVariant
 import io.github.lukebemish.modularmetals.data.variant.Variant
@@ -39,16 +41,18 @@ class ModularMetalsClient {
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "template"), VariantTemplateSource.CODEC)
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "resolved"), ResolvedVariantSource.CODEC)
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "easy_recolor"), EasyRecolorSource.$CODEC)
+        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "property_or_default"), PropertyOrDefaultSource.$CODEC)
+        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "with_template"), WithTemplateSource.$CODEC)
 
         AssetResourceCache.INSTANCE.planSource(TexturePlanner.instance)
         AssetResourceCache.INSTANCE.planSource(ModelPlanner.instance)
         AssetResourceCache.INSTANCE.planSource(BlockstatePlanner.instance)
         AssetResourceCache.INSTANCE.planSource(new ResourceLocation(Constants.MOD_ID, 'lang/en_us.json'), {it -> langBuilder.build()})
 
-        registerTexturePlanners()
+        registerPlanners()
     }
 
-    protected static void registerTexturePlanners() {
+    protected static void registerPlanners() {
         ModularMetalsCommon.config.metals.each {metalRl, metal ->
             Supplier<ITexSource> metalTexSource = Suppliers.<ITexSource>memoize {->
                 DataResult<ITexSource> result = metal.texturing.generator.decode(ITexSource.CODEC)
@@ -83,35 +87,40 @@ class ModularMetalsClient {
                                 MapUtil.findFieldsFromMatching('path', map.map, { it.get('type') == 'dynamic_asset_generator:texture' })
                             }
                         }))
-                        sourceLocations.addAll(templateMap.containsKey(key) ? templateMap.get(key).<List<String>>map({
-                            List.<String>of(it.toString())
-                        },{map ->
-                            MapUtil.findFieldsFromMatching('path', map.map, { it.get('type') == 'dynamic_asset_generator:texture' })
-                        }) : List.<String>of())
+                        List<String> usedKeys = [key]
+                        usedKeys.addAll(variant.texturing.generator.<Collection<String>>map({ either ->
+                            MapHolder holder = either.map({it},{it.get(key)})
+                            return MapUtil.findFieldsFromMatching('path',holder.map,{ it.get('type') == 'dynamic_asset_generator:texture' })
+                        }).orElse([]))
+                        for (String usedKey : usedKeys) {
+                            sourceLocations.addAll(templateMap.containsKey(usedKey) ? templateMap.get(usedKey).<List<String>> map({
+                                List.<String> of(it.toString())
+                            }, { map ->
+                                MapUtil.findFieldsFromMatching('path', map.map, { it.get('type') == 'dynamic_asset_generator:texture' })
+                            }) : List.<String> of())
+                        }
                         ResourceLocation full = new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${key == '' ? '' : "_$key"}")
                         TexturePlanner.instance.plan(full, { ->
                             ITexSource metalTex = metalTexSource.get()
                             ITexSource fullTex = fullTexSource.get()
                             TexSourceDataHolder data = new TexSourceDataHolder()
                             data.put(ResolvedVariantSource.ResolvedVariantData,new ResolvedVariantSource.ResolvedVariantData(metalTex))
-                            data.put(VariantTemplateSource.SingleVariantData,new VariantTemplateSource.SingleVariantData((ITexSource) (templateMap.containsKey(key) ? templateMap.get(key).<ITexSource>map({
-                                new TextureReader(it)
-                            },{
-                                DataResult<ITexSource> result = it.decode(ITexSource.CODEC)
-                                return result.result().orElseGet({->new ErrorSource("Could not load texturing for template '${key}', metal ${metalRl}, variant ${variantRl}: ${result.error().get().message()}")})
-                            }) : new ErrorSource("Model key $key does not have a matching template texture"))))
+                            data.put(VariantTemplateSource.TemplateData,new VariantTemplateSource.TemplateData(templateMap.collectEntries {templateKey, template ->
+                                [templateKey, template.map({
+                                    new TextureReader(it)
+                                },{
+                                    DataResult<ITexSource> result = it.decode(ITexSource.CODEC)
+                                    return result.result().orElseGet({->new ErrorSource("Could not load texturing for template '${key}', metal ${metalRl}, variant ${variantRl}: ${result.error().get().message()}")})
+                                })]
+                            }, key))
+                            data.put(PropertyOrDefaultSource.PropertyGetterData, new PropertyOrDefaultSource.PropertyGetterData(metal, metalRl))
                             return fullTex.getSupplier(data).get()
                         }, sourceLocations)
                     }
 
-                    Map replacements
-                    if (textures.keySet().size() == 1 && textures.containsKey('')) {
-                        replacements = ['textures':new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}").toString()]
-                    } else {
-                        replacements = ['textures': textures.keySet().collectEntries {
-                            [it, new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${it == '' ? '' : "_$it"}").toString()]
-                        }]
-                    }
+                    Map replacements = ['textures': textures.keySet().collectEntries {
+                        [it, new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${it == '' ? '' : "_$it"}").toString()]
+                    }]
                     replacements += ModularMetalsCommon.sharedEnvMap
                     replacements += ['metal':metalRl,'location':fullLocation] as Map
 
@@ -119,8 +128,8 @@ class ModularMetalsClient {
                         [key,holder.map]
                     }}.orElseGet({->
                         if (variant instanceof BlockVariant)
-                            return Map.<String, Map>of('',['parent':'block/cube_all', 'textures':['all':'${textures}']])
-                        return Map.<String, Map>of('',['parent':'item/generated', 'textures':['layer0':'${textures}']])
+                            return Map.<String, Map>of('',['parent':'block/cube_all', 'textures':['all':'${textures[""]}']])
+                        return Map.<String, Map>of('',['parent':'item/generated', 'textures':['layer0':'${textures[""]}']])
                     })
 
                     if (variant instanceof BlockVariant) {
@@ -162,8 +171,8 @@ class ModularMetalsClient {
                         }
                     }
 
-                    String name = metal.name.contains('%s') ?
-                            metal.name.replaceAll(/%s/, variant.name) :
+                    String name = variant.name.contains('%s') ?
+                            variant.name.replaceAll(/%s/, metal.name) :
                             "${metal.name} ${variant.name}"
                     String key = variant instanceof BlockVariant ?
                             "block.${Constants.MOD_ID}.${fullLocation.path}" :

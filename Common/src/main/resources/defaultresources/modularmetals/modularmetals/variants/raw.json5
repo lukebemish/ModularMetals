@@ -1,0 +1,65 @@
+{
+  type: "modularmetals:item",
+  texturing: {
+    template: {
+      "": {
+        type: "dynamic_asset_generator:texture",
+        path: "modularmetals:item/base_raw"
+      },
+      "overlay": {
+        type: "dynamic_asset_generator:texture",
+        path: "modularmetals:item/alt_raw"
+      }
+    },
+    generator: {
+      type: "dynamic_asset_generator:animation_splitter",
+      sources: {
+        base: {
+          source: {
+            type: "modularmetals:resolved"
+          },
+          scale: 1
+        },
+        overlay: {
+          source: {
+            type: "modularmetals:with_template",
+            source: {
+              type: "modularmetals:property_or_default",
+              backup: {
+                type: "dynamic_asset_generator:texture",
+                path: "dynamic_asset_generator:empty"
+              },
+              property: "modularmetals:oxide_generator"
+            },
+            template: {
+              type: "modularmetals:template",
+              template: "overlay"
+            },
+          },
+          scale: 1
+        }
+      },
+      generator: {
+        type: "dynamic_asset_generator:overlay",
+        inputs: [
+          {
+            type: "dynamic_asset_generator:frame_capture",
+            capture: "base"
+          },
+          {
+            type: "dynamic_asset_generator:frame_capture",
+            capture: "overlay"
+          }
+        ]
+      }
+    }
+  },
+  default_enabled: true,
+  name: "Raw %s",
+  tags: [
+    "forge:raw_materials/%s",
+    "forge:raw_materials",
+    "c:raw_%s_ores",
+    "c:raw_materials/%s"
+  ]
+}

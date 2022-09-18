@@ -36,7 +36,7 @@
     model: {
       parent: "minecraft:item/handheld",
       textures: {
-        layer0: "${textures}"
+        layer0: "${textures['']}"
       }
     }
   },

@@ -32,7 +32,7 @@ class EasyRecolorSource implements ITexSource {
     Supplier<NativeImage> getSupplier(TexSourceDataHolder data) throws JsonSyntaxException {
         ITexSource internal = new AnimationSplittingSource(
                 ['template':new AnimationSplittingSource.TimeAwareSource(
-                        VariantTemplateSource.instance,
+                        new VariantTemplateSource(Optional.empty()),
                         1
                 )],
                 new CombinedPaletteImage(

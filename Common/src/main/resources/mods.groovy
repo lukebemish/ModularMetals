@@ -14,7 +14,7 @@ ModsDotGroovy.make {
         displayUrl = 'https://github.com/lukebemish/ModularMetals'
 
         description = "Adds modularly defined metals"
-        authors = [this.buildProperties['mod_author']]
+        authors = [this.buildProperties['mod_author'] as String]
 
         dependencies {
             minecraft = this.minecraftVersionRange

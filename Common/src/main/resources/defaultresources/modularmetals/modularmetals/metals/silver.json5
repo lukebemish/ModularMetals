@@ -4,7 +4,7 @@
       type: "modularmetals:easy_recolor",
       color: [
         0xff233754,
-        0xff16263d,
+        0xff2f1706,
         0xff364761,
         0xff415a80,
         0xff4a6896,
@@ -15,5 +15,21 @@
       ],
     },
   },
-  name: "Silver"
+  name: "Silver",
+  properties: {
+    "modularmetals:oxide_generator": {
+      type: "modularmetals:easy_recolor",
+      color: [
+        0xffffe1c5,
+        0xffe4c59c,
+        0xffb68f58,
+        0xff415a80,
+        0xffa47248,
+        0xff915821,
+        0xff82380f,
+        0xff5f2e0d,
+        0xff471803
+      ]
+    }
+  }
 }

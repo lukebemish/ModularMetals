@@ -7,16 +7,16 @@ import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.github.lukebemish.dynamic_asset_generator.api.client.generators.ITexSource
 import io.github.lukebemish.dynamic_asset_generator.api.client.generators.TexSourceDataHolder
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposeCodec
+import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
 import org.jetbrains.annotations.NotNull
 
 import java.util.function.Supplier
 
 @CompileStatic
-@Singleton
+@CodecSerializable(property = 'CODEC')
+@TupleConstructor
 class VariantTemplateSource implements ITexSource {
-    @ExposeCodec
-    static final Codec<VariantTemplateSource> CODEC = Codec.unit({-> instance} as Supplier)
+    final Optional<String> template
 
     @Override
     Codec<? extends ITexSource> codec() {
@@ -27,17 +27,21 @@ class VariantTemplateSource implements ITexSource {
     @NotNull
     Supplier<NativeImage> getSupplier(TexSourceDataHolder data) throws JsonSyntaxException {
         return {
-            SingleVariantData variant = data.get(SingleVariantData.class)
+            TemplateData variant = data.get(TemplateData.class)
             if (variant===null) {
                 data.logger.error("No provided variant template to capture... Are you trying to use the variant template source outside of a Modular Metals metal config?")
                 return null
             }
-            return variant.template.getSupplier(data).get()
+            String templateName = template.orElse(variant.defaultName)
+            TexSourceDataHolder templateData = variant.dataHolderOverride?:data
+            return variant.templates.get(templateName)?.getSupplier(templateData)?.get()
         }
     }
 
     @TupleConstructor
-    static class SingleVariantData {
-        final ITexSource template
+    static class TemplateData {
+        final Map<String,ITexSource> templates
+        final String defaultName
+        TexSourceDataHolder dataHolderOverride = null
     }
 }

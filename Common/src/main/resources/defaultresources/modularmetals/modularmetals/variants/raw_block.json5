@@ -1,0 +1,23 @@
+{
+  type: "modularmetals:block",
+  texturing: {
+    template: {
+      "": {
+        type: "dynamic_asset_generator:palette_spread",
+        source: {
+          type: "dynamic_asset_generator:texture",
+          path: "minecraft:block/raw_iron_block"
+        },
+        upper_bound: 0.8
+      }
+    }
+  },
+  default_enabled: true,
+  name: "Raw %s Block",
+  tags: [
+    "forge:storage_blocks/raw_%s",
+    "forge:storage_blocks",
+    "c:raw_%s_blocks",
+    "c:blocks/raw_%s"
+  ]
+}
