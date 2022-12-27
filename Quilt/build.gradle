@@ -57,7 +57,7 @@ dependencies {
     }
 
     modCompileOnly(libs.excavatedvariants.quilt) {
-        exclude group: 'org.quiltmc'
+        transitive = false
     }
 
     compileOnly(project(path: ":Common", configuration: "namedElements")) {

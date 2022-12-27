@@ -3,7 +3,7 @@ plugins {
 }
 
 modsDotGroovy {
-    dslVersion = '1.1.3'
+    dslVersion = '1.2.1'
     platform 'multiloader'
 }
 
@@ -15,12 +15,19 @@ subprojects {
     java.withSourcesJar()
 
     repositories {
+        mavenCentral()
         maven {
             name = 'TheModdingInquisition'
             url = 'https://maven.moddinginquisition.org/releases'
         }
-        mavenCentral()
-        // For DynAssetGen and defaultresources
+        maven {
+            url "https://maven.lukebemish.dev/releases"
+        }
+        maven {
+            name = 'ParchmentMC'
+            url = 'https://maven.parchmentmc.org'
+        }
+        // For Excavated Variants
         mavenLocal()
     }
 
@@ -31,9 +38,17 @@ subprojects {
     tasks.withType(GroovyCompile).configureEach {
         it.groovyOptions.fork = true
         it.groovyOptions.encoding = 'UTF-8'
-        it.groovyOptions.optimizationOptions.indy = true
-        it.groovyOptions.optimizationOptions.groovydoc = true
+        groovyOptions.optimizationOptions.indy = true
+        groovyOptions.optimizationOptions.groovydoc = true
+        it.groovyOptions.javaAnnotationProcessing = true
         it.exclude('mods.groovy')
+    }
+
+    tasks.compileGroovy { t ->
+        t.options.compilerArgs += [
+                "-Aautoextension.name=${mod_name}",
+                "-Aautoextension.version=${version}"
+        ]
     }
 
     // Disables Gradle's custom module metadata from being published to maven. The
@@ -50,5 +65,10 @@ subprojects {
     dependencies {
         implementation libs.groovy.core
         implementation libs.groovy.templates
+
+        annotationProcessor libs.autoextension
+        annotationProcessor libs.autoservice
+        compileOnly libs.autoextension
+        compileOnly libs.autoservice
     }
 }

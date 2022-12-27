@@ -1,12 +1,7 @@
-buildscript {
-    dependencies {
-        classpath 'org.spongepowered:mixingradle:0.7.+'
-    }
-}
-
 plugins {
     alias libs.plugins.forgegradle
     alias libs.plugins.librarian
+    alias libs.plugins.mixin
 }
 
 archivesBaseName = "${mod_id}-${libs.versions.minecraft.get()}-forge"
@@ -83,7 +78,7 @@ dependencies {
 
     implementation fg.deobf(libs.dynassetgen.forge.get())
     implementation fg.deobf(libs.defaultresources.forge.get())
-    jarJar("io.github.lukebemish.defaultresources:defaultresources-forge-1.19.2:[${libs.versions.defaultresources.get()},)") {
+    jarJar("dev.lukebemish.defaultresources:defaultresources-forge-1.19.3:[${libs.versions.defaultresources.get()},)") {
         jarJar.pin(it, "${libs.versions.defaultresources.get()}")
     }
 

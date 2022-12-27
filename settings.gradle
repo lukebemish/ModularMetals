@@ -13,6 +13,9 @@ pluginManagement {
             url = 'https://maven.moddinginquisition.org/releases'
         }
         maven {
+            url "https://maven.lukebemish.dev/releases"
+        }
+        maven {
             name = 'Minecraft Forge'
             url = 'https://maven.minecraftforge.net'
         }
@@ -20,11 +23,14 @@ pluginManagement {
             name = 'ParchmentMC'
             url = 'https://maven.parchmentmc.org'
         }
-        maven {
-            name = 'Sponge Snapshots'
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-        }
         gradlePluginPortal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.toString() == 'org.spongepowered.mixin') {
+                useModule("org.spongepowered:mixingradle:${requested.version}")
+            }
+        }
     }
 }
 

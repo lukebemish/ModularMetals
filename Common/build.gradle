@@ -38,6 +38,7 @@ tasks.withType(AbstractRemapJarTask).each {
 }
 
 groovydoc {
+    exclude 'mods.groovy'
     use = true
     docTitle = "${mod_name} v${version}"
 }
