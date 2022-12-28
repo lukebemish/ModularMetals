@@ -3,8 +3,8 @@ package io.github.lukebemish.modularmetals.data
 import com.mojang.datafixers.util.Either
 import groovy.transform.CompileStatic
 import groovy.transform.Immutable
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.WithCodec
+import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
+import io.github.groovymc.cgl.api.transform.codec.WithCodec
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.filter.Filter
@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation
 import org.jetbrains.annotations.Nullable
 
 @CompileStatic
-@CodecSerializable(camelToSnake = true, allowDefaultValues = true)
+@CodecSerializable
 @Immutable(knownImmutableClasses = [Filter, Optional])
 class Metal {
     final MetalTexturing texturing
@@ -29,7 +29,7 @@ class Metal {
     }
 
     @Immutable(knownImmutableClasses = [Optional, Either])
-    @CodecSerializable(camelToSnake = true, allowDefaultValues = true)
+    @CodecSerializable
     static class MetalTexturing {
         final MapHolder generator
         @WithCodec(value = { ModConfig.TEMPLATE_SET_CODEC })

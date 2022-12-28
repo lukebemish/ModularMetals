@@ -11,7 +11,8 @@ import com.mojang.serialization.DataResult
 import com.mojang.serialization.Decoder
 import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.codec.JanksonOps
-import io.github.lukebemish.defaultresources.api.ResourceProvider
+import dev.lukebemish.defaultresources.api.ResourceProvider
+import io.github.groovymc.cgl.api.transform.codec.CodecRetriever
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.data.recipe.Recipe
 import io.github.lukebemish.modularmetals.data.variant.Variant
@@ -70,7 +71,7 @@ class ModConfig {
                         if (rl.path.endsWith(".json") || rl.path.endsWith(".json5")) {
                             ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('metals/'.length(),rl.path.lastIndexOf('.')))
                             JsonObject json = Constants.JANKSON.load(optional.get())
-                            Metal resource = ((Decoder<Metal>)Metal.$CODEC).parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
+                            Metal resource = ((Decoder<Metal>) Metal.$CODEC).parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
                             this.metals.put(newRl, resource)
                         }
                     } catch (RuntimeException | SyntaxError | IOException e) {

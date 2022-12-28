@@ -6,12 +6,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
 import groovy.transform.TupleConstructor
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposeCodec
+import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.data.UtilCodecs
 import io.github.lukebemish.modularmetals.services.IPlatformHelper
 import io.github.lukebemish.modularmetals.services.Services
-import net.minecraft.core.Registry
+import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Tier
@@ -50,7 +50,7 @@ class ModularTier implements Tier {
 
     ModularTier bake(ResourceLocation location) {
         repairIngredientSupplier = repairIngredientSupplierOptional.orElse(Suppliers.memoize {->
-            Ingredient.of(TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(Constants.MOD_ID,"ingots/${location.path}")))
+            Ingredient.of(TagKey.create(Registries.ITEM, new ResourceLocation(Constants.MOD_ID,"ingots/${location.path}")))
         })
         return this
     }
@@ -74,9 +74,9 @@ class ModularTier implements Tier {
     // Used by Forge; added to appropriate dynamic tag on Quilt
     @Memoized TagKey<Block> getTag() {
         if (Services.PLATFORM.platform === IPlatformHelper.Platform.FORGE)
-            return TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(Constants.MOD_ID, "needs_${metalLocation}_tool"))
+            return TagKey.create(Registries.BLOCK, new ResourceLocation(Constants.MOD_ID, "needs_${metalLocation}_tool"))
         else
-            return TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation('fabric',"needs_tool_level_${level}"))
+            return TagKey.create(Registries.BLOCK, new ResourceLocation('fabric',"needs_tool_level_${level}"))
     }
 
     static Map<ResourceLocation, ModularTier> getTiers() {

@@ -3,13 +3,15 @@ package io.github.lukebemish.modularmetals.client
 import com.google.common.base.Suppliers
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.DataResult
+import dev.lukebemish.dynamicassetgenerator.api.ResourceCache
 import groovy.text.SimpleTemplateEngine
 import groovy.transform.CompileStatic
-import io.github.lukebemish.dynamic_asset_generator.api.client.AssetResourceCache
-import io.github.lukebemish.dynamic_asset_generator.api.client.generators.ITexSource
-import io.github.lukebemish.dynamic_asset_generator.api.client.generators.TexSourceDataHolder
-import io.github.lukebemish.dynamic_asset_generator.api.client.generators.texsources.ErrorSource
-import io.github.lukebemish.dynamic_asset_generator.api.client.generators.texsources.TextureReader
+import dev.lukebemish.dynamicassetgenerator.api.client.AssetResourceCache
+import dev.lukebemish.dynamicassetgenerator.api.client.generators.ITexSource
+import dev.lukebemish.dynamicassetgenerator.api.client.generators.TexSourceDataHolder
+import dev.lukebemish.dynamicassetgenerator.api.client.generators.texsources.ErrorSource
+import dev.lukebemish.dynamicassetgenerator.api.client.generators.texsources.TextureReader
+import io.github.groovymc.cgl.api.transform.codec.CodecRetriever
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.MapHolder
@@ -37,17 +39,19 @@ class ModularMetalsClient {
 
     private static LangBuilder langBuilder = new LangBuilder()
 
+    public static final AssetResourceCache ASSET_CACHE = ResourceCache.register(new AssetResourceCache(new ResourceLocation(Constants.MOD_ID, "assets")))
+
     static void init() {
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "template"), VariantTemplateSource.CODEC)
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "resolved"), ResolvedVariantSource.CODEC)
-        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "easy_recolor"), EasyRecolorSource.$CODEC)
-        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "property_or_default"), PropertyOrDefaultSource.$CODEC)
-        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "with_template"), WithTemplateSource.$CODEC)
+        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "easy_recolor"), CodecRetriever[EasyRecolorSource])
+        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "property_or_default"), CodecRetriever[PropertyOrDefaultSource])
+        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "with_template"), CodecRetriever[WithTemplateSource])
 
-        AssetResourceCache.INSTANCE.planSource(TexturePlanner.instance)
-        AssetResourceCache.INSTANCE.planSource(ModelPlanner.instance)
-        AssetResourceCache.INSTANCE.planSource(BlockstatePlanner.instance)
-        AssetResourceCache.INSTANCE.planSource(new ResourceLocation(Constants.MOD_ID, 'lang/en_us.json'), {it -> langBuilder.build()})
+        ASSET_CACHE.planSource(TexturePlanner.instance)
+        ASSET_CACHE.planSource(ModelPlanner.instance)
+        ASSET_CACHE.planSource(BlockstatePlanner.instance)
+        ASSET_CACHE.planSource(new ResourceLocation(Constants.MOD_ID, 'lang/en_us.json'), {it -> langBuilder.build()})
 
         registerPlanners()
     }
@@ -100,7 +104,8 @@ class ModularMetalsClient {
                             }) : List.<String> of())
                         }
                         ResourceLocation full = new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${key == '' ? '' : "_$key"}")
-                        TexturePlanner.instance.plan(full, { ->
+
+                        TexturePlanner.instance.plan(full, { context ->
                             ITexSource metalTex = metalTexSource.get()
                             ITexSource fullTex = fullTexSource.get()
                             TexSourceDataHolder data = new TexSourceDataHolder()
@@ -114,7 +119,7 @@ class ModularMetalsClient {
                                 })]
                             }, key))
                             data.put(PropertyOrDefaultSource.PropertyGetterData, new PropertyOrDefaultSource.PropertyGetterData(metal, metalRl))
-                            return fullTex.getSupplier(data).get()
+                            return fullTex.getSupplier(data, context).get()
                         }, sourceLocations)
                     }
 

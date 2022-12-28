@@ -3,7 +3,7 @@ package io.github.lukebemish.modularmetals.data.filter
 import com.mojang.serialization.Codec
 import groovy.transform.CompileStatic
 import groovy.transform.Immutable
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
+import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import net.minecraft.resources.ResourceLocation
 
 @CompileStatic

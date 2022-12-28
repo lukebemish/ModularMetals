@@ -2,8 +2,8 @@ package io.github.lukebemish.modularmetals.data.variant
 
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.WithCodec
+import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
+import io.github.groovymc.cgl.api.transform.codec.WithCodec
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.PickaxeItem
 import net.minecraft.world.item.Tier

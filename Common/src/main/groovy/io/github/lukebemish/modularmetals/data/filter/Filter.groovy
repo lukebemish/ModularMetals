@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import groovy.transform.CompileStatic
 import groovy.transform.KnownImmutable
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposeCodec
+import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 import io.github.lukebemish.modularmetals.PsuedoRegisters
 import io.github.lukebemish.modularmetals.util.CodecAware
 import io.github.lukebemish.modularmetals.util.CodecMapCodec

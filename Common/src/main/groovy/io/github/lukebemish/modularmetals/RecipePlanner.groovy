@@ -1,11 +1,11 @@
 package io.github.lukebemish.modularmetals
 
 import com.google.gson.JsonElement
+import dev.lukebemish.dynamicassetgenerator.api.IPathAwareInputStreamSource
+import dev.lukebemish.dynamicassetgenerator.api.ResourceGenerationContext
 import groovy.transform.CompileStatic
-import io.github.lukebemish.dynamic_asset_generator.api.IPathAwareInputStreamSource
 import net.minecraft.resources.ResourceLocation
-
-import java.util.function.Supplier
+import net.minecraft.server.packs.resources.IoSupplier
 
 @CompileStatic
 @Singleton
@@ -22,11 +22,11 @@ class RecipePlanner implements IPathAwareInputStreamSource {
     }
 
     @Override
-    Supplier<InputStream> get(ResourceLocation outRl) {
+    IoSupplier<InputStream> get(ResourceLocation outRl, ResourceGenerationContext context) {
+        JsonElement json = sources.get(outRl)
+        if (json===null)
+            return null
         return {->
-            JsonElement json = sources.get(outRl)
-            if (json===null)
-                return null
             return new BufferedInputStream(new ByteArrayInputStream(Constants.GSON.toJson(json).bytes))
         }
     }

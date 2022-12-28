@@ -8,7 +8,7 @@ import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ObjectOps
+import io.github.groovymc.cgl.api.codec.ObjectOps
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.ExtraCodecs
 

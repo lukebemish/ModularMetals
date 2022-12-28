@@ -1,6 +1,6 @@
 package io.github.lukebemish.modularmetals.quilt.platform
 
-
+import com.google.auto.service.AutoService
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
 import io.github.lukebemish.modularmetals.quilt.ModularMetalsQuilt
@@ -13,6 +13,7 @@ import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader
 import java.nio.file.Path
 
 @CompileStatic
+@AutoService(IPlatformHelper)
 class PlatformHelperImpl implements IPlatformHelper {
 
     @Override

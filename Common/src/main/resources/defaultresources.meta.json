@@ -1,4 +1,4 @@
 {
   "config_path": "modularmetals.toml",
-  "make_marker_file": true
+  "creates_marker": true
 }

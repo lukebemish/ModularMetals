@@ -1,10 +1,9 @@
 package io.github.lukebemish.modularmetals.data.variant
 
-
 import com.mojang.serialization.Codec
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposeCodec
+import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 import io.github.lukebemish.modularmetals.PsuedoRegisters
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.ModConfig

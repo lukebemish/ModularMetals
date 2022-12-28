@@ -2,7 +2,7 @@ package io.github.lukebemish.modularmetals.data.filter
 
 import com.mojang.serialization.Codec
 import groovy.transform.CompileStatic
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposeCodec
+import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 import net.minecraft.resources.ResourceLocation
 
 @CompileStatic

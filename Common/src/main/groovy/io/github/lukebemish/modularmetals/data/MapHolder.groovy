@@ -5,8 +5,8 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import groovy.transform.CompileStatic
 import groovy.transform.Immutable
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ExposeCodec
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ObjectOps
+import io.github.groovymc.cgl.api.codec.ObjectOps
+import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 import io.github.lukebemish.modularmetals.util.OpsCodec
 
 @Immutable(knownImmutableClasses = [JsonElement])

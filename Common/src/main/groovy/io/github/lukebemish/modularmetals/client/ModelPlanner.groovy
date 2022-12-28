@@ -2,13 +2,13 @@ package io.github.lukebemish.modularmetals.client
 
 import com.google.gson.JsonElement
 import com.mojang.serialization.JsonOps
+import dev.lukebemish.dynamicassetgenerator.api.IPathAwareInputStreamSource
+import dev.lukebemish.dynamicassetgenerator.api.ResourceGenerationContext
 import groovy.transform.CompileStatic
-import io.github.lukebemish.dynamic_asset_generator.api.IPathAwareInputStreamSource
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ObjectOps
+import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.lukebemish.modularmetals.Constants
 import net.minecraft.resources.ResourceLocation
-
-import java.util.function.Supplier
+import net.minecraft.server.packs.resources.IoSupplier
 
 @CompileStatic
 @Singleton
@@ -21,11 +21,11 @@ class ModelPlanner implements IPathAwareInputStreamSource {
     }
 
     @Override
-    Supplier<InputStream> get(ResourceLocation outRl) {
+    IoSupplier<InputStream> get(ResourceLocation outRl, ResourceGenerationContext context) {
+        Map obj = sources[outRl]
+        if (obj === null)
+            return null
         return {
-            Map obj = sources[outRl]
-            if (obj === null)
-                return null
             JsonElement json = ObjectOps.instance.convertTo(JsonOps.INSTANCE, obj)
             return new BufferedInputStream(new ByteArrayInputStream(Constants.GSON.toJson(json).bytes))
         }

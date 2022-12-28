@@ -3,14 +3,16 @@ package io.github.lukebemish.modularmetals.data.texsources
 import com.google.gson.JsonSyntaxException
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.serialization.Codec
+import dev.lukebemish.dynamicassetgenerator.api.ResourceGenerationContext
+import dev.lukebemish.dynamicassetgenerator.api.client.generators.ITexSource
+import dev.lukebemish.dynamicassetgenerator.api.client.generators.TexSourceDataHolder
+import dev.lukebemish.dynamicassetgenerator.api.client.generators.texsources.ErrorSource
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.lukebemish.dynamic_asset_generator.api.client.generators.ITexSource
-import io.github.lukebemish.dynamic_asset_generator.api.client.generators.TexSourceDataHolder
-import io.github.lukebemish.dynamic_asset_generator.api.client.generators.texsources.ErrorSource
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
+import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.lukebemish.modularmetals.data.Metal
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.packs.resources.IoSupplier
 
 import java.util.function.Supplier
 
@@ -27,12 +29,12 @@ class PropertyOrDefaultSource implements ITexSource {
     }
 
     @Override
-    Supplier<NativeImage> getSupplier(TexSourceDataHolder data) throws JsonSyntaxException {
+    IoSupplier<NativeImage> getSupplier(TexSourceDataHolder data, ResourceGenerationContext context) {
         return {->
             PropertyGetterData getter = data.get(PropertyGetterData)
             if (getter === null)
                 data.logger.error("No metal property source attached! Are you using this outside of a modularmetals config?")
-            Supplier<NativeImage> supplier = getter.getSourceFromProperty(property)?.getSupplier(data)?:backup.getSupplier(data)
+            IoSupplier<NativeImage> supplier = getter.getSourceFromProperty(property)?.getSupplier(data, context)?:backup.getSupplier(data, context)
             return supplier.get()
         }
     }

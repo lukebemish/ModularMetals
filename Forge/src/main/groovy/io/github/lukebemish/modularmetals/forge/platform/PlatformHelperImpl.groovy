@@ -1,5 +1,6 @@
 package io.github.lukebemish.modularmetals.forge.platform
 
+import com.google.auto.service.AutoService
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
 import io.github.lukebemish.modularmetals.forge.ModularMetalsForge
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.loading.FMLPaths
 import java.nio.file.Path
 
 @CompileStatic
+@AutoService(IPlatformHelper)
 class PlatformHelperImpl implements IPlatformHelper {
 
     @Override

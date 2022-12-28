@@ -6,8 +6,8 @@ import com.mojang.serialization.JsonOps
 import groovy.text.SimpleTemplateEngine
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ObjectOps
+import io.github.groovymc.cgl.api.codec.ObjectOps
+import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.RecipePlanner
@@ -20,7 +20,7 @@ import org.apache.groovy.io.StringBuilderWriter
 import org.codehaus.groovy.control.CompilerConfiguration
 
 @CompileStatic
-@CodecSerializable(camelToSnake = true, allowDefaultValues = true)
+@CodecSerializable
 @TupleConstructor(includeSuperProperties = true, callSuper = true)
 class TemplateRecipe extends Recipe {
     private static final SimpleTemplateEngine ENGINE = new SimpleTemplateEngine(new GroovyShell(TemplateRecipe.classLoader,new CompilerConfiguration()

@@ -1,8 +1,7 @@
 package io.github.lukebemish.modularmetals.compat
 
-import io.github.lukebemish.excavated_variants.api.ExcavatedVariantsListener
-import io.github.lukebemish.excavated_variants.api.IDataProvider
-import io.github.lukebemish.excavated_variants.data.ModData
+import dev.lukebemish.excavatedvariants.api.ExcavatedVariantsListener
+import dev.lukebemish.excavatedvariants.data.ModData
 
 @ExcavatedVariantsListener
 class ExcavatedVariantsModData implements IDataProvider {

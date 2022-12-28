@@ -4,8 +4,7 @@ import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.lukebemish.dynamic_asset_generator.api.DataResourceCache
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.CodecSerializable
+import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.MapHolder
@@ -15,7 +14,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 
 @CompileStatic
-@CodecSerializable(camelToSnake = true)
+@CodecSerializable
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
 class ItemVariant extends Variant {
     protected ItemVariantTexturing texturing
@@ -49,9 +48,9 @@ class ItemVariant extends Variant {
 
     void registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
         getItemTags(metalRl).each {
-            DataResourceCache.INSTANCE.planTag(new ResourceLocation(it.namespace, "items/${it.path}"), () -> Set.of(new ResourceLocation(Constants.MOD_ID, location)))
+            ModularMetalsCommon.DATA_CACHE.tags().queue(new ResourceLocation(it.namespace, "items/${it.path}"), new ResourceLocation(Constants.MOD_ID, location))
         }
-        ModularMetalsCommon.ITEMS.register(location, {->new Item(new Item.Properties().tab(Services.PLATFORM.getItemTab()))})
+        ModularMetalsCommon.ITEMS.register(location, {->new Item(new Item.Properties())})
     }
 
     List<ResourceLocation> getItemTags(ResourceLocation metalRl) {

@@ -4,13 +4,12 @@ import com.google.common.base.Suppliers
 import com.mojang.serialization.DataResult
 import groovy.transform.CompileStatic
 import groovy.transform.InheritConstructors
-import io.github.lukebemish.groovyduvet.wrapper.minecraft.api.codec.ObjectOps
+import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.tier.ModularTier
-import io.github.lukebemish.modularmetals.services.Services
-import net.minecraft.core.Registry
+import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
@@ -40,7 +39,7 @@ abstract class ToolVariant extends ItemVariant {
 
     private static Supplier<Ingredient> defaultIngredient(ResourceLocation location) {
         return Suppliers.memoize {->
-            Ingredient.of(TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(Constants.MOD_ID,"ingots/${location.path}")))
+            Ingredient.of(TagKey.create(Registries.ITEM, new ResourceLocation(Constants.MOD_ID,"ingots/${location.path}")))
         }
     }
 
@@ -48,7 +47,7 @@ abstract class ToolVariant extends ItemVariant {
     void registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
         ModularMetalsCommon.ITEMS.register(location, {->
             return getToolItemSupplier().getItem(getTier(metal, metalRl), getAttackModifier(), getSpeedModifier(),
-                    new Item.Properties().tab(Services.PLATFORM.getItemTab()))
+                    new Item.Properties())
         })
     }
 
