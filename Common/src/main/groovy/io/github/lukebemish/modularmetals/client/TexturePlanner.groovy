@@ -14,7 +14,6 @@ import net.minecraft.server.packs.resources.IoSupplier
 import java.util.function.Function
 import java.util.function.Supplier
 
-@CompileStatic
 @Singleton
 class TexturePlanner implements IPathAwareInputStreamSource {
     final Map<ResourceLocation, Function<ResourceGenerationContext, NativeImage>> sources = [:]

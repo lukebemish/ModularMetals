@@ -6,14 +6,12 @@ import com.electronwill.nightconfig.toml.TomlParser
 import com.electronwill.nightconfig.toml.TomlWriter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import groovy.transform.CompileStatic
 import org.codehaus.groovy.ast.expr.*
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-@CompileStatic
 class Constants {
     public static final String MOD_ID = "modularmetals"
     public static final String MOD_NAME = "Modular Metals"

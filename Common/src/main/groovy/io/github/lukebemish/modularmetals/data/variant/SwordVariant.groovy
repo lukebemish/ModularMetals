@@ -8,7 +8,6 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.SwordItem
 import net.minecraft.world.item.Tier
 
-@CompileStatic
 @CodecSerializable(property = "SWORD_CODEC")
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeSuperFields = true)
 class SwordVariant extends ToolVariant {

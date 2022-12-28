@@ -5,15 +5,14 @@ import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 import net.minecraft.resources.ResourceLocation
 
-@CompileStatic
 @Singleton
 class AllFilter extends Filter {
     @ExposeCodec
-    static Codec<AllFilter> CODEC = Codec.unit(AllFilter.instance)
+    static final Codec<AllFilter> ALL_CODEC = Codec.unit(AllFilter.instance)
 
     @Override
     Codec getCodec() {
-        return CODEC
+        return ALL_CODEC
     }
 
     @Override

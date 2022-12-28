@@ -3,16 +3,13 @@ package io.github.lukebemish.modularmetals.quilt.platform
 import com.google.auto.service.AutoService
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
-import io.github.lukebemish.modularmetals.quilt.ModularMetalsQuilt
 import io.github.lukebemish.modularmetals.services.IPlatformHelper
 import net.fabricmc.api.EnvType
-import net.minecraft.world.item.CreativeModeTab
 import org.quiltmc.loader.api.QuiltLoader
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader
 
 import java.nio.file.Path
 
-@CompileStatic
 @AutoService(IPlatformHelper)
 class PlatformHelperImpl implements IPlatformHelper {
 
@@ -31,7 +28,7 @@ class PlatformHelperImpl implements IPlatformHelper {
         return QuiltLoader.configDir
     }
 
-    @Override
+    /*@Override
     CreativeModeTab getItemTab() {
         return ModularMetalsQuilt.ITEM_TAB
     }
@@ -39,7 +36,7 @@ class PlatformHelperImpl implements IPlatformHelper {
     @Override
     CreativeModeTab getBlockTab() {
         return ModularMetalsQuilt.BLOCK_TAB
-    }
+    }*/
 
     @Override
     Platform getPlatform() {

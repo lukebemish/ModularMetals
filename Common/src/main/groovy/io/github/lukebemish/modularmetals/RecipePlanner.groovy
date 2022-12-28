@@ -7,7 +7,6 @@ import groovy.transform.CompileStatic
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.IoSupplier
 
-@CompileStatic
 @Singleton
 class RecipePlanner implements IPathAwareInputStreamSource {
     final Map<ResourceLocation, JsonElement> sources = [:]

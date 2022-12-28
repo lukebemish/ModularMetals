@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
 import net.minecraft.world.level.material.MaterialColor
 
-@CompileStatic
 @CodecSerializable
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
 class BlockVariant extends ItemVariant {

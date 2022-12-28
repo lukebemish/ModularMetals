@@ -10,7 +10,6 @@ import io.github.lukebemish.modularmetals.util.CodecAware
 import io.github.lukebemish.modularmetals.util.CodecMapCodec
 import net.minecraft.resources.ResourceLocation
 
-@CompileStatic
 @KnownImmutable
 abstract class Filter implements CodecAware {
     @ExposeCodec

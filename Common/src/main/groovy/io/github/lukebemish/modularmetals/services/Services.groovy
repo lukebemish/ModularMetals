@@ -5,7 +5,6 @@ import groovy.transform.CompileStatic
 import io.github.lukebemish.modularmetals.Constants
 
 @AutoFinal
-@CompileStatic
 class Services {
     static final IPlatformHelper PLATFORM = load(IPlatformHelper.class)
 

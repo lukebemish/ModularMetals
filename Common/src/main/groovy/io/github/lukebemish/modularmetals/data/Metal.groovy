@@ -11,8 +11,7 @@ import io.github.lukebemish.modularmetals.data.filter.Filter
 import net.minecraft.resources.ResourceLocation
 import org.jetbrains.annotations.Nullable
 
-@CompileStatic
-@CodecSerializable
+@CodecSerializable(allowDefaultValues = true)
 @Immutable(knownImmutableClasses = [Filter, Optional])
 class Metal {
     final MetalTexturing texturing
@@ -29,7 +28,7 @@ class Metal {
     }
 
     @Immutable(knownImmutableClasses = [Optional, Either])
-    @CodecSerializable
+    @CodecSerializable(allowDefaultValues = true)
     static class MetalTexturing {
         final MapHolder generator
         @WithCodec(value = { ModConfig.TEMPLATE_SET_CODEC })

@@ -13,7 +13,6 @@ import io.github.lukebemish.modularmetals.services.Services
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 
-@CompileStatic
 @CodecSerializable
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
 class ItemVariant extends Variant {

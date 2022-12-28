@@ -10,7 +10,6 @@ import io.github.lukebemish.modularmetals.data.ModConfig
 import io.github.lukebemish.modularmetals.util.CodecAware
 import net.minecraft.resources.ResourceLocation
 
-@CompileStatic
 @TupleConstructor
 abstract class Variant implements CodecAware {
     @ExposeCodec

@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull
 
 import java.util.function.Supplier
 
-@CompileStatic
 @CodecSerializable
 @TupleConstructor
 class VariantTemplateSource implements ITexSource {

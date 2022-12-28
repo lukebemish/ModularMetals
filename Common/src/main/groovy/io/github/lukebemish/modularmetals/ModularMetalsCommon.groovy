@@ -3,7 +3,6 @@ package io.github.lukebemish.modularmetals
 import com.google.common.base.Suppliers
 import dev.lukebemish.dynamicassetgenerator.api.DataResourceCache
 import dev.lukebemish.dynamicassetgenerator.api.ResourceCache
-import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.reg.RegistrationProvider
 import io.github.lukebemish.modularmetals.client.ModularMetalsClient
 import io.github.lukebemish.modularmetals.data.Metal
@@ -18,7 +17,6 @@ import net.minecraft.world.level.block.Block
 
 import java.util.function.Supplier
 
-@CompileStatic
 final class ModularMetalsCommon {
     private static final Supplier<ModConfig> CONFIG = Suppliers.memoize({ModConfig.load()})
 

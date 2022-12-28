@@ -8,7 +8,6 @@ import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 import io.github.lukebemish.modularmetals.util.OpsCodec
 
-@CompileStatic
 @TupleConstructor
 class ObjectHolder {
     @ExposeCodec

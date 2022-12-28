@@ -16,7 +16,6 @@ import java.util.function.Supplier
 
 @TupleConstructor
 @CodecSerializable
-@CompileStatic
 class WithTemplateSource implements ITexSource {
     final Either<ITexSource,Map<String,ITexSource>> template
     final ITexSource source

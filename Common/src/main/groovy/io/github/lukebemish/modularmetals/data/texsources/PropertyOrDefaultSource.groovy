@@ -18,7 +18,6 @@ import java.util.function.Supplier
 
 @TupleConstructor
 @CodecSerializable
-@CompileStatic
 class PropertyOrDefaultSource implements ITexSource {
     final ResourceLocation property
     final ITexSource backup

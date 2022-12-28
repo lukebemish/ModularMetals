@@ -38,11 +38,10 @@ dependencies {
         exclude group: 'org.quiltmc'
     }
 
-    // GroovyDuvet allows for loading groovy mods, and has wrappers around minecraft and QSL code for ease of development.
-    modImplementation(libs.groovyduvet.all) {
+    runtimeOnly(libs.groovyduvet.groovy) {
         exclude group: 'org.quiltmc'
     }
-    runtimeOnly(libs.groovyduvet.groovy) {
+    modImplementation(libs.groovyduvet.all) {
         exclude group: 'org.quiltmc'
     }
 

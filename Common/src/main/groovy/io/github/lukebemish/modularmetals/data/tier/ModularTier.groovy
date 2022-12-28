@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable
 
 import java.util.function.Supplier
 
-@CompileStatic
 @TupleConstructor(excludes = ['repairIngredientSupplier'])
 class ModularTier implements Tier {
     @ExposeCodec

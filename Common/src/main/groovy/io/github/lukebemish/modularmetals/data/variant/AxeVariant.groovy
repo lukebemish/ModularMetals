@@ -7,7 +7,6 @@ import net.minecraft.world.item.AxeItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Tier
 
-@CompileStatic
 @CodecSerializable(property = "AXE_CODEC")
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeSuperFields = true)
 class AxeVariant extends ToolVariant {

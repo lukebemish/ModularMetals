@@ -12,7 +12,6 @@ import net.minecraft.server.packs.resources.IoSupplier
 
 import java.util.function.Supplier
 
-@CompileStatic
 @Singleton
 class ResolvedVariantSource implements ITexSource {
     @io.github.groovymc.cgl.api.transform.codec.ExposeCodec

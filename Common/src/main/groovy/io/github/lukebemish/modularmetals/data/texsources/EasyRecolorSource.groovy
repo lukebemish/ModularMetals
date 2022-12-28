@@ -15,7 +15,6 @@ import net.minecraft.server.packs.resources.IoSupplier
 
 import java.util.function.Supplier
 
-@CompileStatic
 @CodecSerializable
 @TupleConstructor
 class EasyRecolorSource implements ITexSource {

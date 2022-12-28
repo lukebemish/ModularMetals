@@ -19,7 +19,6 @@ import io.github.lukebemish.modularmetals.data.variant.SwordVariant
 import io.github.lukebemish.modularmetals.data.variant.Variant
 import net.minecraft.resources.ResourceLocation
 
-@CompileStatic
 final class PsuedoRegisters {
     private PsuedoRegisters() {}
 

@@ -5,15 +5,11 @@ import groovy.transform.CompileStatic
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.tier.ModularTier
-import net.minecraft.world.item.CreativeModeTab
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraftforge.common.TierSortingRegistry
 
 @GMod(Constants.MOD_ID)
-@CompileStatic
 class ModularMetalsForge {
-    static final CreativeModeTab ITEM_TAB = new CreativeModeTab("${Constants.MOD_ID}.items") {
+    /*static final CreativeModeTab ITEM_TAB = new CreativeModeTab("${Constants.MOD_ID}.items") {
         @Override
         ItemStack makeIcon() {
             return new ItemStack(Items.IRON_INGOT)
@@ -24,7 +20,7 @@ class ModularMetalsForge {
         ItemStack makeIcon() {
             return new ItemStack(Items.IRON_BLOCK)
         }
-    }
+    }*/
 
     ModularMetalsForge() {
         ModularMetalsCommon.init()

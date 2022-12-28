@@ -22,7 +22,6 @@ import net.minecraft.resources.ResourceLocation
 
 import java.util.stream.Stream
 
-@CompileStatic
 class ModConfig {
 
     HashBiMap<ResourceLocation, Metal> metals = HashBiMap.create()

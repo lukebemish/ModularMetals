@@ -4,7 +4,6 @@ import com.google.gson.JsonElement
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
 import groovy.text.SimpleTemplateEngine
-import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
@@ -19,7 +18,6 @@ import net.minecraft.resources.ResourceLocation
 import org.apache.groovy.io.StringBuilderWriter
 import org.codehaus.groovy.control.CompilerConfiguration
 
-@CompileStatic
 @CodecSerializable
 @TupleConstructor(includeSuperProperties = true, callSuper = true)
 class TemplateRecipe extends Recipe {
@@ -50,7 +48,9 @@ class TemplateRecipe extends Recipe {
         try {
             out = MapUtil.replaceInMap(map, {
                 var writer = new StringBuilderWriter()
-                ENGINE.createTemplate(it).make(replacements).writeTo(writer)
+                ENGINE.createTemplate(it)
+                        .make(replacements)
+                        .writeTo(writer)
                 return writer.builder.toString()
             })
         } catch (Exception e) {

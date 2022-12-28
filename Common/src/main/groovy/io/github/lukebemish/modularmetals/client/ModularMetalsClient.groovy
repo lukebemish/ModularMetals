@@ -31,7 +31,6 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Supplier
 
-@CompileStatic
 class ModularMetalsClient {
     private ModularMetalsClient() {}
     private static final SimpleTemplateEngine ENGINE = new SimpleTemplateEngine(new GroovyShell(ModularMetalsClient.classLoader,new CompilerConfiguration()
@@ -51,7 +50,7 @@ class ModularMetalsClient {
         ASSET_CACHE.planSource(TexturePlanner.instance)
         ASSET_CACHE.planSource(ModelPlanner.instance)
         ASSET_CACHE.planSource(BlockstatePlanner.instance)
-        ASSET_CACHE.planSource(new ResourceLocation(Constants.MOD_ID, 'lang/en_us.json'), {it -> langBuilder.build()})
+        ASSET_CACHE.planSource(new ResourceLocation(Constants.MOD_ID, 'lang/en_us.json'), {it, context -> langBuilder.build()})
 
         registerPlanners()
     }

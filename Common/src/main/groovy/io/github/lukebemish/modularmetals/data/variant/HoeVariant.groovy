@@ -8,7 +8,6 @@ import net.minecraft.world.item.HoeItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Tier
 
-@CompileStatic
 @CodecSerializable(property = "HOE_CODEC")
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeSuperFields = true)
 class HoeVariant extends ToolVariant {

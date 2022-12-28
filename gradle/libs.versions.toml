@@ -5,7 +5,7 @@ parchment_mappings = "2022.12.18"
 quilt_loader = "0.18.1-beta.25"
 
 qfapi = "5.0.0-alpha.7+0.70.0-1.19.3"
-groovyduvet = "2.0.0"
+groovyduvet = "2.0.1"
 cgl = "0.2.1"
 jankson = "1.2.1"
 

@@ -10,7 +10,6 @@ import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 import io.github.lukebemish.modularmetals.util.OpsCodec
 
 @Immutable(knownImmutableClasses = [JsonElement])
-@CompileStatic
 class MapHolder {
     @ExposeCodec
     static final Codec<MapHolder> CODEC = new OpsCodec<>(ObjectOps.instance).<MapHolder>xmap({new MapHolder((Map) it)}, {it.map})

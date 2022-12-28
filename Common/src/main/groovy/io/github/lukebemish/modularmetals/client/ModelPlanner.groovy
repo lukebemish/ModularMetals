@@ -10,7 +10,6 @@ import io.github.lukebemish.modularmetals.Constants
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.IoSupplier
 
-@CompileStatic
 @Singleton
 class ModelPlanner implements IPathAwareInputStreamSource {
     final Map<ResourceLocation, Map> sources = [:]

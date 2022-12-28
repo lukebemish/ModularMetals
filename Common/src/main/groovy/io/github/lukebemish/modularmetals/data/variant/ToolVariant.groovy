@@ -19,7 +19,6 @@ import net.minecraft.world.item.crafting.Ingredient
 
 import java.util.function.Supplier
 
-@CompileStatic
 @InheritConstructors
 abstract class ToolVariant extends ItemVariant {
 

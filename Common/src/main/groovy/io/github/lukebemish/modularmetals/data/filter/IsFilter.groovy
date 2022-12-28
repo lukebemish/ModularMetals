@@ -6,7 +6,6 @@ import groovy.transform.Immutable
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import net.minecraft.resources.ResourceLocation
 
-@CompileStatic
 @Immutable(knownImmutableClasses = [ResourceLocation])
 @CodecSerializable
 class IsFilter extends Filter {

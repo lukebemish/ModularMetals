@@ -38,9 +38,11 @@ subprojects {
     tasks.withType(GroovyCompile).configureEach {
         it.groovyOptions.fork = true
         it.groovyOptions.encoding = 'UTF-8'
-        groovyOptions.optimizationOptions.indy = true
-        groovyOptions.optimizationOptions.groovydoc = true
+        it.groovyOptions.optimizationOptions.indy = true
+        it.groovyOptions.optimizationOptions.groovydoc = true
         it.groovyOptions.javaAnnotationProcessing = true
+        it.groovyOptions.keepStubs = true // for debugging
+        it.groovyOptions.configurationScript = rootProject.file('compile.groovy')
         it.exclude('mods.groovy')
     }
 
@@ -63,8 +65,8 @@ subprojects {
     }
 
     dependencies {
-        implementation libs.groovy.core
-        implementation libs.groovy.templates
+        compileOnly libs.groovy.core
+        compileOnly libs.groovy.templates
 
         annotationProcessor libs.autoextension
         annotationProcessor libs.autoservice

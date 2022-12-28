@@ -11,7 +11,6 @@ import net.minecraft.world.item.crafting.Ingredient
 
 import java.util.function.Supplier
 
-@CompileStatic
 class UtilCodecs {
     static final Codec<Supplier<Ingredient>> INGREDIENT_CODEC = new OpsCodec<JsonElement>(JsonOps.INSTANCE).<Supplier<Ingredient>>xmap({ Suppliers.memoize({->Ingredient.fromJson(it)})},{it.get().toJson()})
 

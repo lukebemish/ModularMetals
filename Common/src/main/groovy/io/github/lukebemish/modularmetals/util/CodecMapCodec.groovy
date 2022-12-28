@@ -14,7 +14,6 @@ import net.minecraft.util.ExtraCodecs
 
 import java.util.function.Function
 
-@CompileStatic
 @TupleConstructor
 class CodecMapCodec<O extends CodecAware<O>> implements Codec<Codec<? extends O>> {
     final BiMap<ResourceLocation, Codec<? extends O>> lookup
@@ -45,13 +44,11 @@ class CodecMapCodec<O extends CodecAware<O>> implements Codec<Codec<? extends O>
 
     static <O extends CodecAware<O>, T> Codec<O> dispatchWithInherit(BiMap<ResourceLocation, Codec<? extends O>> lookup, String name, Function<ResourceLocation, DataResult<T>> inheritanceFinder, DynamicOps<T> inheritanceOps) {
         Codec<O> dispatch = dispatch(lookup, name)
-        var inheriting = new InheritingCodecHolder<O,T>(lookup, name, inheritanceFinder, inheritanceOps, dispatch)
+        var inheriting = new InheritingCodecHolder<O,T>(inheritanceFinder, inheritanceOps, dispatch)
         return inheriting.codec
     }
 
     static class InheritingCodecHolder<O extends CodecAware<O>,T> {
-        final BiMap<ResourceLocation, Codec<? extends O>> lookup
-        final String name
         final Function<ResourceLocation, DataResult<T>> inheritanceFinder
         final DynamicOps<T> inheritanceOps
         final Codec<O> dispatch
@@ -75,9 +72,7 @@ class CodecMapCodec<O extends CodecAware<O>> implements Codec<Codec<? extends O>
                     DataResult.success(Either.<Pair<Object,ResourceLocation>,O>right(it))
                 }
         )
-        protected InheritingCodecHolder(BiMap<ResourceLocation, Codec<? extends O>> lookup, String name, Function<ResourceLocation, DataResult<T>> inheritanceFinder, DynamicOps<T> inheritanceOps, Codec<O> dispatch) {
-            this.lookup = lookup
-            this.name = name
+        protected InheritingCodecHolder(Function<ResourceLocation, DataResult<T>> inheritanceFinder, DynamicOps<T> inheritanceOps, Codec<O> dispatch) {
             this.inheritanceFinder = inheritanceFinder
             this.inheritanceOps = inheritanceOps
             this.dispatch = dispatch

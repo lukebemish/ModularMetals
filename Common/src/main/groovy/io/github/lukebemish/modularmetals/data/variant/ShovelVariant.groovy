@@ -7,7 +7,6 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ShovelItem
 import net.minecraft.world.item.Tier
 
-@CompileStatic
 @CodecSerializable(property = "SHOVEL_CODEC")
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeSuperFields = true)
 class ShovelVariant extends ToolVariant {

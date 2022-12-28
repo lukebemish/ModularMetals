@@ -8,7 +8,6 @@ import com.mojang.serialization.MapLike
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
-@CompileStatic
 @TupleConstructor
 class OpsCodec<O> implements Codec<O> {
     final DynamicOps<O> ops

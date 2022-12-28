@@ -3,9 +3,7 @@ package io.github.lukebemish.modularmetals.forge.platform
 import com.google.auto.service.AutoService
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
-import io.github.lukebemish.modularmetals.forge.ModularMetalsForge
 import io.github.lukebemish.modularmetals.services.IPlatformHelper
-import net.minecraft.world.item.CreativeModeTab
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.loading.FMLLoader
@@ -13,7 +11,6 @@ import net.minecraftforge.fml.loading.FMLPaths
 
 import java.nio.file.Path
 
-@CompileStatic
 @AutoService(IPlatformHelper)
 class PlatformHelperImpl implements IPlatformHelper {
 
@@ -32,7 +29,7 @@ class PlatformHelperImpl implements IPlatformHelper {
         return FMLPaths.CONFIGDIR.get()
     }
 
-    @Override
+    /*@Override
     CreativeModeTab getItemTab() {
         return ModularMetalsForge.ITEM_TAB
     }
@@ -40,7 +37,7 @@ class PlatformHelperImpl implements IPlatformHelper {
     @Override
     CreativeModeTab getBlockTab() {
         return ModularMetalsForge.BLOCK_TAB
-    }
+    }*/
 
     @Override
     Platform getPlatform() {
