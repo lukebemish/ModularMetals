@@ -1,25 +1,26 @@
 package io.github.lukebemish.modularmetals.data.texsources
 
-
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.serialization.Codec
+import com.mojang.serialization.DataResult
+import com.mojang.serialization.DynamicOps
 import dev.lukebemish.dynamicassetgenerator.api.ResourceGenerationContext
 import dev.lukebemish.dynamicassetgenerator.api.client.generators.ITexSource
 import dev.lukebemish.dynamicassetgenerator.api.client.generators.TexSourceDataHolder
-import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
+import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 import net.minecraft.server.packs.resources.IoSupplier
 
 import java.util.function.Supplier
 
 @Singleton
 class ResolvedVariantSource implements ITexSource {
-    @io.github.groovymc.cgl.api.transform.codec.ExposeCodec
-    static final Codec<ResolvedVariantSource> CODEC = Codec.unit({-> instance} as Supplier)
+    @ExposeCodec
+    static final Codec<ResolvedVariantSource> RESOLVED_CODEC = Codec.unit({-> instance} as Supplier)
 
     @Override
     Codec<? extends ITexSource> codec() {
-        return CODEC
+        return RESOLVED_CODEC
     }
 
     @Override
@@ -32,6 +33,17 @@ class ResolvedVariantSource implements ITexSource {
         return {->
             return variant.template.getSupplier(data, context).get()
         }
+    }
+
+    @Override
+    <T> DataResult<T> cacheMetadata(DynamicOps<T> ops, TexSourceDataHolder data) {
+        ResolvedVariantData getter = data.get(ResolvedVariantData.class)
+        if (getter != null) {
+            var builder = ops.mapBuilder()
+            builder.add('resolved', ITexSource.CODEC.encodeStart(ops, getter.template))
+            return builder.build(ops.empty())
+        }
+        return DataResult.error('Could not get or encode resolved template')
     }
 
     @TupleConstructor

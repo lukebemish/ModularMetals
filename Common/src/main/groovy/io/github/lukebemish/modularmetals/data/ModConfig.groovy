@@ -5,14 +5,11 @@ import blue.endless.jankson.JsonObject
 import blue.endless.jankson.api.SyntaxError
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
-import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.Decoder
-import groovy.transform.CompileStatic
-import io.github.groovymc.cgl.api.codec.JanksonOps
 import dev.lukebemish.defaultresources.api.ResourceProvider
-import io.github.groovymc.cgl.api.transform.codec.CodecRetriever
+import io.github.groovymc.cgl.api.codec.JanksonOps
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.data.recipe.Recipe
 import io.github.lukebemish.modularmetals.data.variant.Variant
@@ -27,18 +24,10 @@ class ModConfig {
     HashBiMap<ResourceLocation, Metal> metals = HashBiMap.create()
     HashBiMap<ResourceLocation, Variant> variants = HashBiMap.create()
     HashBiMap<ResourceLocation, Recipe> recipes = HashBiMap.create()
-    HashBiMap<ResourceLocation, Map<ResourceLocation, Map<String,Either<ResourceLocation,MapHolder>>>> templateSets = HashBiMap.create()
+    HashBiMap<ResourceLocation, Category> categories = HashBiMap.create()
+    HashBiMap<ResourceLocation, Map<ResourceLocation, TexSourceMap>> templateSets = HashBiMap.create()
 
-    static final Codec<Map<ResourceLocation, Map<String,Either<ResourceLocation,MapHolder>>>> TEMPLATE_SET_CODEC = Codec.<ResourceLocation, Map<String,Either<ResourceLocation,MapHolder>>>unboundedMap(ResourceLocation.CODEC,
-            Codec.<ResourceLocation, Map<String,Either<ResourceLocation,MapHolder>>>either(ResourceLocation.CODEC,Codec.<String, Either<ResourceLocation,MapHolder>>unboundedMap(Codec.STRING, Codec.either(ResourceLocation.CODEC, MapHolder.CODEC))).<Map<String, ResourceLocation>>xmap({
-                return it.map({
-                    return ['':it]
-                },{
-                    return it
-                })
-            },{
-                return Either.<ResourceLocation, Map<String,ResourceLocation>>right(it)
-            }))
+    static final Codec<Map<ResourceLocation, TexSourceMap>> TEMPLATE_SET_CODEC = Codec.unboundedMap(ResourceLocation.CODEC, TexSourceMap.NONEMPTY_CODEC)
 
     static ModConfig getDefaultConfig() {
         return new ModConfig()
@@ -52,6 +41,7 @@ class ModConfig {
             config.loadMetals()
             config.loadVariants()
             config.loadRecipes()
+            config.loadCategories()
 
             return config
         } catch (IOException e) {
@@ -59,66 +49,68 @@ class ModConfig {
         }
     }
 
-    private void loadMetals() {
-        var rls = ResourceProvider.instance().getResources(Constants.MOD_ID, "metals", rl -> true)
+    private static Collection<ResourceLocation> processResources(Collection<ResourceLocation> resources) {
+        return resources
+            .collect {rl -> new ResourceLocation(rl.namespace, rl.path.substring(0, rl.path.lastIndexOf('.'))) }
+            .unique()
+    }
+
+    private static boolean isResource(ResourceLocation rl) {
+        return rl.path.endsWith('.json') || rl.path.endsWith('.json5')
+    }
+
+    private void loadCategories() {
+        var rls = processResources(ResourceProvider.instance().getResources(Constants.MOD_ID, "categories", ModConfig::isResource))
 
         for (ResourceLocation rl : rls) {
-            try (var resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, rl)) {
-                Optional<? extends InputStream> optional = resources.findFirst()
-                if (optional.isPresent()) {
+            ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('categories/'.length()))
+            ResourceLocation jsonRl = new ResourceLocation(rl.namespace, rl.path + '.json')
+            ResourceLocation json5Rl = new ResourceLocation(rl.namespace, rl.path + '.json5')
+            try (Stream<? extends InputStream> resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, [json5Rl, jsonRl])) {
+                Category category = Category.EMPTY
+                resources.each { InputStream stream ->
                     try {
-                        if (rl.path.endsWith(".json") || rl.path.endsWith(".json5")) {
-                            ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('metals/'.length(),rl.path.lastIndexOf('.')))
-                            JsonObject json = Constants.JANKSON.load(optional.get())
-                            Metal resource = ((Decoder<Metal>) Metal.$CODEC).parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
-                            this.metals.put(newRl, resource)
-                        }
+                        JsonObject json = Constants.JANKSON.load(stream)
+                        Category read = ((Decoder<Category>) Category.$CODEC).parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
+                        category = read.merge(category)
                     } catch (RuntimeException | SyntaxError | IOException e) {
                         Constants.LOGGER.error("Issues loading resource: {}", rl, e)
                     }
+                    categories.put(newRl, category)
                 }
             }
         }
+    }
+
+    private void loadMetals() {
+        loadGeneralType(Metal.$CODEC, 'metals', this.metals)
     }
 
     private void loadVariants() {
-        var rls = ResourceProvider.instance().getResources(Constants.MOD_ID, "variants", rl -> true)
-
-        for (ResourceLocation rl : rls) {
-            try (var resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, rl)) {
-                Optional<? extends InputStream> optional = resources.findFirst()
-                if (optional.isPresent()) {
-                    try {
-                        if (rl.path.endsWith(".json") || rl.path.endsWith(".json5")) {
-                            ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('variants/'.length(),rl.path.lastIndexOf('.')))
-                            JsonObject json = Constants.JANKSON.load(optional.get())
-                            Variant resource = ((Decoder<Variant>)Variant.CODEC).parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
-                            this.variants.put(newRl, resource)
-                        }
-                    } catch (RuntimeException | SyntaxError | IOException e) {
-                        Constants.LOGGER.error("Issues loading resource: {}", rl, e)
-                    }
-                }
-            }
-        }
+        loadGeneralType(Variant.CODEC, 'variants', this.variants)
     }
 
     private void loadRecipes() {
-        var rls = ResourceProvider.instance().getResources(Constants.MOD_ID, "recipes", rl -> true)
+        loadGeneralType(Recipe.CODEC, 'recipes', this.recipes)
+    }
+
+    private static <T> void loadGeneralType(Codec<T> codec, String type, BiMap<ResourceLocation, T> destination) {
+        Decoder<T> decoder = codec
+        var rls = processResources(ResourceProvider.instance().getResources(Constants.MOD_ID, type, ModConfig::isResource))
 
         for (ResourceLocation rl : rls) {
-            try (var resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, rl)) {
+            ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring(type.length() + 1))
+            ResourceLocation jsonRl = new ResourceLocation(rl.namespace, rl.path + '.json')
+            ResourceLocation json5Rl = new ResourceLocation(rl.namespace, rl.path + '.json5')
+            try (var resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, [json5Rl, jsonRl])) {
                 Optional<? extends InputStream> optional = resources.findFirst()
                 if (optional.isPresent()) {
                     try {
-                        if (rl.path.endsWith(".json") || rl.path.endsWith(".json5")) {
-                            ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('recipes/'.length(),rl.path.lastIndexOf('.')))
-                            JsonObject json = Constants.JANKSON.load(optional.get())
-                            Recipe resource = ((Decoder<Recipe>)Recipe.CODEC).parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
-                            this.recipes.put(newRl, resource)
-                        }
+                        JsonObject json = Constants.JANKSON.load(optional.get())
+                        T resource = decoder.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
+                        destination.put(newRl, resource)
                     } catch (RuntimeException | SyntaxError | IOException e) {
-                        Constants.LOGGER.error("Issues loading resource: {}", rl, e)
+                        Constants.LOGGER.error("Issues loading ${type} resource: ${rl}", e)
                     }
                 }
             }
@@ -126,22 +118,29 @@ class ModConfig {
     }
 
     private void loadTemplateSets() {
-        var rls = ResourceProvider.instance().getResources(Constants.MOD_ID, "template_sets", rl -> true)
+        var rls = processResources(ResourceProvider.instance().getResources(Constants.MOD_ID, "template_sets", ModConfig::isResource))
 
         for (ResourceLocation rl : rls) {
-            try (var resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, rl)) {
-                Optional<? extends InputStream> optional = resources.findFirst()
-                if (optional.isPresent()) {
+            ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('template_sets/'.length()))
+            ResourceLocation jsonRl = new ResourceLocation(rl.namespace, rl.path + '.json')
+            ResourceLocation json5Rl = new ResourceLocation(rl.namespace, rl.path + '.json5')
+            try (Stream<? extends InputStream> resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, [json5Rl, jsonRl])) {
+                Map<ResourceLocation, TexSourceMap> set = [:]
+                resources.each { InputStream stream ->
                     try {
-                        if (rl.path.endsWith(".json") || rl.path.endsWith(".json5")) {
-                            ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('template_sets/'.length(),rl.path.lastIndexOf('.')))
-                            JsonObject json = Constants.JANKSON.load(optional.get())
-                            Map<ResourceLocation, Map<String,Either<ResourceLocation,MapHolder>>> resource = TEMPLATE_SET_CODEC.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
-                            this.templateSets.put(newRl, resource)
+                        JsonObject json = Constants.JANKSON.load(stream)
+                        Map<ResourceLocation, TexSourceMap> resource = TEMPLATE_SET_CODEC.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
+                        set.each { location, map ->
+                            var innerMap = set.computeIfAbsent(location, {new TexSourceMap([:])})
+                            map.value.each {k, v ->
+                                innerMap.value.putIfAbsent(k, v)
+                            }
                         }
+                        set.putAll(resource)
                     } catch (RuntimeException | SyntaxError | IOException e) {
                         Constants.LOGGER.error("Issues loading template set: {}", rl, e)
                     }
+                    templateSets.put(newRl, set)
                 }
             }
         }
@@ -151,8 +150,8 @@ class ModConfig {
         CodecMapCodec.<O,JsonElement>dispatchWithInherit(lookup, name,
                 {
                     try (Stream<InputStream> streams = Stream.<InputStream>concat(ResourceProvider.instance().getResourceStreams(Constants.MOD_ID,
-                            new ResourceLocation(it.namespace,"${dirName}/${it.path}.json")),ResourceProvider.instance().getResourceStreams(Constants.MOD_ID,
-                            new ResourceLocation(it.namespace,"${dirName}/${it.path}.json5")))) {
+                            new ResourceLocation(it.namespace,"${dirName}/${it.path}.json5")),ResourceProvider.instance().getResourceStreams(Constants.MOD_ID,
+                            new ResourceLocation(it.namespace,"${dirName}/${it.path}.json")))) {
                         Optional<? extends InputStream> optional = streams.findFirst()
                         if (optional.present) {
                             JsonObject json = Constants.JANKSON.load(optional.get())

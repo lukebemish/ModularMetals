@@ -1,23 +1,23 @@
 [versions]
 minecraft = "1.19.3"
 parchment_minecraft = "1.19.3"
-parchment_mappings = "2022.12.18"
-quilt_loader = "0.18.1-beta.25"
+parchment_mappings = "2023.02.05"
+quilt_loader = "0.18.1-beta.68"
 
-qfapi = "5.0.0-alpha.7+0.70.0-1.19.3"
-groovyduvet = "2.0.1"
-cgl = "0.2.1"
+qfapi = "5.0.0-beta.4+0.73.0-1.19.3"
+groovyduvet = "2.0.3"
+cgl = "0.2.2"
 jankson = "1.2.1"
 
 gml = "1.2.0"
 
-groovy = "4.0.6"
+groovy = "4.0.8"
 
-forge = "1.19.3-44.0.41"
+forge = "1.19.3-44.1.9"
 mixin = "0.8.5"
 
-dynassetgen = "3.0.1"
-defaultresources = "1.0.1"
+dynassetgen = "3.0.2"
+defaultresources = "1.0.2"
 excavatedvariants = "2.0.1"
 
 autoservice = "1.0.1"

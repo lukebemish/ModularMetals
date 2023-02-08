@@ -40,7 +40,6 @@
       }
     }
   },
-  default_enabled: true,
   name: "Sword",
   tags: [
     "fabric:swords"

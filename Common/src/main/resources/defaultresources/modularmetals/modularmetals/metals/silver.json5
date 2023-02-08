@@ -15,6 +15,9 @@
       ],
     },
   },
+  categories: [
+    "modularmetals:metal"
+  ],
   name: "Silver",
   properties: {
     "modularmetals:oxide_generator": {

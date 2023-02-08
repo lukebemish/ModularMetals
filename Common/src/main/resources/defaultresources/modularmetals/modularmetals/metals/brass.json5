@@ -15,5 +15,8 @@
       ],
     },
   },
+  categories: [
+    "modularmetals:metal"
+  ],
   name: "Brass"
 }

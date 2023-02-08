@@ -3,7 +3,6 @@ package io.github.lukebemish.modularmetals.data.recipe
 import com.google.gson.JsonElement
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
-import groovy.text.SimpleTemplateEngine
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
@@ -16,13 +15,10 @@ import io.github.lukebemish.modularmetals.services.Services
 import io.github.lukebemish.modularmetals.util.MapUtil
 import net.minecraft.resources.ResourceLocation
 import org.apache.groovy.io.StringBuilderWriter
-import org.codehaus.groovy.control.CompilerConfiguration
 
 @CodecSerializable
 @TupleConstructor(includeSuperProperties = true, callSuper = true)
 class TemplateRecipe extends Recipe {
-    private static final SimpleTemplateEngine ENGINE = new SimpleTemplateEngine(new GroovyShell(TemplateRecipe.classLoader,new CompilerConfiguration()
-            .addCompilationCustomizers(Constants.MAP_ACCESS_IMPORT_CUSTOMIZER, Constants.MAP_ACCESS_AST_CUSTOMIZER)))
 
     final MapHolder template
     final List<ResourceLocation> requiredVariants
@@ -48,7 +44,7 @@ class TemplateRecipe extends Recipe {
         try {
             out = MapUtil.replaceInMap(map, {
                 var writer = new StringBuilderWriter()
-                ENGINE.createTemplate(it)
+                Constants.ENGINE.createTemplate(it)
                         .make(replacements)
                         .writeTo(writer)
                 return writer.builder.toString()

@@ -1,52 +1,46 @@
 package io.github.lukebemish.modularmetals.data
 
-import com.mojang.datafixers.util.Either
-import groovy.transform.CompileStatic
-import groovy.transform.Immutable
+
+import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.groovymc.cgl.api.transform.codec.WithCodec
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
-import io.github.lukebemish.modularmetals.data.filter.Filter
 import net.minecraft.resources.ResourceLocation
 import org.jetbrains.annotations.Nullable
 
 @CodecSerializable(allowDefaultValues = true)
-@Immutable(knownImmutableClasses = [Filter, Optional])
+@TupleConstructor
 class Metal {
     final MetalTexturing texturing
-    final Optional<Filter> disallowedVariants
-    // Applied after disallowedVariants
-    final Optional<Filter> allowedVariants
     final String name
-    Map<ResourceLocation,ObjectHolder> properties = [:]
-    final Optional<Filter> disallowedRecipes
-    final Optional<Filter> allowedRecipes
+    final List<ResourceLocation> categories
+    final Map<ResourceLocation,ObjectHolder> properties = [:]
 
     @Nullable ObjectHolder getPropertyFromMap(ResourceLocation rl) {
         return properties.get(rl)
     }
 
-    @Immutable(knownImmutableClasses = [Optional, Either])
+    @TupleConstructor
     @CodecSerializable(allowDefaultValues = true)
     static class MetalTexturing {
         final MapHolder generator
         @WithCodec(value = { ModConfig.TEMPLATE_SET_CODEC })
-        Map<ResourceLocation,Map<String,Either<ResourceLocation,MapHolder>>> templateOverrides = [:]
-        List<ResourceLocation> templateSets = []
+        final Map<ResourceLocation,TexSourceMap> templateOverrides = [:]
+        final List<ResourceLocation> templateSets = []
 
-        Map<String, Either<ResourceLocation,MapHolder>> getResolvedTemplateOverrides(ResourceLocation location) {
-            Map<String, Either<ResourceLocation,MapHolder>> built = [:]
+        Map<String, MapHolder> getResolvedTemplateOverrides(ResourceLocation location) {
+            Map<String, MapHolder> built = [:]
             for (ResourceLocation l : templateSets) {
                 if (ModularMetalsCommon.config.templateSets.containsKey(l)) {
-                    Map<ResourceLocation, Map<String, Either<ResourceLocation,MapHolder>>> templateSet = ModularMetalsCommon.config.templateSets.get(l)
+                    Map<ResourceLocation, TexSourceMap> templateSet = ModularMetalsCommon.config.templateSets.get(l)
                     if (templateSet.containsKey(location))
-                        built.putAll(templateSet.get(location))
+                        built.putAll(templateSet.get(location).value)
                 } else {
                     Constants.LOGGER.warn("Missing referenced template set ${l}; ignoring.")
                 }
             }
-            built.putAll(templateOverrides.get(location)?:[:])
+            built.putAll(templateOverrides.get(location)?.value?:[:])
             return built
         }
     }

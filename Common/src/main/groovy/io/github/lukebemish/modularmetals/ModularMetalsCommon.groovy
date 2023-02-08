@@ -5,6 +5,7 @@ import dev.lukebemish.dynamicassetgenerator.api.DataResourceCache
 import dev.lukebemish.dynamicassetgenerator.api.ResourceCache
 import io.github.groovymc.cgl.reg.RegistrationProvider
 import io.github.lukebemish.modularmetals.client.ModularMetalsClient
+import io.github.lukebemish.modularmetals.data.Category
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.ModConfig
 import io.github.lukebemish.modularmetals.data.variant.Variant
@@ -24,9 +25,6 @@ final class ModularMetalsCommon {
     static final RegistrationProvider<Block> BLOCKS = RegistrationProvider.get(Registries.BLOCK, Constants.MOD_ID)
 
     private ModularMetalsCommon() {}
-
-    static Set<ResourceLocation> enabledDefaultVariants = config.variants.findAll {it.value.defaultEnabled.orElse(true)}.collect {it.key}.toSet()
-    static Set<ResourceLocation> enabledDefaultRecipes = config.recipes.findAll {it.value.defaultEnabled.orElse(true)}.collect {it.key}.toSet()
 
     public static final DataResourceCache DATA_CACHE = ResourceCache.register(new DataResourceCache(new ResourceLocation(Constants.MOD_ID, "data")))
 
@@ -59,25 +57,29 @@ final class ModularMetalsCommon {
     }
 
     static Set<ResourceLocation> getVariants(ResourceLocation metal) {
-        Set<ResourceLocation> variants = new HashSet<>(enabledDefaultVariants)
+        Set<ResourceLocation> variants = new HashSet<>()
         Metal m = config.metals.get(metal)
-        variants.removeAll {m.disallowedVariants.isPresent() && m.disallowedVariants.get().matches(it)}
-        variants.addAll(config.variants.keySet().findAll {m.allowedVariants.isPresent() && m.allowedVariants.get().matches(it)})
+        m.categories.each {
+            Category category = config.categories.getOrDefault(it, Category.EMPTY)
+            variants.addAll(category.variants)
+        }
 
         return variants
     }
 
     static Set<ResourceLocation> getRecipes(ResourceLocation metal) {
-        Set<ResourceLocation> recipes = new HashSet<>(enabledDefaultRecipes)
+        Set<ResourceLocation> recipes = new HashSet<>()
         Metal m = config.metals.get(metal)
-        recipes.removeAll {m.disallowedRecipes.isPresent() && m.disallowedRecipes.get().matches(it)}
-        recipes.addAll(config.recipes.keySet().findAll {m.allowedRecipes.isPresent() && m.allowedRecipes.get().matches(it)})
+        m.categories.each {
+            Category category = config.categories.getOrDefault(it, Category.EMPTY)
+            recipes.addAll(category.recipes)
+        }
 
         return recipes
     }
 
     static ResourceLocation assembleMetalVariantName(ResourceLocation metal, ResourceLocation variant) {
-        return new ResourceLocation(Constants.MOD_ID, "${metal.namespace}_${metal.path}_${variant.namespace}_${variant.path}")
+        return new ResourceLocation(Constants.MOD_ID, "${metal.namespace}__${metal.path}___${variant.namespace}__${variant.path}")
     }
 
     static final Map sharedEnvMap = Collections.unmodifiableMap(['platform':switch (Services.PLATFORM.platform) {

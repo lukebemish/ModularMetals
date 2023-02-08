@@ -1,0 +1,18 @@
+{
+  variants: [
+    "modularmetals:axe",
+    "modularmetals:hoe",
+    "modularmetals:pickaxe",
+    "modularmetals:shovel",
+    "modularmetals:sword",
+    "modularmetals:ingot",
+    "modularmetals:raw",
+    "modularmetals:raw_block",
+    "modularmetals:block",
+    "modularmetals:nugget"
+  ],
+  recipes: [
+    "modularmetals:ingot_from_nuggets",
+    "modularmetals:ingot_to_nuggets"
+  ]
+}

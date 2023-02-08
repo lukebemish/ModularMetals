@@ -11,7 +11,6 @@
       }
     }
   },
-  default_enabled: true,
   name: "Nugget",
   tags: [
     "forge:nuggets/%s",

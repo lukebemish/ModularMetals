@@ -1,20 +1,19 @@
 package io.github.lukebemish.modularmetals.data.texsources
 
-import com.google.gson.JsonSyntaxException
+
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.serialization.Codec
+import com.mojang.serialization.DataResult
+import com.mojang.serialization.DynamicOps
 import dev.lukebemish.dynamicassetgenerator.api.ResourceGenerationContext
 import dev.lukebemish.dynamicassetgenerator.api.client.generators.ITexSource
 import dev.lukebemish.dynamicassetgenerator.api.client.generators.TexSourceDataHolder
 import dev.lukebemish.dynamicassetgenerator.api.client.generators.texsources.ErrorSource
-import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.lukebemish.modularmetals.data.Metal
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.IoSupplier
-
-import java.util.function.Supplier
 
 @TupleConstructor
 @CodecSerializable
@@ -36,6 +35,17 @@ class PropertyOrDefaultSource implements ITexSource {
             IoSupplier<NativeImage> supplier = getter.getSourceFromProperty(property)?.getSupplier(data, context)?:backup.getSupplier(data, context)
             return supplier.get()
         }
+    }
+
+    @Override
+    <T> DataResult<T> cacheMetadata(DynamicOps<T> ops, TexSourceDataHolder data) {
+        PropertyGetterData getter = data.get(PropertyGetterData.class)
+        if (getter != null) {
+            var builder = ops.mapBuilder()
+            builder.add('from_property', ITexSource.CODEC.encodeStart(ops, getter.getSourceFromProperty(property)))
+            return builder.build(ops.empty())
+        }
+        return DataResult.error('Could not get or encode property-based texture source')
     }
 
     @TupleConstructor

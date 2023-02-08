@@ -12,7 +12,6 @@
       }
     }
   },
-  default_enabled: true,
   name: "Raw %s Block",
   tags: [
     "forge:storage_blocks/raw_%s",

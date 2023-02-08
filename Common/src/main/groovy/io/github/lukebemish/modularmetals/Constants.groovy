@@ -6,9 +6,8 @@ import com.electronwill.nightconfig.toml.TomlParser
 import com.electronwill.nightconfig.toml.TomlWriter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.codehaus.groovy.ast.expr.*
-import org.codehaus.groovy.control.customizers.ImportCustomizer
-import org.codehaus.groovy.control.customizers.SecureASTCustomizer
+import groovy.text.SimpleTemplateEngine
+import org.codehaus.groovy.control.CompilerConfiguration
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -21,32 +20,5 @@ class Constants {
     public static final TomlWriter TOML_WRITER = TomlFormat.instance().createWriter()
     public static final Gson GSON = new GsonBuilder().setLenient().setPrettyPrinting().create()
 
-    // For GroovyShell stuff
-    public static final ImportCustomizer MAP_ACCESS_IMPORT_CUSTOMIZER = new ImportCustomizer().addImports('java.lang.Math')
-    public static final SecureASTCustomizer MAP_ACCESS_AST_CUSTOMIZER = new SecureASTCustomizer().tap {
-        closuresAllowed = false
-        methodDefinitionAllowed = false
-
-        allowedImports = ['java.lang.Math']
-        allowedStaticImports = []
-        allowedStaticStarImports = []
-        disallowedExpressions = [
-                ClassExpression,
-                StaticMethodCallExpression,
-                MethodReferenceExpression
-        ]
-        addExpressionCheckers(new SecureASTCustomizer.ExpressionChecker() {
-            @Override
-            boolean isAuthorized(Expression expression) {
-                if (expression instanceof MethodCallExpression) {
-                    Expression object = expression.objectExpression
-                    return expression.methodAsString == 'print' && object instanceof VariableExpression && object.name == 'out'
-                } else if (expression instanceof PropertyExpression) {
-                    if (expression.static)
-                        return false
-                }
-                return true
-            }
-        })
-    }
+    public static final SimpleTemplateEngine ENGINE = new SimpleTemplateEngine(new GroovyShell(Constants.classLoader,new CompilerConfiguration()))
 }

@@ -2,16 +2,18 @@ package io.github.lukebemish.modularmetals.data.variant
 
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
-import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.Metal
+import io.github.lukebemish.modularmetals.data.TexSourceMap
 import io.github.lukebemish.modularmetals.services.Services
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
+
+import java.util.function.Function
 
 @CodecSerializable
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
@@ -35,7 +37,12 @@ class ItemVariant extends Variant {
     static class ItemVariantTexturing {
         final Optional<Either<MapHolder,Map<String,MapHolder>>> generator
         final Optional<Either<MapHolder,Map<String,MapHolder>>> model
-        final Either<ResourceLocation,Map<String,Either<ResourceLocation,MapHolder>>> template
+        final TexSourceMap template
+
+        Optional<Map<String, MapHolder>> getSimplifiedGenerator() {
+            return generator
+                .<Map<String, MapHolder>>map(either -> either.<Map<String,MapHolder>>map(holder -> ['':holder], Function.identity()))
+        }
     }
 
     void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation) {
