@@ -38,7 +38,7 @@ class ResolvedVariantSource implements ITexSource {
     @Override
     <T> DataResult<T> cacheMetadata(DynamicOps<T> ops, TexSourceDataHolder data) {
         ResolvedVariantData getter = data.get(ResolvedVariantData.class)
-        if (getter != null) {
+        if (getter != null && getter.template != null) {
             var builder = ops.mapBuilder()
             builder.add('resolved', ITexSource.CODEC.encodeStart(ops, getter.template))
             return builder.build(ops.empty())

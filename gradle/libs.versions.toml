@@ -2,7 +2,7 @@
 minecraft = "1.19.3"
 parchment_minecraft = "1.19.3"
 parchment_mappings = "2023.02.05"
-quilt_loader = "0.18.1-beta.68"
+quilt_loader = "0.18.1-beta.74"
 
 qfapi = "5.0.0-beta.4+0.73.0-1.19.3"
 groovyduvet = "2.0.3"
@@ -58,7 +58,7 @@ autoservice = { module = "com.google.auto.service:auto-service", version.ref = "
 autoextension = { module = "dev.lukebemish.autoextension:autoextension", version.ref = "autoextension" }
 
 [plugins]
-quilt_loom = { id = "org.quiltmc.loom", version = "1.+" }
+quilt_loom = { id = "org.quiltmc.loom", version = "1.0.+" }
 forgegradle = {id = "net.minecraftforge.gradle", version = "5.1.+"}
 librarian = {id = "org.parchmentmc.librarian.forgegradle", version = "1.+"}
 mixin = {id = "org.spongepowered.mixin", version = "0.7.+"}

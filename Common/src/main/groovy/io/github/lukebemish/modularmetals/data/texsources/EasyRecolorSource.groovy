@@ -26,13 +26,13 @@ class EasyRecolorSource implements ITexSource {
 
     @Override
     IoSupplier<NativeImage> getSupplier(TexSourceDataHolder data, ResourceGenerationContext context) {
-        ITexSource internal = getInternal()
+        ITexSource internal = this.internal
         return internal.getSupplier(data, context)
     }
 
     @Override
     <T> DataResult<T> cacheMetadata(DynamicOps<T> ops, TexSourceDataHolder data) {
-        ITexSource internal = getInternal()
+        ITexSource internal = this.internal
         var builder = ops.mapBuilder()
         builder.add('constructed', ITexSource.CODEC.encodeStart(ops, internal))
 
@@ -41,14 +41,14 @@ class EasyRecolorSource implements ITexSource {
 
     private ITexSource getInternal() {
         return new AnimationSplittingSource(
-            ['template':new AnimationSplittingSource.TimeAwareSource(
+            ['easy_recolor_template':new AnimationSplittingSource.TimeAwareSource(
                 new VariantTemplateSource(Optional.empty()),
                 1
             )],
             new CombinedPaletteImage(
                 new TextureReader(new ResourceLocation('dynamic_asset_generator','empty')),
                 new ColorSource(color),
-                new AnimationFrameCapture('template'),
+                new AnimationFrameCapture('easy_recolor_template'),
                 false, false, 0
             )
         )

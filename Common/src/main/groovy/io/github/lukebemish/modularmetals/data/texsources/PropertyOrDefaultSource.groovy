@@ -40,9 +40,10 @@ class PropertyOrDefaultSource implements ITexSource {
     @Override
     <T> DataResult<T> cacheMetadata(DynamicOps<T> ops, TexSourceDataHolder data) {
         PropertyGetterData getter = data.get(PropertyGetterData.class)
-        if (getter != null) {
+        ITexSource propertySource
+        if (getter !== null && (propertySource=getter.getSourceFromProperty(property)) !== null) {
             var builder = ops.mapBuilder()
-            builder.add('from_property', ITexSource.CODEC.encodeStart(ops, getter.getSourceFromProperty(property)))
+            builder.add('from_property', ITexSource.CODEC.encodeStart(ops, propertySource))
             return builder.build(ops.empty())
         }
         return DataResult.error('Could not get or encode property-based texture source')
