@@ -1,17 +1,19 @@
-package io.github.lukebemish.modularmetals.client
+package io.github.lukebemish.modularmetals.planner
 
 import com.google.gson.JsonElement
-import com.mojang.serialization.JsonOps
 import dev.lukebemish.dynamicassetgenerator.api.IPathAwareInputStreamSource
 import dev.lukebemish.dynamicassetgenerator.api.ResourceGenerationContext
-import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.lukebemish.modularmetals.Constants
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.IoSupplier
 
 @Singleton
-class BlockstatePlanner implements IPathAwareInputStreamSource {
-    final Map<ResourceLocation, Map> sources = [:]
+class RecipePlanner implements IPathAwareInputStreamSource {
+    final Map<ResourceLocation, JsonElement> sources = [:]
+
+    void plan(ResourceLocation location, JsonElement json) {
+        sources[new ResourceLocation(location.namespace, "recipes/${location.path}.json")] = json
+    }
 
     @Override
     Set<ResourceLocation> getLocations() {
@@ -20,16 +22,11 @@ class BlockstatePlanner implements IPathAwareInputStreamSource {
 
     @Override
     IoSupplier<InputStream> get(ResourceLocation outRl, ResourceGenerationContext context) {
-        Map obj = sources[outRl]
-        if (obj === null)
+        JsonElement json = sources.get(outRl)
+        if (json===null)
             return null
-        return {
-            JsonElement json = ObjectOps.instance.convertTo(JsonOps.INSTANCE, obj)
+        return {->
             return new BufferedInputStream(new ByteArrayInputStream(Constants.GSON.toJson(json).bytes))
         }
-    }
-
-    void plan(ResourceLocation location, Map map) {
-        sources[new ResourceLocation(location.namespace, "blockstates/${location.path}.json")] = map
     }
 }

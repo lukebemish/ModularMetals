@@ -2,9 +2,9 @@ package io.github.lukebemish.modularmetals.data.variant
 
 import com.google.common.base.Suppliers
 import com.mojang.serialization.DataResult
-import groovy.transform.CompileStatic
 import groovy.transform.InheritConstructors
 import io.github.groovymc.cgl.api.codec.ObjectOps
+import io.github.groovymc.cgl.reg.RegistryObject
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.Metal
@@ -43,7 +43,7 @@ abstract class ToolVariant extends ItemVariant {
     }
 
     @Override
-    void registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
+    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
         ModularMetalsCommon.ITEMS.register(location, {->
             return getToolItemSupplier().getItem(getTier(metal, metalRl), getAttackModifier(), getSpeedModifier(),
                     new Item.Properties())

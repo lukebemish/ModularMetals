@@ -1,15 +1,17 @@
 package io.github.lukebemish.modularmetals.forge.platform
 
 import com.google.auto.service.AutoService
-import groovy.transform.CompileStatic
 import groovy.transform.Memoized
+import io.github.lukebemish.modularmetals.forge.ModularMetalsForge
 import io.github.lukebemish.modularmetals.services.IPlatformHelper
+import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.loading.FMLLoader
 import net.minecraftforge.fml.loading.FMLPaths
 
 import java.nio.file.Path
+import java.util.function.Supplier
 
 @AutoService(IPlatformHelper)
 class PlatformHelperImpl implements IPlatformHelper {
@@ -29,15 +31,10 @@ class PlatformHelperImpl implements IPlatformHelper {
         return FMLPaths.CONFIGDIR.get()
     }
 
-    /*@Override
-    CreativeModeTab getItemTab() {
-        return ModularMetalsForge.ITEM_TAB
-    }
-
     @Override
-    CreativeModeTab getBlockTab() {
-        return ModularMetalsForge.BLOCK_TAB
-    }*/
+    void addTabItem(Supplier<ItemStack> itemStackSupplier) {
+        ModularMetalsForge.TAB_ITEMS.add(itemStackSupplier)
+    }
 
     @Override
     Platform getPlatform() {

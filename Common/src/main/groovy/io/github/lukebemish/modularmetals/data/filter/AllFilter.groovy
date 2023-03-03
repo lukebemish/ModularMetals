@@ -1,9 +1,7 @@
 package io.github.lukebemish.modularmetals.data.filter
 
 import com.mojang.serialization.Codec
-import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
-import net.minecraft.resources.ResourceLocation
 
 @Singleton
 class AllFilter extends Filter {
@@ -16,7 +14,7 @@ class AllFilter extends Filter {
     }
 
     @Override
-    boolean matches(ResourceLocation rl) {
+    <T> boolean matches(T thing, FilterFinder<T> checker) {
         return true
     }
 }

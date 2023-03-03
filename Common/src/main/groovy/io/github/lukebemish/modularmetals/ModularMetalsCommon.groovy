@@ -9,6 +9,8 @@ import io.github.lukebemish.modularmetals.data.Category
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.ModConfig
 import io.github.lukebemish.modularmetals.data.variant.Variant
+import io.github.lukebemish.modularmetals.planner.RecipePlanner
+import io.github.lukebemish.modularmetals.planner.WorldgenPlanner
 import io.github.lukebemish.modularmetals.services.IPlatformHelper
 import io.github.lukebemish.modularmetals.services.Services
 import net.minecraft.core.registries.Registries
@@ -34,6 +36,7 @@ final class ModularMetalsCommon {
             ModularMetalsClient.init()
 
         DATA_CACHE.planSource(RecipePlanner.instance)
+        DATA_CACHE.planSource(WorldgenPlanner.instance)
     }
 
     static ModConfig getConfig() {
@@ -43,15 +46,20 @@ final class ModularMetalsCommon {
 
     static void register() {
         config.metals.each { metalRl, metal ->
+            var existingVariants = metal.existingVariants.orElse(Map.of())
             Set<ResourceLocation> variantRls = getVariants(metalRl)
+            Map<ResourceLocation, ResourceLocation> variantLocations = new HashMap<>()
             for (ResourceLocation variantRl : variantRls) {
-                ResourceLocation fullLocation = assembleMetalVariantName(metalRl, variantRl)
+                variantLocations.put(variantRl, assembleMetalVariantName(metalRl, variantRl))
+            }
+            variantLocations.putAll(existingVariants)
+            for (ResourceLocation variantRl : variantRls) {
                 Variant variant = config.variants.get(variantRl)
                 variant.register(metal, metalRl, variantRl)
             }
             Set<ResourceLocation> recipeRls = getRecipes(metalRl)
             for (ResourceLocation recipeRl : recipeRls) {
-                config.recipes.get(recipeRl).register(metal, metalRl, recipeRl, variantRls)
+                config.recipes.get(recipeRl).register(metal, metalRl, recipeRl, variantLocations)
             }
         }
     }
@@ -64,6 +72,9 @@ final class ModularMetalsCommon {
             variants.addAll(category.variants)
         }
 
+        variants.removeAll(m.banRecipes.orElse(List.of()))
+        variants.removeAll(m.existingVariants.orElse(Map.of()).keySet())
+
         return variants
     }
 
@@ -74,6 +85,8 @@ final class ModularMetalsCommon {
             Category category = config.categories.getOrDefault(it, Category.EMPTY)
             recipes.addAll(category.recipes)
         }
+
+        recipes.removeAll(m.banRecipes.orElse(List.of()))
 
         return recipes
     }

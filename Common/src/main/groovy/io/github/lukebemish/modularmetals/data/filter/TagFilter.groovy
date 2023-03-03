@@ -3,11 +3,12 @@ package io.github.lukebemish.modularmetals.data.filter
 import com.mojang.serialization.Codec
 import groovy.transform.Immutable
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
+import net.minecraft.resources.ResourceLocation
 
-@Immutable
+@Immutable(knownImmutableClasses = [ResourceLocation])
 @CodecSerializable
-class AndFilter extends Filter {
-    List<Filter> values
+class TagFilter extends Filter {
+    ResourceLocation value
 
     @Override
     Codec getCodec() {
@@ -16,6 +17,6 @@ class AndFilter extends Filter {
 
     @Override
     <T> boolean matches(T thing, FilterFinder<T> checker) {
-        return values.every {it.matches(thing, checker)}
+        return checker.isTag(thing, value)
     }
 }

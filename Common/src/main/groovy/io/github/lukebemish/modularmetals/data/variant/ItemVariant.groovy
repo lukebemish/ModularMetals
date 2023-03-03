@@ -4,8 +4,11 @@ import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
+import io.github.groovymc.cgl.reg.RegistryObject
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
+import io.github.lukebemish.modularmetals.client.variant.ClientVariantHandler
+import io.github.lukebemish.modularmetals.client.variant.ItemClientVariantHandler
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.TexSourceMap
@@ -19,9 +22,8 @@ import java.util.function.Function
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
 class ItemVariant extends Variant {
     protected ItemVariantTexturing texturing
-    final String name
+    final Either<String,Map<String,String>> name
     final Optional<List<String>> tags
-    final Optional<List<String>> requiredMods
 
     @Override
     Codec getCodec() {
@@ -46,17 +48,25 @@ class ItemVariant extends Variant {
     }
 
     void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation) {
-        if (requiredMods.orElse([]).every {Services.PLATFORM.isModPresent(it)}) {
-            String location = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation).path
-            registerItem(location, variantLocation, metalLocation, metal)
-        }
+        String location = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation).path
+        var item = registerItem(location, variantLocation, metalLocation, metal)
+        Services.PLATFORM.addTabItem {item.get().defaultInstance}
     }
 
-    void registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
+    @Override
+    ClientVariantHandler getClientHandler() {
+        return new ItemClientVariantHandler()
+    }
+
+    String makeTranslationKey(String path) {
+        return "item.${Constants.MOD_ID}.${path}"
+    }
+
+    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
         getItemTags(metalRl).each {
             ModularMetalsCommon.DATA_CACHE.tags().queue(new ResourceLocation(it.namespace, "items/${it.path}"), new ResourceLocation(Constants.MOD_ID, location))
         }
-        ModularMetalsCommon.ITEMS.register(location, {->new Item(new Item.Properties())})
+        return ModularMetalsCommon.ITEMS.register(location, {->new Item(new Item.Properties())})
     }
 
     List<ResourceLocation> getItemTags(ResourceLocation metalRl) {

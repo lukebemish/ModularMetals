@@ -1,5 +1,5 @@
 {
-  type: "modularmetals:template",
+  type: "modularmetals:recipe",
   template: {
     type: "minecraft:crafting_shapeless",
     ingredients: [

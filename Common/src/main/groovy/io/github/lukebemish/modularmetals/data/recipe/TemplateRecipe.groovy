@@ -1,43 +1,29 @@
 package io.github.lukebemish.modularmetals.data.recipe
 
 import com.google.gson.JsonElement
-import com.mojang.serialization.Codec
+import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.JsonOps
-import groovy.transform.TupleConstructor
+import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.codec.ObjectOps
-import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
-import io.github.lukebemish.modularmetals.RecipePlanner
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.Metal
-import io.github.lukebemish.modularmetals.services.Services
 import io.github.lukebemish.modularmetals.util.MapUtil
 import net.minecraft.resources.ResourceLocation
 import org.apache.groovy.io.StringBuilderWriter
 
-@CodecSerializable
-@TupleConstructor(includeSuperProperties = true, callSuper = true)
-class TemplateRecipe extends Recipe {
+@CompileStatic
+interface TemplateRecipe {
+    List<ResourceLocation> provideRequiredVariants()
 
-    final MapHolder template
-    final List<ResourceLocation> requiredVariants
-    final Optional<List<String>> requiredMods
-
-    @Override
-    Codec getCodec() {
-        return $CODEC
-    }
-
-    @Override
-    void register(Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Set<ResourceLocation> variantLocations) {
-        if (!requiredMods.orElse([]).every { Services.PLATFORM.isModPresent(it)})
-            return
-        if (!variantLocations.containsAll(requiredVariants))
-            return
-        Map map = this.template.map
+    default Pair<ResourceLocation, JsonElement> init(MapHolder template, Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Map<ResourceLocation, ResourceLocation> variantLocations) {
+        var requiredVariants = provideRequiredVariants()
+        if (!variantLocations.keySet().containsAll(requiredVariants))
+            return null
+        Map map = template.map
         Map replacements = ['variants':requiredVariants.collectEntries {
-            [it.toString(), ModularMetalsCommon.assembleMetalVariantName(metalLocation, it)]
+            [it.toString(), variantLocations[it].toString()]
         },'metal':metalLocation]
         replacements += ModularMetalsCommon.sharedEnvMap
         Map out
@@ -45,16 +31,16 @@ class TemplateRecipe extends Recipe {
             out = MapUtil.replaceInMap(map, {
                 var writer = new StringBuilderWriter()
                 Constants.ENGINE.createTemplate(it)
-                        .make(replacements)
-                        .writeTo(writer)
+                    .make(replacements)
+                    .writeTo(writer)
                 return writer.builder.toString()
             })
         } catch (Exception e) {
             Constants.LOGGER.error("Error filling out templated string for recipe ${recipeLocation}, metal ${metalLocation}: ",e)
-            return
+            return null
         }
         ResourceLocation outputLocation = new ResourceLocation(Constants.MOD_ID, "${metalLocation.namespace}_${metalLocation.path}_${recipeLocation.namespace}_${recipeLocation.path}")
         JsonElement json = ObjectOps.instance.convertTo(JsonOps.INSTANCE,out)
-        RecipePlanner.instance.plan(outputLocation, json)
+        return new Pair<>(outputLocation, json)
     }
 }

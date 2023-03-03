@@ -1,8 +1,9 @@
 package io.github.lukebemish.modularmetals.services
 
-import groovy.transform.CompileStatic
+import net.minecraft.world.item.ItemStack
 
 import java.nio.file.Path
+import java.util.function.Supplier
 
 interface IPlatformHelper {
     boolean isDevelopmentEnvironment();
@@ -11,9 +12,7 @@ interface IPlatformHelper {
 
     Path getConfigFolder()
 
-    //CreativeModeTab getItemTab()
-
-    //CreativeModeTab getBlockTab()
+    void addTabItem(Supplier<ItemStack> itemStackSupplier)
 
     Platform getPlatform()
 

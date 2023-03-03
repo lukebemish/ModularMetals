@@ -1,17 +1,16 @@
-package io.github.lukebemish.modularmetals.client
+package io.github.lukebemish.modularmetals.client.planner
 
 import com.google.gson.JsonElement
 import com.mojang.serialization.JsonOps
 import dev.lukebemish.dynamicassetgenerator.api.IPathAwareInputStreamSource
 import dev.lukebemish.dynamicassetgenerator.api.ResourceGenerationContext
-import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.lukebemish.modularmetals.Constants
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.IoSupplier
 
 @Singleton
-class ModelPlanner implements IPathAwareInputStreamSource {
+class BlockstatePlanner implements IPathAwareInputStreamSource {
     final Map<ResourceLocation, Map> sources = [:]
 
     @Override
@@ -30,9 +29,7 @@ class ModelPlanner implements IPathAwareInputStreamSource {
         }
     }
 
-
-
     void plan(ResourceLocation location, Map map) {
-        sources[new ResourceLocation(location.namespace, "models/${location.path}.json")] = map
+        sources[new ResourceLocation(location.namespace, "blockstates/${location.path}.json")] = map
     }
 }

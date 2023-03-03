@@ -11,8 +11,9 @@ import net.minecraft.resources.ResourceLocation
 
 @TupleConstructor
 abstract class Recipe implements CodecAware {
+    final Optional<List<String>> requiredMods
     @ExposeCodec
     static final Codec<Recipe> CODEC = ModConfig.dispatchedToDefaultResources(PsuedoRegisters.RECIPE_TYPES, 'recipe type','recipes')
 
-    abstract void register(Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Set<ResourceLocation> variantLocations)
+    abstract void register(Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Map<ResourceLocation, ResourceLocation> variantLocations)
 }

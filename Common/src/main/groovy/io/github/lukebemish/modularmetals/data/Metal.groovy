@@ -1,6 +1,6 @@
 package io.github.lukebemish.modularmetals.data
 
-
+import com.mojang.datafixers.util.Either
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.groovymc.cgl.api.transform.codec.WithCodec
@@ -13,8 +13,12 @@ import org.jetbrains.annotations.Nullable
 @TupleConstructor
 class Metal {
     final MetalTexturing texturing
-    final String name
+    final Either<String,Map<String,String>> name
     final List<ResourceLocation> categories
+    final Optional<List<String>> requiredMods
+    final Optional<Map<ResourceLocation,ResourceLocation>> existingVariants
+    final Optional<List<ResourceLocation>> banVariants
+    final Optional<List<ResourceLocation>> banRecipes
     final Map<ResourceLocation,ObjectHolder> properties = [:]
 
     @Nullable ObjectHolder getPropertyFromMap(ResourceLocation rl) {

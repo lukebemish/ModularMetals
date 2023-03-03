@@ -13,6 +13,7 @@ import io.github.groovymc.cgl.api.codec.JanksonOps
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.data.recipe.Recipe
 import io.github.lukebemish.modularmetals.data.variant.Variant
+import io.github.lukebemish.modularmetals.services.Services
 import io.github.lukebemish.modularmetals.util.CodecAware
 import io.github.lukebemish.modularmetals.util.CodecMapCodec
 import net.minecraft.resources.ResourceLocation
@@ -84,14 +85,35 @@ class ModConfig {
 
     private void loadMetals() {
         loadGeneralType(Metal.$CODEC, 'metals', this.metals)
+        Set<ResourceLocation> keys = new HashSet<>(this.metals.keySet())
+        for (ResourceLocation rl : keys) {
+            Metal metal = this.metals.get(rl)
+            if (metal.requiredMods.orElse([]).any { !Services.PLATFORM.isModPresent(it)}) {
+                this.metals.remove(rl)
+            }
+        }
     }
 
     private void loadVariants() {
         loadGeneralType(Variant.CODEC, 'variants', this.variants)
+        Set<ResourceLocation> keys = new HashSet<>(this.variants.keySet())
+        for (ResourceLocation rl : keys) {
+            Variant variant = this.variants.get(rl)
+            if (variant.requiredMods.orElse([]).any { !Services.PLATFORM.isModPresent(it)}) {
+                this.variants.remove(rl)
+            }
+        }
     }
 
     private void loadRecipes() {
         loadGeneralType(Recipe.CODEC, 'recipes', this.recipes)
+        Set<ResourceLocation> keys = new HashSet<>(this.recipes.keySet())
+        for (ResourceLocation rl : keys) {
+            Recipe recipe = this.recipes.get(rl)
+            if (recipe.requiredMods.orElse([]).any { !Services.PLATFORM.isModPresent(it)}) {
+                this.recipes.remove(rl)
+            }
+        }
     }
 
     private static <T> void loadGeneralType(Codec<T> codec, String type, BiMap<ResourceLocation, T> destination) {

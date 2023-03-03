@@ -1,7 +1,6 @@
 package io.github.lukebemish.modularmetals.data.filter
 
 import com.mojang.serialization.Codec
-import groovy.transform.CompileStatic
 import groovy.transform.Immutable
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import net.minecraft.resources.ResourceLocation
@@ -17,7 +16,7 @@ class IsFilter extends Filter {
     }
 
     @Override
-    boolean matches(ResourceLocation rl) {
-        return rl == value
+    <T> boolean matches(T thing, FilterFinder<T> checker) {
+        return checker.isLocation(thing, value)
     }
 }

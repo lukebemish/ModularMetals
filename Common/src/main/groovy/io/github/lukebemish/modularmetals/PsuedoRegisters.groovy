@@ -3,12 +3,12 @@ package io.github.lukebemish.modularmetals
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import com.mojang.serialization.Codec
-import groovy.transform.CompileStatic
 import groovy.transform.Memoized
 import groovy.transform.PackageScope
 import io.github.lukebemish.modularmetals.data.filter.*
 import io.github.lukebemish.modularmetals.data.recipe.Recipe
-import io.github.lukebemish.modularmetals.data.recipe.TemplateRecipe
+import io.github.lukebemish.modularmetals.data.recipe.RecipeRecipe
+import io.github.lukebemish.modularmetals.data.recipe.WorldgenRecipe
 import io.github.lukebemish.modularmetals.data.variant.AxeVariant
 import io.github.lukebemish.modularmetals.data.variant.BlockVariant
 import io.github.lukebemish.modularmetals.data.variant.HoeVariant
@@ -41,9 +41,10 @@ final class PsuedoRegisters {
         FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "or"), OrFilter.$CODEC)
         FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "not"), NotFilter.$CODEC)
         FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "is"), IsFilter.$CODEC)
-        FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "all"), AllFilter.CODEC)
+        FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "all"), AllFilter.ALL_CODEC)
 
-        RECIPE_TYPES.put(new ResourceLocation(Constants.MOD_ID, "template"), TemplateRecipe.$CODEC)
+        RECIPE_TYPES.put(new ResourceLocation(Constants.MOD_ID, "recipe"), RecipeRecipe.$CODEC)
+        RECIPE_TYPES.put(new ResourceLocation(Constants.MOD_ID, "feature"), WorldgenRecipe.$CODEC)
 
         return null
     }

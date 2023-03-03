@@ -1,4 +1,4 @@
-package io.github.lukebemish.modularmetals.client
+package io.github.lukebemish.modularmetals.client.planner
 
 import com.google.common.base.Suppliers
 import com.google.gson.JsonSyntaxException
