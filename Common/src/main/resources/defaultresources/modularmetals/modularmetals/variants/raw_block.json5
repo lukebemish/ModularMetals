@@ -3,12 +3,54 @@
   texturing: {
     template: {
       "": {
-        type: "dynamic_asset_generator:palette_spread",
-        source: {
-          type: "dynamic_asset_generator:texture",
-          path: "minecraft:block/raw_iron_block"
+        type: "dynamic_asset_generator:texture",
+        path: "modularmetals:block/base_raw_block"
+      },
+      "overlay": {
+        type: "dynamic_asset_generator:texture",
+        path: "modularmetals:block/alt_raw_block"
+      }
+    },
+    generator: {
+      type: "dynamic_asset_generator:animation_splitter",
+      sources: {
+        base: {
+          source: {
+            type: "modularmetals:resolved"
+          },
+          scale: 1
         },
-        upper_bound: 0.8
+        overlay: {
+          source: {
+            type: "modularmetals:with_template",
+            source: {
+              type: "modularmetals:property_or_default",
+              backup: {
+                type: "dynamic_asset_generator:texture",
+                path: "dynamic_asset_generator:empty"
+              },
+              property: "modularmetals:oxide_generator"
+            },
+            template: {
+              type: "modularmetals:template",
+              template: "overlay"
+            },
+          },
+          scale: 1
+        }
+      },
+      generator: {
+        type: "dynamic_asset_generator:overlay",
+        inputs: [
+          {
+            type: "dynamic_asset_generator:frame_capture",
+            capture: "base"
+          },
+          {
+            type: "dynamic_asset_generator:frame_capture",
+            capture: "overlay"
+          }
+        ]
       }
     }
   },

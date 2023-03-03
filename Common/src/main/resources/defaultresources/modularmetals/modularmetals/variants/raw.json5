@@ -3,10 +3,21 @@
   texturing: {
     template: {
       "": {
-        type: "dynamic_asset_generator:texture",
-        path: "modularmetals:item/base_raw"
+        type: "modularmetals:property_check",
+        absent: {
+          type: "dynamic_asset_generator:palette_spread",
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "minecraft:item/raw_iron"
+          }
+        },
+        property: "modularmetals:oxide_generator",
+        present: {
+          type: "dynamic_asset_generator:texture",
+          path: "modularmetals:item/base_raw"
+        }
       },
-      "overlay": {
+      "oxide_overlay": {
         type: "dynamic_asset_generator:texture",
         path: "modularmetals:item/alt_raw"
       }
@@ -29,11 +40,14 @@
                 type: "dynamic_asset_generator:texture",
                 path: "dynamic_asset_generator:empty"
               },
-              property: "modularmetals:oxide_generator"
+              property: "modularmetals:oxide_generator",
+              source: {
+                type: "modularmetals:property_capture"
+              }
             },
             template: {
               type: "modularmetals:template",
-              template: "overlay"
+              template: "oxide_overlay"
             },
           },
           scale: 1

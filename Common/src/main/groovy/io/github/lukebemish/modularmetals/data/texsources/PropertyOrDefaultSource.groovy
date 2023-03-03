@@ -20,6 +20,7 @@ import net.minecraft.server.packs.resources.IoSupplier
 class PropertyOrDefaultSource implements ITexSource {
     final ResourceLocation property
     final ITexSource backup
+    final ITexSource source
 
     @Override
     Codec<? extends ITexSource> codec() {
@@ -32,8 +33,15 @@ class PropertyOrDefaultSource implements ITexSource {
             PropertyGetterData getter = data.get(PropertyGetterData)
             if (getter === null)
                 data.logger.error("No metal property source attached! Are you using this outside of a modularmetals config?")
-            IoSupplier<NativeImage> supplier = getter.getSourceFromProperty(property)?.getSupplier(data, context)?:backup.getSupplier(data, context)
-            return supplier.get()
+            ITexSource propertySource = getter?.getSourceFromProperty(property)
+            if (propertySource === null) {
+                return backup.getSupplier(data, context).get()
+            } else {
+                var capture = new MostRecentCapturedProperty(propertySource)
+                TexSourceDataHolder newData = new TexSourceDataHolder(data)
+                newData.put(MostRecentCapturedProperty, capture)
+                return source.getSupplier(newData, context).get()
+            }
         }
     }
 
@@ -58,5 +66,10 @@ class PropertyOrDefaultSource implements ITexSource {
             var result = metal.getPropertyFromMap(location)?.decode(ITexSource.CODEC)
             return result?.result()?.orElseGet {->new ErrorSource("Failed to parse property ${location} as texture source for metal ${metalLocation}: ${result.error().get().message()}")}
         }
+    }
+
+    @TupleConstructor
+    static class MostRecentCapturedProperty {
+        ITexSource property
     }
 }

@@ -31,6 +31,8 @@ class ModularMetalsClient {
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "resolved"), ResolvedVariantSource.RESOLVED_CODEC)
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "easy_recolor"), EasyRecolorSource.$CODEC)
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "property_or_default"), PropertyOrDefaultSource.$CODEC)
+        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "property_capture"), PropertyCaptureSource.CODEC)
+        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "property_check"), PropertyCheckSource.$CODEC)
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "with_template"), WithTemplateSource.$CODEC)
 
         ASSET_CACHE.planSource(TexturePlanner.instance)

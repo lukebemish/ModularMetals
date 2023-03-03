@@ -7,7 +7,7 @@
     "modularmetals:sword",
     "modularmetals:ingot",
     "modularmetals:raw",
-    "modularmetals:raw_block",
+    //"modularmetals:raw_block",
     "modularmetals:block",
     "modularmetals:nugget"
   ],
