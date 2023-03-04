@@ -2,11 +2,10 @@
   type: "modularmetals:recipe",
   template: {
     type: "minecraft:crafting_shaped",
-    group: "${metal.path}_ingot",
-    category: "misc",
+    category: "building",
     key: {
       "#": {
-        tag: "${platform == 'forge' ? ('forge:nuggets/'+metal.path) : ('c:'+metal.path+'_nuggets')}"
+        tag: "${platform == 'forge' ? ('forge:ingots/'+metal.path) : ('c:'+metal.path+'_ingots')}"
       }
     },
     pattern: [
@@ -15,10 +14,10 @@
       "###"
     ],
     result: {
-      item: "${variants['modularmetals:ingot']}"
+      item: "${variants['modularmetals:block']}"
     }
   },
   required_variants: [
-    "modularmetals:ingot"
+    "modularmetals:block"
   ]
 }

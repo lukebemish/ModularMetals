@@ -2,6 +2,7 @@
   type: "modularmetals:recipe",
   template: {
     type: "minecraft:crafting_shapeless",
+    category: "misc",
     ingredients: [
       {
         tag: "${platform == 'forge' ? ('forge:ingots/'+metal.path) : ('c:'+metal.path+'_ingots')}"

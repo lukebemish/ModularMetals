@@ -51,6 +51,10 @@ class ItemVariant extends Variant {
         String location = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation).path
         var item = registerItem(location, variantLocation, metalLocation, metal)
         Services.PLATFORM.addTabItem {item.get().defaultInstance}
+
+        getTags(metalLocation).each {
+            ModularMetalsCommon.DATA_CACHE.tags().queue(new ResourceLocation(it.namespace, "items/${it.path}"), new ResourceLocation(Constants.MOD_ID, location))
+        }
     }
 
     @Override
@@ -63,13 +67,10 @@ class ItemVariant extends Variant {
     }
 
     RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
-        getItemTags(metalRl).each {
-            ModularMetalsCommon.DATA_CACHE.tags().queue(new ResourceLocation(it.namespace, "items/${it.path}"), new ResourceLocation(Constants.MOD_ID, location))
-        }
         return ModularMetalsCommon.ITEMS.register(location, {->new Item(new Item.Properties())})
     }
 
-    List<ResourceLocation> getItemTags(ResourceLocation metalRl) {
+    List<ResourceLocation> getTags(ResourceLocation metalRl) {
         return (tags.orElse([])).collect {ResourceLocation.of(it.replaceAll(/%s/, metalRl.path), ':' as char)}
     }
 }

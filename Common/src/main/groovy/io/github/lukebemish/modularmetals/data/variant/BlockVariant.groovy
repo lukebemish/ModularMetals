@@ -63,12 +63,13 @@ class BlockVariant extends ItemVariant {
         String location = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation).path
         registerBlock(location, variantLocation, metalLocation, metal)
         super.register(metal, metalLocation, variantLocation)
+
+        getTags(metalLocation).each {
+            ModularMetalsCommon.DATA_CACHE.tags().queue(new ResourceLocation(it.namespace, "blocks/${it.path}"), new ResourceLocation(Constants.MOD_ID, location))
+        }
     }
 
     RegistryObject<? extends Block> registerBlock(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
-        getItemTags(metalRl).each {
-            ModularMetalsCommon.DATA_CACHE.tags().queue(new ResourceLocation(it.namespace, "blocks/${it.path}"), new ResourceLocation(Constants.MOD_ID, location))
-        }
         return ModularMetalsCommon.BLOCKS.register(location, {->
             Block block = new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_GRAY))
             BLOCKS.put(location, block)

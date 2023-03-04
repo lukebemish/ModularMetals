@@ -1,0 +1,27 @@
+{
+  type: "modularmetals:recipe",
+  template: {
+    type: "minecraft:crafting_shaped",
+    category: "equipment",
+    key: {
+      "#": {
+        item: "minecraft:stick"
+      },
+      "X": {
+        tag: "${platform == 'forge' ? ('forge:ingots/'+metal.path) : ('c:'+metal.path+'_ingots')}"
+      }
+    },
+    pattern: [
+      "XXX",
+      " # ",
+      " # "
+    ],
+    result: {
+      item: "${variants['modularmetals:pickaxe']}"
+    }
+  },
+  required_variants: [
+    "modularmetals:ingot",
+    "modularmetals:pickaxe"
+  ]
+}

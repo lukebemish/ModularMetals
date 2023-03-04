@@ -1,20 +1,16 @@
 {
   type: "modularmetals:recipe",
   template: {
-    type: "minecraft:crafting_shaped",
+    type: "minecraft:crafting_shapeless",
     group: "${metal.path}_ingot",
     category: "misc",
-    key: {
-      "#": {
-        tag: "${platform == 'forge' ? ('forge:nuggets/'+metal.path) : ('c:'+metal.path+'_nuggets')}"
+    ingredients: [
+      {
+        tag: "${platform == 'forge' ? ('forge:blocks/'+metal.path) : ('c:'+metal.path+'_blocks')}"
       }
-    },
-    pattern: [
-      "###",
-      "###",
-      "###"
     ],
     result: {
+      count: 9,
       item: "${variants['modularmetals:ingot']}"
     }
   },

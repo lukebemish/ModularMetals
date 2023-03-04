@@ -12,7 +12,15 @@
     "modularmetals:nugget"
   ],
   recipes: [
+    // crafting
     "modularmetals:ingot_from_nuggets",
-    "modularmetals:ingot_to_nuggets"
+    "modularmetals:ingot_to_nuggets",
+    "modularmetals:axe_from_ingots",
+    "modularmetals:hoe_from_ingots",
+    "modularmetals:pickaxe_from_ingots",
+    "modularmetals:shovel_from_ingots",
+    "modularmetals:sword_from_ingots",
+    "modularmetals:ingots_from_block",
+    "modularmetals:block_from_ingots"
   ]
 }
