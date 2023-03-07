@@ -9,8 +9,7 @@ import io.github.lukebemish.modularmetals.data.Category
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.ModConfig
 import io.github.lukebemish.modularmetals.data.variant.Variant
-import io.github.lukebemish.modularmetals.planner.RecipePlanner
-import io.github.lukebemish.modularmetals.planner.WorldgenPlanner
+import io.github.lukebemish.modularmetals.util.DataPlanner
 import io.github.lukebemish.modularmetals.services.IPlatformHelper
 import io.github.lukebemish.modularmetals.services.Services
 import net.minecraft.core.registries.Registries
@@ -35,8 +34,7 @@ final class ModularMetalsCommon {
         if (Services.PLATFORM.isClient())
             ModularMetalsClient.init()
 
-        DATA_CACHE.planSource(RecipePlanner.instance)
-        DATA_CACHE.planSource(WorldgenPlanner.instance)
+        DATA_CACHE.planSource(DataPlanner.instance)
     }
 
     static ModConfig getConfig() {
@@ -55,7 +53,7 @@ final class ModularMetalsCommon {
             variantLocations.putAll(existingVariants)
             for (ResourceLocation variantRl : variantRls) {
                 Variant variant = config.variants.get(variantRl)
-                variant.register(metal, metalRl, variantRl)
+                variant.register(metal, metalRl, variantRl, variantLocations)
             }
             Set<ResourceLocation> recipeRls = getRecipes(metalRl)
             for (ResourceLocation recipeRl : recipeRls) {

@@ -1,17 +1,17 @@
 package io.github.lukebemish.modularmetals.data.recipe
 
-
 import com.mojang.serialization.Codec
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
-import io.github.lukebemish.modularmetals.planner.RecipePlanner
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.Metal
+import io.github.lukebemish.modularmetals.util.DataPlanner
+import io.github.lukebemish.modularmetals.util.TemplateUtils
 import net.minecraft.resources.ResourceLocation
 
 @CodecSerializable
 @TupleConstructor(includeSuperProperties = true, callSuper = true)
-class RecipeRecipe extends Recipe implements TemplateRecipe{
+class RecipeRecipe extends Recipe {
 
     final MapHolder template
     final List<ResourceLocation> requiredVariants
@@ -26,14 +26,9 @@ class RecipeRecipe extends Recipe implements TemplateRecipe{
     }
 
     @Override
-    List<ResourceLocation> provideRequiredVariants() {
-        return requiredVariants
-    }
-
-    @Override
     void register(Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Map<ResourceLocation, ResourceLocation> variantLocations) {
-        var pair = this.init(template, metal, metalLocation, recipeLocation, variantLocations)
+        var pair = TemplateUtils.init(template, metal, metalLocation, recipeLocation, variantLocations, requiredVariants)
         if (pair == null) return
-        RecipePlanner.instance.plan(pair.first, pair.second)
+        DataPlanner.instance.recipe(pair.first, pair.second)
     }
 }

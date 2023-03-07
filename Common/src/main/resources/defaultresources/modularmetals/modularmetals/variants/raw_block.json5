@@ -10,8 +10,8 @@
             type: "dynamic_asset_generator:texture",
             path: "minecraft:block/raw_iron_block"
           },
-          lower_bound: 0.2,
-          upper_bound: 0.8
+          lower_bound: 0.15,
+          upper_bound: 0.85
         },
         property: "modularmetals:oxide_generator",
         present: {

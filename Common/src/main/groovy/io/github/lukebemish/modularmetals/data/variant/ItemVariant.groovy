@@ -47,7 +47,7 @@ class ItemVariant extends Variant {
         }
     }
 
-    void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation) {
+    void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation, Map<ResourceLocation, ResourceLocation> variantLocations) {
         String location = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation).path
         var item = registerItem(location, variantLocation, metalLocation, metal)
         Services.PLATFORM.addTabItem {item.get().defaultInstance}

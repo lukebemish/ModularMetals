@@ -1,4 +1,4 @@
-package io.github.lukebemish.modularmetals.planner
+package io.github.lukebemish.modularmetals.util
 
 import com.google.gson.JsonElement
 import dev.lukebemish.dynamicassetgenerator.api.IPathAwareInputStreamSource
@@ -8,10 +8,18 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.IoSupplier
 
 @Singleton
-class WorldgenPlanner implements IPathAwareInputStreamSource {
+class DataPlanner implements IPathAwareInputStreamSource {
     final Map<ResourceLocation, JsonElement> sources = [:]
 
-    void plan(ResourceLocation location, JsonElement configured, JsonElement placed) {
+    void blockLoot(ResourceLocation location, JsonElement json) {
+        sources[new ResourceLocation(location.namespace, "loot_tables/blocks/${location.path}.json")] = json
+    }
+
+    void recipe(ResourceLocation location, JsonElement json) {
+        sources[new ResourceLocation(location.namespace, "recipes/${location.path}.json")] = json
+    }
+
+    void feature(ResourceLocation location, JsonElement configured, JsonElement placed) {
         sources[new ResourceLocation(location.namespace, "worldgen/placed_feature/${location.path}.json")] = placed
         sources[new ResourceLocation(location.namespace, "worldgen/configured_feature/${location.path}.json")] = configured
     }

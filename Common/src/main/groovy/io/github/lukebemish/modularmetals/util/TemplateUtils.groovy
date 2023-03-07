@@ -1,24 +1,20 @@
-package io.github.lukebemish.modularmetals.data.recipe
+package io.github.lukebemish.modularmetals.util
 
 import com.google.gson.JsonElement
 import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.JsonOps
-import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.Metal
-import io.github.lukebemish.modularmetals.util.MapUtil
 import net.minecraft.resources.ResourceLocation
 import org.apache.groovy.io.StringBuilderWriter
 
-@CompileStatic
-interface TemplateRecipe {
-    List<ResourceLocation> provideRequiredVariants()
+final class TemplateUtils {
+    private TemplateUtils() {}
 
-    default Pair<ResourceLocation, JsonElement> init(MapHolder template, Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Map<ResourceLocation, ResourceLocation> variantLocations) {
-        var requiredVariants = provideRequiredVariants()
+    static Pair<ResourceLocation, JsonElement> init(MapHolder template, Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Map<ResourceLocation, ResourceLocation> variantLocations, List<ResourceLocation> requiredVariants) {
         if (!variantLocations.keySet().containsAll(requiredVariants))
             return null
         Map map = template.map
