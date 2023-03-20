@@ -24,7 +24,7 @@ class CodecMapCodec<O extends CodecAware<O>> implements Codec<Codec<? extends O>
     <T> DataResult<T> encode(Codec<? extends O> input, DynamicOps<T> ops, T prefix) {
         ResourceLocation key = lookup.inverse().get(input)
         if (key == null)
-            return DataResult.error("Unregistered ${name} type: ${input}")
+            return DataResult.error {->"Unregistered ${name} type: ${input}"}
         T toMerge = ops.createString(key.toString())
         return ops.mergeToPrimitive(prefix, toMerge)
     }
@@ -40,7 +40,7 @@ class CodecMapCodec<O extends CodecAware<O>> implements Codec<Codec<? extends O>
                 lookup.containsKey(key = new ResourceLocation(Constants.MOD_ID, it.first.path))) {
                 return DataResult.<Pair<Codec<? extends O>, T>>success(Pair.of(lookup.get(key), it.second))
             }
-            return DataResult.<Pair<Codec<? extends O>, T>>error("Unknown ${name} type: ${key}")
+            return DataResult.<Pair<Codec<? extends O>, T>>error {->"Unknown ${name} type: ${key}"}
         }
     }
 
@@ -76,9 +76,9 @@ class CodecMapCodec<O extends CodecAware<O>> implements Codec<Codec<? extends O>
                             if (map instanceof Map && it.first instanceof Map) {
                                 return codec.decode(ObjectOps.instance, map + (Map) it.first).map { p -> p.first }
                             } else if (it.first instanceof Map)
-                                return DataResult.error("Provided object not map-like: ${map}.")
+                                return DataResult.error {->"Provided object not map-like: ${map}."}
                             else
-                                return DataResult.error("Provided object not map-like: ${it.first}.")
+                                return DataResult.error {->"Provided object not map-like: ${it.first}."}
                         }
                     },{
                         DataResult.success(it)

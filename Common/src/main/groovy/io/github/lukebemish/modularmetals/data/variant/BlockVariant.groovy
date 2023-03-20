@@ -29,8 +29,15 @@ class BlockVariant extends ItemVariant {
     protected BlockVariantTexturing texturing
 
     Optional<MapHolder> lootTable
-    @WithCodec({ MoreCodecs.MATERIAL_CODEC })
-    Optional<Material> material
+
+    BlockProperties blockProperties = new BlockProperties(Optional.empty())
+
+    @TupleConstructor
+    @CodecSerializable
+    static class BlockProperties {
+        @WithCodec({ MoreCodecs.MATERIAL_CODEC })
+        Optional<Material> material
+    }
 
     @Override
     ItemVariantTexturing getTexturing() {
@@ -94,7 +101,7 @@ class BlockVariant extends ItemVariant {
 
     RegistryObject<? extends Block> registerBlock(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
         return ModularMetalsCommon.BLOCKS.register(location, {->
-            Block block = new Block(BlockBehaviour.Properties.of(material.orElse(Material.METAL)))
+            Block block = new Block(BlockBehaviour.Properties.of(blockProperties.material.orElse(Material.METAL)))
             BLOCKS.put(location, block)
             return block
         })

@@ -78,7 +78,7 @@ dependencies {
 
     implementation fg.deobf(libs.dynassetgen.forge.get())
     implementation fg.deobf(libs.defaultresources.forge.get())
-    jarJar("dev.lukebemish.defaultresources:defaultresources-forge-1.19.3:[${libs.versions.defaultresources.get()},)") {
+    jarJar("dev.lukebemish.defaultresources:defaultresources-forge-1.19.4:[${libs.versions.defaultresources.get()},)") {
         jarJar.pin(it, "${libs.versions.defaultresources.get()}")
     }
 

@@ -5,7 +5,6 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
 import com.mojang.serialization.MapLike
-import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 
 @TupleConstructor
@@ -18,7 +17,7 @@ class OpsCodec<O> implements Codec<O> {
             O obj = ops.convertTo(this.ops, input)
             return DataResult.success(new Pair<>(obj, input))
         } catch (Exception e) {
-            return DataResult.error(e.message)
+            return DataResult.error {->e.message}
         }
     }
 
@@ -37,7 +36,7 @@ class OpsCodec<O> implements Codec<O> {
             }
             return out
         } catch (Exception e) {
-            return DataResult.error(e.message)
+            return DataResult.error {->e.message}
         }
     }
 }

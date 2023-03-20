@@ -41,6 +41,6 @@ class PropertyCheckSource implements ITexSource {
 
     @Override
     <T> DataResult<T> cacheMetadata(DynamicOps<T> ops, TexSourceDataHolder data) {
-        return DataResult.error('Property-checking source is not cacheable')
+        return DataResult.error {->'Property-checking source is not cacheable'}
     }
 }

@@ -1,6 +1,4 @@
-plugins {
-    alias libs.plugins.quilt.loom
-}
+apply plugin: libs.plugins.quilt.loom.get().pluginId
 
 archivesBaseName = "${mod_id}-${libs.versions.minecraft.get()}"
 

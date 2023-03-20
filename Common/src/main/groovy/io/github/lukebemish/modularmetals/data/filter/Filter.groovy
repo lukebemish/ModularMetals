@@ -22,7 +22,7 @@ abstract class Filter implements CodecAware {
         if (it.startsWith('#')) {
             ResourceLocation.read(it.substring(1)).map({new TagFilter(it)})
         }
-        return DataResult.<TagFilter>error("Not a tag filter: ${it}")
+        return DataResult.<TagFilter>error {->"Not a tag filter: ${it}"}
     },{
         return DataResult.<String>success("#${it.value}")
     })).<Filter>xmap({

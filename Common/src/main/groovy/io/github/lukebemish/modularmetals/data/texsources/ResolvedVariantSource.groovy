@@ -43,7 +43,7 @@ class ResolvedVariantSource implements ITexSource {
             builder.add('resolved', ITexSource.CODEC.encodeStart(ops, getter.template))
             return builder.build(ops.empty())
         }
-        return DataResult.error('Could not get or encode resolved template')
+        return DataResult.error {->'Could not get or encode resolved template'}
     }
 
     @TupleConstructor

@@ -36,6 +36,6 @@ class PropertyCaptureSource implements ITexSource {
             builder.add('captured_property', ITexSource.CODEC.encodeStart(ops, property.property))
             return builder.build(ops.empty())
         }
-        return DataResult.error('Could not get or encode captured-property-based texture source')
+        return DataResult.error {->'Could not get or encode captured-property-based texture source'}
     }
 }

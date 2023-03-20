@@ -142,13 +142,13 @@ final class MoreCodecs {
         return Codec.STRING.<T>flatXmap({ it ->
             var out = map.get(it)
             if (out == null) {
-                return DataResult.<T>error("Unknown $name: " + it)
+                return DataResult.<T>error {->"Unknown $name: $it"}
             }
             return DataResult.<T>success(out)
         }, {
             var out = map.inverse().get(it)
             if (out == null) {
-                return DataResult.<String>error("Unknown $name: " + it)
+                return DataResult.<String>error {->"Unknown $name: $it"}
             }
             return DataResult.<String>success(out)
         })
@@ -180,12 +180,12 @@ final class MoreCodecs {
     static Codec<Integer> intCodecBounded(int min, int max) {
         return Codec.INT.<Integer>flatXmap({ it ->
             if (it < min || it > max) {
-                return DataResult.<Integer>error("Value must be between $min and $max: " + it)
+                return DataResult.<Integer>error {->"Value must be between $min and $max: $it"}
             }
             return DataResult.<Integer>success(it)
         }, {
             if (it < min || it > max) {
-                return DataResult.<Integer>error("Value must be between $min and $max: " + it)
+                return DataResult.<Integer>error {->"Value must be between $min and $max: $it"}
             }
             return DataResult.<Integer>success(it)
         })

@@ -40,7 +40,7 @@ class VariantTemplateSource implements ITexSource {
         if (templateData != null) {
             String templateName = template.orElse(templateData.defaultName)
             if (templateData.dataHolderOverride != null) {
-                return DataResult.error('Could not cache variant template source due to changing data holder')
+                return DataResult.error {->'Could not cache variant template source due to changing data holder'}
             }
             var builder = ops.mapBuilder()
             ITexSource source = templateData.templates.get(templateName)
@@ -50,7 +50,7 @@ class VariantTemplateSource implements ITexSource {
             builder.add('template', ITexSource.CODEC.encodeStart(ops, source))
             return builder.build(ops.empty())
         }
-        return DataResult.error('Could not get or encode template data')
+        return DataResult.error {->'Could not get or encode template data'}
     }
 
     @TupleConstructor

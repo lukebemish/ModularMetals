@@ -180,7 +180,7 @@ class ModConfig {
                             return DataResult.<JsonElement>success(json)
                         }
                     } catch(Exception e) {
-                        return DataResult.<JsonElement>error("Couldn't get inherited ${name} ${it}: ${e}")
+                        return DataResult.<JsonElement>error {->"Couldn't get inherited ${name} ${it}: ${e}"}
                     }
                 }, JanksonOps.COMMENTED)
     }

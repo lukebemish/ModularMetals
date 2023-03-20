@@ -54,7 +54,7 @@ class PropertyOrDefaultSource implements ITexSource {
             builder.add('from_property', ITexSource.CODEC.encodeStart(ops, propertySource))
             return builder.build(ops.empty())
         }
-        return DataResult.error('Could not get or encode property-based texture source')
+        return DataResult.error {->'Could not get or encode property-based texture source'}
     }
 
     @TupleConstructor
