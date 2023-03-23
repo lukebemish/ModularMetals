@@ -1,23 +1,19 @@
 package io.github.lukebemish.modularmetals.data.variant
 
-import com.google.common.base.Suppliers
+
 import com.mojang.serialization.DataResult
 import groovy.transform.InheritConstructors
 import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.groovymc.cgl.reg.RegistryObject
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
+import io.github.lukebemish.modularmetals.data.Fillable
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.tier.ModularTier
-import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Tier
 import net.minecraft.world.item.TieredItem
-import net.minecraft.world.item.crafting.Ingredient
-
-import java.util.function.Supplier
 
 @InheritConstructors
 abstract class ToolVariant extends ItemVariant {
@@ -36,22 +32,23 @@ abstract class ToolVariant extends ItemVariant {
         })
     }
 
-    private static Supplier<Ingredient> defaultIngredient(ResourceLocation location) {
-        return Suppliers.memoize {->
-            Ingredient.of(TagKey.create(Registries.ITEM, new ResourceLocation(Constants.MOD_ID,"ingots/${location.path}")))
-        }
-    }
-
     @Override
-    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
+    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map<ResourceLocation, ResourceLocation> variantLocations) {
+        Map props = fillProperties(new ResourceLocation(Constants.MOD_ID, location), metalRl, metal, variantLocations)
+        float attackModifier = getAttackModifier().apply(props).getOrThrow(false, {
+            Constants.LOGGER.error("Speed modifier could not be parsed in variant ${variantRl} for metal ${metalRl}")
+        })
+        float speedModifier = getSpeedModifier().apply(props).getOrThrow(false, {
+            Constants.LOGGER.error("Speed modifier could not be parsed in variant ${variantRl} for metal ${metalRl}")
+        })
         ModularMetalsCommon.ITEMS.register(location, {->
-            return getToolItemSupplier().getItem(getTier(metal, metalRl), getAttackModifier(), getSpeedModifier(),
+            return getToolItemSupplier().getItem(getTier(metal, metalRl), attackModifier, speedModifier,
                     new Item.Properties())
         })
     }
 
-    abstract float getAttackModifier()
-    abstract float getSpeedModifier()
+    abstract Fillable<Float> getAttackModifier()
+    abstract Fillable<Float> getSpeedModifier()
     abstract ToolItemSupplier getToolItemSupplier()
 
     interface ToolItemSupplier {

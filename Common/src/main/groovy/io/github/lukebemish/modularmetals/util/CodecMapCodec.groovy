@@ -74,7 +74,7 @@ class CodecMapCodec<O extends CodecAware<O>> implements Codec<Codec<? extends O>
                         return inheritanceFinder.apply(it.second).flatMap { data ->
                             Object map = inheritanceOps.convertTo(ObjectOps.instance, data)
                             if (map instanceof Map && it.first instanceof Map) {
-                                return codec.decode(ObjectOps.instance, map + (Map) it.first).map { p -> p.first }
+                                return codec.decode(ObjectOps.instance, (Map) map + (Map) it.first).map { p -> p.first }
                             } else if (it.first instanceof Map)
                                 return DataResult.error {->"Provided object not map-like: ${map}."}
                             else

@@ -9,6 +9,7 @@ import dev.lukebemish.dynamicassetgenerator.api.client.generators.TexSourceDataH
 import dev.lukebemish.dynamicassetgenerator.api.client.generators.texsources.ErrorSource
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
+import io.github.lukebemish.modularmetals.TemplateEngine
 import io.github.lukebemish.modularmetals.client.planner.LangPlanner
 import io.github.lukebemish.modularmetals.client.planner.ModelPlanner
 import io.github.lukebemish.modularmetals.client.planner.TexturePlanner
@@ -21,7 +22,6 @@ import io.github.lukebemish.modularmetals.data.variant.ItemVariant
 import io.github.lukebemish.modularmetals.data.variant.Variant
 import io.github.lukebemish.modularmetals.util.MapUtil
 import net.minecraft.resources.ResourceLocation
-import org.apache.groovy.io.StringBuilderWriter
 
 import java.util.function.Supplier
 
@@ -115,7 +115,7 @@ class ItemClientVariantHandler implements ClientVariantHandler {
         models.each { key, map ->
             try {
                 ResourceLocation full = new ResourceLocation(fullLocation.namespace, "${key == 'item' ? 'item' : header}/${fullLocation.path}${key == '' || key == 'item' ? '' : "_$key"}")
-                Map out = fillReplacements(map, replacements)
+                Map out = TemplateEngine.fillReplacements(map, replacements)
                 ModelPlanner.instance.plan(full, out)
             } catch (Exception e) {
                 Constants.LOGGER.error("Error writing model '${key}' for metal '${metalRl}', variant '${variantRl}':", e)
@@ -124,14 +124,6 @@ class ItemClientVariantHandler implements ClientVariantHandler {
 
         // lang file
         language(metal, metalRl, variantRl, variant)
-    }
-
-    static Map fillReplacements(Map map, Map replacements) {
-        MapUtil.replaceInMap(map, {
-            var writer = new StringBuilderWriter()
-            Constants.ENGINE.createTemplate(it).make(replacements).writeTo(writer)
-            return writer.builder.toString()
-        })
     }
 
     static NativeImage generateTexture(ResourceGenerationContext context,

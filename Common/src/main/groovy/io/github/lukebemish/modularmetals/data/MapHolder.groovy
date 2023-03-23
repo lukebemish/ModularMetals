@@ -11,7 +11,13 @@ import io.github.lukebemish.modularmetals.util.OpsCodec
 @CompileStatic
 class MapHolder {
     @ExposeCodec
-    static final Codec<MapHolder> CODEC = new OpsCodec<>(ObjectOps.instance).<MapHolder>xmap({new MapHolder((Map) it)}, {it.map})
+    static final Codec<MapHolder> CODEC = new OpsCodec<>(ObjectOps.instance).<MapHolder>flatXmap({
+        if (it instanceof Map)
+            return DataResult.success(new MapHolder((Map) it))
+        return DataResult.<MapHolder>error {->"Expected map, got something else"}
+    }, {
+        DataResult.success(it.map)
+    })
 
     final Map map
 

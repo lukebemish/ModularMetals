@@ -6,31 +6,25 @@ import com.mojang.serialization.JsonOps
 import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
+import io.github.lukebemish.modularmetals.TemplateEngine
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.Metal
 import net.minecraft.resources.ResourceLocation
-import org.apache.groovy.io.StringBuilderWriter
 
 final class TemplateUtils {
     private TemplateUtils() {}
 
-    static Pair<ResourceLocation, JsonElement> init(MapHolder template, Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Map<ResourceLocation, ResourceLocation> variantLocations, List<ResourceLocation> requiredVariants) {
+    static Pair<ResourceLocation, JsonElement> init(MapHolder template, Map initial, Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Map<ResourceLocation, ResourceLocation> variantLocations, List<ResourceLocation> requiredVariants) {
         if (!variantLocations.keySet().containsAll(requiredVariants))
             return null
         Map map = template.map
-        Map replacements = ['variants':requiredVariants.collectEntries {
+        Map replacements = initial + ['variants':requiredVariants.collectEntries {
             [it.toString(), variantLocations[it].toString()]
-        },'metal':metalLocation]
+        },'metal':metalLocation,'properties':metal.properties.collectEntries {[it.key.toString(), it.value.obj]}]
         replacements += ModularMetalsCommon.sharedEnvMap
         Map out
         try {
-            out = MapUtil.replaceInMap(map, {
-                var writer = new StringBuilderWriter()
-                Constants.ENGINE.createTemplate(it)
-                    .make(replacements)
-                    .writeTo(writer)
-                return writer.builder.toString()
-            })
+            out = TemplateEngine.fillReplacements(map, replacements)
         } catch (Exception e) {
             Constants.LOGGER.error("Error filling out templated string for recipe ${recipeLocation}, metal ${metalLocation}: ",e)
             return null
@@ -38,5 +32,9 @@ final class TemplateUtils {
         ResourceLocation outputLocation = new ResourceLocation(Constants.MOD_ID, "${metalLocation.namespace}_${metalLocation.path}_${recipeLocation.namespace}_${recipeLocation.path}")
         JsonElement json = ObjectOps.instance.convertTo(JsonOps.INSTANCE,out)
         return new Pair<>(outputLocation, json)
+    }
+
+    static Pair<ResourceLocation, JsonElement> init(MapHolder template, Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Map<ResourceLocation, ResourceLocation> variantLocations, List<ResourceLocation> requiredVariants) {
+        return init(template, [:], metal, metalLocation, recipeLocation, variantLocations, requiredVariants)
     }
 }

@@ -9,6 +9,7 @@ import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.client.variant.BlockClientVariantHandler
 import io.github.lukebemish.modularmetals.client.variant.ClientVariantHandler
+import io.github.lukebemish.modularmetals.data.Fillable
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.util.DataPlanner
@@ -30,12 +31,12 @@ class BlockVariant extends ItemVariant {
 
     Optional<MapHolder> lootTable
 
-    BlockProperties blockProperties = new BlockProperties(Optional.empty())
+    Optional<Fillable<BlockProperties>> blockProperties
 
     @TupleConstructor
     @CodecSerializable
     static class BlockProperties {
-        @WithCodec({ MoreCodecs.MATERIAL_CODEC })
+        @WithCodec(value={ MoreCodecs.MATERIAL_CODEC }, target=[0])
         Optional<Material> material
     }
 
@@ -65,7 +66,7 @@ class BlockVariant extends ItemVariant {
     }
 
     @Override
-    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
+    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map<ResourceLocation, ResourceLocation> variantLocations) {
         ModularMetalsCommon.ITEMS.register(location, {->
             Block block = BLOCKS.get(location)
             return new BlockItem(block, new Item.Properties())
@@ -75,16 +76,17 @@ class BlockVariant extends ItemVariant {
     @Override
     void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation, Map<ResourceLocation, ResourceLocation> variantLocations) {
         var fullLocation = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation)
+        Map fullProperties = fillProperties(fullLocation, metalLocation, metal, variantLocations)
         String location = fullLocation.path
-        registerBlock(location, variantLocation, metalLocation, metal)
+        registerBlock(location, variantLocation, metalLocation, metal, variantLocations)
         super.register(metal, metalLocation, variantLocation, variantLocations)
 
-        getTags(metalLocation).each {
+        getTags(metalLocation, fullProperties).each {
             ModularMetalsCommon.DATA_CACHE.tags().queue(new ResourceLocation(it.namespace, "blocks/${it.path}"), new ResourceLocation(Constants.MOD_ID, location))
         }
 
         if (this.lootTable.isPresent()) {
-            var lootTableJson = TemplateUtils.init(lootTable.get(), metal, metalLocation, variantLocation, variantLocations, variantLocations.keySet().toList()).second
+            var lootTableJson = TemplateUtils.init(lootTable.get(), ['location':fullLocation], metal, metalLocation, variantLocation, variantLocations, variantLocations.keySet().toList()).second
             DataPlanner.instance.blockLoot(fullLocation, lootTableJson)
         } else {
             var map = [
@@ -99,9 +101,16 @@ class BlockVariant extends ItemVariant {
         }
     }
 
-    RegistryObject<? extends Block> registerBlock(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
+    RegistryObject<? extends Block> registerBlock(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map<ResourceLocation, ResourceLocation> variantLocations) {
         return ModularMetalsCommon.BLOCKS.register(location, {->
-            Block block = new Block(BlockBehaviour.Properties.of(blockProperties.material.orElse(Material.METAL)))
+            BlockBehaviour.Properties properties = blockProperties.flatMap {
+                it.apply(fillProperties(new ResourceLocation(Constants.MOD_ID, location), metalRl, metal, variantLocations)).result()
+            }.map {
+                BlockBehaviour.Properties.of(it.material.orElse(Material.METAL))
+            }.orElseGet {
+                BlockBehaviour.Properties.of(Material.METAL)
+            }
+            Block block = new Block(properties)
             BLOCKS.put(location, block)
             return block
         })

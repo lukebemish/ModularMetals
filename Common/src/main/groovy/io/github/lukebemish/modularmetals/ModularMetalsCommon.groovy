@@ -70,7 +70,7 @@ final class ModularMetalsCommon {
             variants.addAll(category.variants)
         }
 
-        variants.removeAll(m.banRecipes.orElse(List.of()))
+        variants.removeAll(m.banVariants.orElse(List.of()))
         variants.removeAll(m.existingVariants.orElse(Map.of()).keySet())
 
         return variants

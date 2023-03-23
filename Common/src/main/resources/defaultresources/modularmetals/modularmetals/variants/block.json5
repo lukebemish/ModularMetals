@@ -17,5 +17,25 @@
     "forge:storage_blocks",
     "c:%s_blocks",
     "c:blocks/%s"
-  ]
+  ],
+  loot_table: {
+    type: "minecraft:block",
+    pools: [
+      {
+        rolls: 1,
+        bonus_roles: 0,
+        entries: [
+          {
+            type: "minecraft:item",
+            name: "${location}"
+          }
+        ],
+        conditions: [
+          {
+            condition: "minecraft:survives_explosion"
+          }
+        ]
+      }
+    ]
+  }
 }

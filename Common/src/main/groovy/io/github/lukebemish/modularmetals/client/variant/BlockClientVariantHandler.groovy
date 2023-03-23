@@ -1,6 +1,7 @@
 package io.github.lukebemish.modularmetals.client.variant
 
 import io.github.lukebemish.modularmetals.Constants
+import io.github.lukebemish.modularmetals.TemplateEngine
 import io.github.lukebemish.modularmetals.client.planner.BlockstatePlanner
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.variant.BlockVariant
@@ -42,7 +43,7 @@ class BlockClientVariantHandler extends ItemClientVariantHandler {
                 'model': mainModel.get().toString()
             ]]]}
         try {
-            Map out = fillReplacements(map, replacements)
+            Map out = TemplateEngine.fillReplacements(map, replacements)
             BlockstatePlanner.instance.plan(fullLocation, out)
         } catch (Exception e) {
             Constants.LOGGER.error("Error writing blockstate for metal '${metalRl}', variant '${variantRl}':", e)

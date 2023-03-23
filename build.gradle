@@ -1,6 +1,11 @@
 plugins {
     id 'io.github.groovymc.modsdotgroovy' version '1.1.2'
     alias libs.plugins.quilt.loom apply false
+    alias libs.plugins.logfilter
+}
+
+logfilter {
+    removeLine(/.*unknown invokedynamic bsm: org\/codehaus\/groovy\/vmplugin\/v[0-9]\/IndyInterface\/bootstrap.*/)
 }
 
 modsDotGroovy {

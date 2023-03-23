@@ -19,7 +19,7 @@ class Metal {
     final Optional<Map<ResourceLocation,ResourceLocation>> existingVariants
     final Optional<List<ResourceLocation>> banVariants
     final Optional<List<ResourceLocation>> banRecipes
-    final Map<ResourceLocation,ObjectHolder> properties = [:]
+    Map<ResourceLocation,ObjectHolder> properties = [:]
 
     @Nullable ObjectHolder getPropertyFromMap(ResourceLocation rl) {
         return properties.get(rl)

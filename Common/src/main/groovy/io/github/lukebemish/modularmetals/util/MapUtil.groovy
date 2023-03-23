@@ -19,6 +19,37 @@ class MapUtil {
         }
     }
 
+    static Map replaceInMapByType(Map map, Function<String, Object> mapper) {
+        map.collectEntries {key, value ->
+            String strKey = key as String
+            if (value instanceof Map) {
+                if (value.containsKey('__value__')) {
+                    String valueString = (value.get('__value__') ?: '') as String
+                    return [strKey, mapper.apply(valueString)]
+                }
+                return [strKey, replaceInMapByType(value, mapper)]
+            }
+            if (value instanceof List)
+                return [strKey, replaceInListByType(value, mapper)]
+            return [strKey, value]
+        }
+    }
+
+    static List replaceInListByType(List list, Function<String, Object> mapper) {
+        list.collect {
+            if (it instanceof Map) {
+                if (it.containsKey('__value__')) {
+                    String valueString = (it.get('__value__') ?: '') as String
+                    return mapper.apply(valueString)
+                }
+                return replaceInMapByType(it, mapper)
+            }
+            if (it instanceof List)
+                return replaceInListByType(it, mapper)
+            return it
+        }
+    }
+
     static List replaceInList(List list, Function<String, String> function) {
         list.collect {
             if (it instanceof Map)

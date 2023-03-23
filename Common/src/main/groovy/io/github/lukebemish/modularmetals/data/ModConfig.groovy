@@ -21,7 +21,6 @@ import net.minecraft.resources.ResourceLocation
 import java.util.stream.Stream
 
 class ModConfig {
-
     HashBiMap<ResourceLocation, Metal> metals = HashBiMap.create()
     HashBiMap<ResourceLocation, Variant> variants = HashBiMap.create()
     HashBiMap<ResourceLocation, Recipe> recipes = HashBiMap.create()
@@ -90,6 +89,33 @@ class ModConfig {
             Metal metal = this.metals.get(rl)
             if (metal.requiredMods.orElse([]).any { !Services.PLATFORM.isModPresent(it)}) {
                 this.metals.remove(rl)
+            }
+        }
+    }
+
+    private void loadMetalProperties() {
+        var rls = processResources(ResourceProvider.instance().getResources(Constants.MOD_ID, "properties", ModConfig::isResource))
+
+        for (ResourceLocation rl : rls) {
+            ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('properties/'.length()))
+            ResourceLocation jsonRl = new ResourceLocation(rl.namespace, rl.path + '.json')
+            ResourceLocation json5Rl = new ResourceLocation(rl.namespace, rl.path + '.json5')
+            try (Stream<? extends InputStream> resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, [json5Rl, jsonRl])) {
+                Map props = [:]
+                resources.each { InputStream stream ->
+                    try {
+                        JsonObject json = Constants.JANKSON.load(stream)
+                        Map read = MapHolder.CODEC.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {}).map
+                        props.putAll(read)
+                    } catch (RuntimeException | SyntaxError | IOException e) {
+                        Constants.LOGGER.error("Issues loading resource: {}", rl, e)
+                    }
+                }
+                if (metals.containsKey(newRl)) {
+                    metals.get(newRl).properties += props
+                } else {
+                    Constants.LOGGER.error("Issues loading resource: {} - no metal found for properties", rl)
+                }
             }
         }
     }

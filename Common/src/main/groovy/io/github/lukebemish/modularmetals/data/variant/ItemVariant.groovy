@@ -9,6 +9,7 @@ import io.github.lukebemish.modularmetals.Constants
 import io.github.lukebemish.modularmetals.ModularMetalsCommon
 import io.github.lukebemish.modularmetals.client.variant.ClientVariantHandler
 import io.github.lukebemish.modularmetals.client.variant.ItemClientVariantHandler
+import io.github.lukebemish.modularmetals.data.Fillable
 import io.github.lukebemish.modularmetals.data.MapHolder
 import io.github.lukebemish.modularmetals.data.Metal
 import io.github.lukebemish.modularmetals.data.TexSourceMap
@@ -23,7 +24,7 @@ import java.util.function.Function
 class ItemVariant extends Variant {
     protected ItemVariantTexturing texturing
     final Either<String,Map<String,String>> name
-    final Optional<List<String>> tags
+    final Optional<Fillable<List<String>>> tags
 
     @Override
     Codec getCodec() {
@@ -48,11 +49,11 @@ class ItemVariant extends Variant {
     }
 
     void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation, Map<ResourceLocation, ResourceLocation> variantLocations) {
-        String location = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation).path
-        var item = registerItem(location, variantLocation, metalLocation, metal)
+        String location = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation)
+        var item = registerItem(location, variantLocation, metalLocation, metal, variantLocations)
         Services.PLATFORM.addTabItem {item.get().defaultInstance}
-
-        getTags(metalLocation).each {
+        Map fullProperties = fillProperties(new ResourceLocation(Constants.MOD_ID, location), metalLocation, metal, variantLocations)
+        getTags(metalLocation, fullProperties).each {
             ModularMetalsCommon.DATA_CACHE.tags().queue(new ResourceLocation(it.namespace, "items/${it.path}"), new ResourceLocation(Constants.MOD_ID, location))
         }
     }
@@ -66,11 +67,11 @@ class ItemVariant extends Variant {
         return "item.${Constants.MOD_ID}.${path}"
     }
 
-    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal) {
+    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map<ResourceLocation, ResourceLocation> variantLocations) {
         return ModularMetalsCommon.ITEMS.register(location, {->new Item(new Item.Properties())})
     }
 
-    List<ResourceLocation> getTags(ResourceLocation metalRl) {
-        return (tags.orElse([])).collect {ResourceLocation.of(it.replaceAll(/%s/, metalRl.path), ':' as char)}
+    List<ResourceLocation> getTags(ResourceLocation metalRl, Map props) {
+        return (tags.flatMap {it.apply(props).result()}.orElse([])).collect {ResourceLocation.of(it.replaceAll(/%s/, metalRl.path), ':' as char)}
     }
 }
