@@ -12,6 +12,20 @@ class TemplateEngine {
 
     private TemplateEngine() {}
 
+    static Object fillReplacements(Object obj, Map replacements) {
+        if (obj instanceof Map) {
+            return fillReplacements((Map) obj, replacements)
+        }
+        if (obj instanceof List) {
+            List out = []
+            for (Object item : (List) obj) {
+                out.add(fillReplacements(item, replacements))
+            }
+            return out
+        }
+        return obj
+    }
+
     static Map fillReplacements(Map map, Map replacements) {
         var shell = Suppliers.memoize {->
             Binding binding = new Binding(replacements)

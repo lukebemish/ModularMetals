@@ -6,7 +6,7 @@ quilt_loader = "0.18.5"
 
 qfapi = "6.0.0-beta.2+0.76.0-1.19.4"
 groovyduvet = "2.0.5"
-cgl = "0.2.4"
+cgl = "0.2.5"
 jankson = "1.2.1"
 
 gml = "3.1.0"

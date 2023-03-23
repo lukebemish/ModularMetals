@@ -12,11 +12,11 @@ import java.util.function.Function
 
 abstract class Fillable<T> implements Function<Map, DataResult<T>> {
 
-    abstract DataResult<MapHolder> getMap()
+    abstract DataResult<ObjectHolder> getMap()
 
     @ExposeCodecFactory
     static <T> Codec<Fillable<T>> codec(Codec<T> codec) {
-        return MapHolder.CODEC.<Fillable<T>>flatXmap({
+        return ObjectHolder.CODEC.<Fillable<T>>flatXmap({
             DataResult.success(Fillable.<T>of(it, codec))
         }, {
             it.map
@@ -27,24 +27,24 @@ abstract class Fillable<T> implements Function<Map, DataResult<T>> {
         return new ValueFillable<T>(value, codec)
     }
 
-    static <T> Fillable<T> of(MapHolder initial, Codec<T> codec) {
+    static <T> Fillable<T> of(ObjectHolder initial, Codec<T> codec) {
         return new MapFillable<T>(initial, codec)
     }
 
     @TupleConstructor
     static final class MapFillable<T> extends Fillable<T> {
-        final MapHolder initial
+        final ObjectHolder initial
         final Codec<T> codec
 
         @Override
         @Nullable
         DataResult<T> apply(Map replacements) {
-            Map map = TemplateEngine.fillReplacements(initial.map, replacements)
+            Object map = TemplateEngine.fillReplacements(initial.obj, replacements)
             return codec.parse(ObjectOps.instance, map)
         }
 
         @Override
-        DataResult<MapHolder> getMap() {
+        DataResult<ObjectHolder> getMap() {
             return DataResult.success(initial)
         }
     }
@@ -60,9 +60,9 @@ abstract class Fillable<T> implements Function<Map, DataResult<T>> {
         }
 
         @Override
-        DataResult<MapHolder> getMap() {
-            return codec.encodeStart(ObjectOps.instance, value).<MapHolder>flatMap({
-                return MapHolder.CODEC.parse(ObjectOps.instance, it)
+        DataResult<ObjectHolder> getMap() {
+            return codec.encodeStart(ObjectOps.instance, value).<ObjectHolder>flatMap({
+                return ObjectHolder.CODEC.parse(ObjectOps.instance, it)
             })
         }
     }
