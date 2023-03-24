@@ -6,6 +6,7 @@ import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.tier.ModularTier
 import dev.lukebemish.modularmetals.data.variant.ToolVariant
 import dev.lukebemish.modularmetals.util.MapUtil
+import groovy.transform.CompileStatic
 import net.minecraft.resources.ResourceLocation
 import org.apache.groovy.io.StringBuilderWriter
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -13,6 +14,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
 
 import java.util.function.Supplier
 
+@CompileStatic
 class TemplateEngine {
     public static final CompilerConfiguration COMPILER_CONFIGURATION = new CompilerConfiguration().tap {
         it.addCompilationCustomizers(new ImportCustomizer()

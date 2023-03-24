@@ -71,6 +71,8 @@ dependencies {
     implementation fg.deobf(libs.cgl.forge.get())
     compileOnly libs.jankson
 
+    compileOnly project(':Common').sourceSets.transform.output
+
     compileOnly "com.matyrobbrt.gml:gml:${libs.versions.gml.get()}:all"
     runtimeOnly(fg.deobf("com.matyrobbrt.gml:gml:${libs.versions.gml.get()}:all")) {
         exclude module: 'transform'

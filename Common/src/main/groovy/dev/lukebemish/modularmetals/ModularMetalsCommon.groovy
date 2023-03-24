@@ -3,6 +3,7 @@ package dev.lukebemish.modularmetals
 import com.google.common.base.Suppliers
 import dev.lukebemish.dynamicassetgenerator.api.DataResourceCache
 import dev.lukebemish.dynamicassetgenerator.api.ResourceCache
+import dev.lukebemish.modularmetals.util.MoreCodecs
 import io.github.groovymc.cgl.reg.RegistrationProvider
 import dev.lukebemish.modularmetals.client.ModularMetalsClient
 import dev.lukebemish.modularmetals.data.Category
@@ -30,6 +31,13 @@ final class ModularMetalsCommon {
     public static final DataResourceCache DATA_CACHE = ResourceCache.register(new DataResourceCache(new ResourceLocation(Constants.MOD_ID, "data")))
 
     static void init() {
+        if (Services.PLATFORM.isDevelopmentEnvironment()) {
+            println MoreCodecs.MATERIAL_COLOR_MAP
+            println MoreCodecs.MATERIAL_MAP
+            println MoreCodecs.PUSH_REACTION_MAP
+            println MoreCodecs.SOUND_TYPE_MAP
+        }
+
         register()
         if (Services.PLATFORM.isClient())
             ModularMetalsClient.init()
