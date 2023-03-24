@@ -42,7 +42,8 @@
   },
   name: "Hoe",
   tags: [
-    "fabric:hoes"
+    "fabric:hoes",
+    "minecraft:hoes"
   ],
   attack_modifier: 0,
   speed_modifier: -3.0,

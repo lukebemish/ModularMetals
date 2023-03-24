@@ -42,7 +42,8 @@
   },
   name: "Axe",
   tags: [
-    "fabric:axes"
+    "fabric:axes",
+    "minecraft:axes"
   ],
   attack_modifier: 6.0,
   speed_modifier: -3.2,

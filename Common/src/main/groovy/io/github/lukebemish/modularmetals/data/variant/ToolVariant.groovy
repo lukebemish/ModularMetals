@@ -3,6 +3,7 @@ package io.github.lukebemish.modularmetals.data.variant
 
 import com.mojang.serialization.DataResult
 import groovy.transform.InheritConstructors
+import groovy.transform.Memoized
 import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.groovymc.cgl.reg.RegistryObject
 import io.github.lukebemish.modularmetals.Constants
@@ -22,7 +23,7 @@ abstract class ToolVariant extends ItemVariant {
         return ModularTier.CODEC.parse(ObjectOps.instance, [:]).getOrThrow(false, {})
     }
 
-    static ModularTier getTier(Metal metal, ResourceLocation location) {
+    @Memoized static ModularTier getTier(Metal metal, ResourceLocation location) {
         return ModularTier.getOrCreateTier(location, {->
             DataResult<ModularTier> result = metal.getPropertyFromMap(new ResourceLocation(Constants.MOD_ID, 'tier'))?.decode(ModularTier.CODEC)
             return (result?.result()?.orElseGet({->

@@ -16,7 +16,9 @@
     "forge:storage_blocks/%s",
     "forge:storage_blocks",
     "c:%s_blocks",
-    "c:blocks/%s"
+    "c:blocks/%s",
+    "${properties['modularmetals:needed_material']?.with { tierTag(resourceLocation(it)).toString() }?:'minecraft:needs_iron_tool'}",
+    "minecraft:mineable/pickaxe"
   ],
   loot_table: {
     type: "minecraft:block",

@@ -42,7 +42,8 @@
   },
   name: "Shovel",
   tags: [
-    "fabric:shovels"
+    "fabric:shovels",
+    "minecraft:shovels"
   ],
   attack_modifier: 1.5,
   speed_modifier: -3.0,
