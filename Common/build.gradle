@@ -2,6 +2,12 @@ apply plugin: libs.plugins.quilt.loom.get().pluginId
 
 archivesBaseName = "${mod_id}-${libs.versions.minecraft.get()}"
 
+sourceSets {
+    transform {
+
+    }
+}
+
 loom {
     runConfigs.configureEach {
         ideConfigGenerated = false
@@ -28,6 +34,9 @@ dependencies {
     modCompileOnly(libs.excavatedvariants.common){
         transitive = false
     }
+
+    transformCompileOnly libs.groovy.core
+    compileOnly sourceSets.transform.output
 }
 
 import net.fabricmc.loom.task.AbstractRemapJarTask

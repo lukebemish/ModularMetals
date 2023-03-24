@@ -43,7 +43,7 @@ ModsDotGroovy.make {
             init = [
                     adapted {
                         adapter = 'groovyduvet'
-                        value = 'io.github.lukebemish.modularmetals.quilt.ModularMetalsQuilt'
+                        value = 'dev.lukebemish.modularmetals.quilt.ModularMetalsQuilt'
                     }
             ]
         }
