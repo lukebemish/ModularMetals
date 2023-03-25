@@ -1,5 +1,6 @@
 {
   type: "modularmetals:item",
+  inherit: "modularmetals:metal_item",
   texturing: {
     template: {
       "": {

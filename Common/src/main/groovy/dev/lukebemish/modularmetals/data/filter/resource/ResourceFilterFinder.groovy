@@ -1,8 +1,8 @@
-package dev.lukebemish.modularmetals.data.filter
+package dev.lukebemish.modularmetals.data.filter.resource
 
 import net.minecraft.resources.ResourceLocation
 
-interface FilterFinder<T> {
+interface ResourceFilterFinder<T> {
     boolean isTag(T thing, ResourceLocation tag)
     boolean isLocation(T thing, ResourceLocation location)
 }

@@ -1,5 +1,6 @@
 {
   type: "modularmetals:axe",
+  inherit: "modularmetals:metal_item",
   texturing: {
     template: "modularmetals:item/axe_base",
     generator: {

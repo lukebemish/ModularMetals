@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
+import net.minecraft.world.level.material.MaterialColor
 
 @CodecSerializable
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
@@ -41,22 +42,24 @@ class BlockVariant extends ItemVariant {
     @CodecSerializable
     static class BlockProperties {
         @WithCodec({ MoreCodecs.MATERIAL_CODEC })
-        Material material = Material.METAL
-        Collision collision = Collision.NORMAL
+        final Material material = Material.METAL
+        @WithCodec(value = { MoreCodecs.MATERIAL_COLOR_CODEC }, target = [0])
+        final Optional<MaterialColor> materialColor = Optional.empty()
+        final Collision collision = Collision.NORMAL
         @WithCodec({ MoreCodecs.SOUND_TYPE_NAMED_CODEC })
-        SoundType soundType = SoundType.METAL
-        float friction = 0.6f
-        float speedFactor = 1.0f
-        float jumpFactor = 1.0f
-        int lightLevel = 0
-        float destroyTime = 0.0f
-        Optional<Float> explosionResistance = Optional.empty()
-        boolean air = false
-        boolean requiresCorrectToolForDrops = false
-        boolean spawnParticlesOnBreak = true
+        final SoundType soundType = SoundType.METAL
+        final float friction = 0.6f
+        final float speedFactor = 1.0f
+        final float jumpFactor = 1.0f
+        final int lightLevel = 0
+        final float destroyTime = 0.0f
+        final Optional<Float> explosionResistance = Optional.empty()
+        final boolean air = false
+        final boolean requiresCorrectToolForDrops = false
+        final boolean spawnParticlesOnBreak = true
 
         BlockBehaviour.Properties asProperties() {
-            var props = BlockBehaviour.Properties.of(material)
+            var props = BlockBehaviour.Properties.of(material, materialColor.orElseGet { -> material.color })
                 .sound(soundType)
             if (collision == Collision.NO_COLLISION) {
                 props = props.noCollission()
@@ -127,22 +130,22 @@ class BlockVariant extends ItemVariant {
     }
 
     @Override
-    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map<ResourceLocation, ResourceLocation> variantLocations) {
+    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map props) {
         ModularMetalsCommon.ITEMS.register(location, {->
             Block block = BLOCKS.get(location)
-            return new BlockItem(block, new Item.Properties())
+            return new BlockItem(block, makeProperties(props))
         })
     }
 
     @Override
     void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation, Map<ResourceLocation, ResourceLocation> variantLocations) {
         var fullLocation = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation)
-        Map fullProperties = fillProperties(fullLocation, metalLocation, metal, variantLocations)
+        Map props = fillProperties(fullLocation, metalLocation, metal, variantLocations)
         String location = fullLocation.path
-        registerBlock(location, variantLocation, metalLocation, metal, variantLocations)
+        registerBlock(location, variantLocation, metalLocation, metal, props)
         super.register(metal, metalLocation, variantLocation, variantLocations)
 
-        getTags(metalLocation, fullProperties).each {
+        getTags(metalLocation, props).each {
             ModularMetalsCommon.DATA_CACHE.tags().queue(new ResourceLocation(it.namespace, "blocks/${it.path}"), new ResourceLocation(Constants.MOD_ID, location))
         }
 
@@ -162,10 +165,10 @@ class BlockVariant extends ItemVariant {
         }
     }
 
-    RegistryObject<? extends Block> registerBlock(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map<ResourceLocation, ResourceLocation> variantLocations) {
+    RegistryObject<? extends Block> registerBlock(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map props) {
         return ModularMetalsCommon.BLOCKS.register(location, {->
             BlockBehaviour.Properties properties = blockProperties.flatMap {
-                it.apply(fillProperties(new ResourceLocation(Constants.MOD_ID, location), metalRl, metal, variantLocations)).result()
+                it.apply(props).result()
             }.map {
                 it.asProperties()
             }.orElseGet {

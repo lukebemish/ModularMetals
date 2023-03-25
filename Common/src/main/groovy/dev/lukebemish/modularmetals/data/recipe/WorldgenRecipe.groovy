@@ -8,7 +8,7 @@ import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import dev.lukebemish.modularmetals.data.MapHolder
 import dev.lukebemish.modularmetals.data.Metal
-import dev.lukebemish.modularmetals.data.filter.Filter
+import dev.lukebemish.modularmetals.data.filter.resource.ResourceFilter
 import dev.lukebemish.modularmetals.util.DataPlanner
 import dev.lukebemish.modularmetals.util.TemplateUtils
 import net.minecraft.resources.ResourceLocation
@@ -19,7 +19,7 @@ class WorldgenRecipe extends Recipe {
     final MapHolder placedFeatureTemplate
     final MapHolder configuredFeatureTemplate
     final List<ResourceLocation> requiredVariants
-    final Filter biomeFilter
+    final ResourceFilter biomeFilter
 
     @Override
     void register(Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Map<ResourceLocation, ResourceLocation> variantLocations) {

@@ -1,6 +1,8 @@
 package dev.lukebemish.modularmetals.data.variant
 
 import com.mojang.serialization.Codec
+import dev.lukebemish.modularmetals.data.filter.string.AllStringFilter
+import dev.lukebemish.modularmetals.data.filter.string.StringFilter
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 import dev.lukebemish.modularmetals.ModularMetalsCommon
@@ -13,9 +15,9 @@ import net.minecraft.resources.ResourceLocation
 
 @TupleConstructor
 abstract class Variant implements CodecAware {
-    final Optional<List<String>> requiredMods
+    final StringFilter requiredMods = AllStringFilter.instance
     @ExposeCodec
-    static final Codec<Variant> CODEC = ModConfig.dispatchedToDefaultResources(PsuedoRegisters.VARIANT_TYPES, 'variant','variants')
+    static final Codec<Variant> CODEC = ModConfig.dispatchedToDefaultResources(PsuedoRegisters.VARIANT_TYPES, 'variant','variant_templates')
 
     abstract void register(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation, Map<ResourceLocation, ResourceLocation> variantLocations)
 

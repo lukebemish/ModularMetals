@@ -10,12 +10,13 @@ import com.mojang.serialization.DataResult
 import com.mojang.serialization.Decoder
 import dev.lukebemish.defaultresources.api.ResourceProvider
 import dev.lukebemish.modularmetals.Constants
+import dev.lukebemish.modularmetals.data.filter.string.StringFilter
 import dev.lukebemish.modularmetals.data.recipe.Recipe
 import dev.lukebemish.modularmetals.data.variant.Variant
 import dev.lukebemish.modularmetals.services.Services
 import dev.lukebemish.modularmetals.util.CodecAware
 import dev.lukebemish.modularmetals.util.CodecMapCodec
-import dev.lukebemish.modularmetals.util.InlineGroovyAdaptedInputStream
+
 import io.github.groovymc.cgl.api.codec.JanksonOps
 import net.minecraft.resources.ResourceLocation
 
@@ -40,6 +41,7 @@ class ModConfig {
 
             config.loadTemplateSets()
             config.loadMetals()
+            config.loadMetalProperties()
             config.loadVariants()
             config.loadRecipes()
             config.loadCategories()
@@ -71,7 +73,7 @@ class ModConfig {
                 Category category = Category.EMPTY
                 resources.each { InputStream stream ->
                     try {
-                        JsonObject json = Constants.JANKSON.load(new InlineGroovyAdaptedInputStream(stream))
+                        JsonObject json = Constants.JANKSON.load(stream)
                         Category read = ((Decoder<Category>) Category.$CODEC).parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
                         category = read.merge(category)
                     } catch (RuntimeException | SyntaxError | IOException e) {
@@ -88,7 +90,7 @@ class ModConfig {
         Set<ResourceLocation> keys = new HashSet<>(this.metals.keySet())
         for (ResourceLocation rl : keys) {
             Metal metal = this.metals.get(rl)
-            if (metal.requiredMods.orElse([]).any { !Services.PLATFORM.isModPresent(it)}) {
+            if (!metal.requiredMods.matches(Services.PLATFORM.modList(), StringFilter.SET_FINDER)) {
                 this.metals.remove(rl)
             }
         }
@@ -105,7 +107,7 @@ class ModConfig {
                 Map props = [:]
                 resources.each { InputStream stream ->
                     try {
-                        JsonObject json = Constants.JANKSON.load(new InlineGroovyAdaptedInputStream(stream))
+                        JsonObject json = Constants.JANKSON.load(stream)
                         Map read = MapHolder.CODEC.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {}).map
                         props.putAll(read)
                     } catch (RuntimeException | SyntaxError | IOException e) {
@@ -126,7 +128,7 @@ class ModConfig {
         Set<ResourceLocation> keys = new HashSet<>(this.variants.keySet())
         for (ResourceLocation rl : keys) {
             Variant variant = this.variants.get(rl)
-            if (variant.requiredMods.orElse([]).any { !Services.PLATFORM.isModPresent(it)}) {
+            if (!variant.requiredMods.matches(Services.PLATFORM.modList(), StringFilter.SET_FINDER)) {
                 this.variants.remove(rl)
             }
         }
@@ -137,7 +139,7 @@ class ModConfig {
         Set<ResourceLocation> keys = new HashSet<>(this.recipes.keySet())
         for (ResourceLocation rl : keys) {
             Recipe recipe = this.recipes.get(rl)
-            if (recipe.requiredMods.orElse([]).any { !Services.PLATFORM.isModPresent(it)}) {
+            if (!recipe.requiredMods.matches(Services.PLATFORM.modList(), StringFilter.SET_FINDER)) {
                 this.recipes.remove(rl)
             }
         }
@@ -155,7 +157,7 @@ class ModConfig {
                 Optional<? extends InputStream> optional = resources.findFirst()
                 if (optional.isPresent()) {
                     try {
-                        JsonObject json = Constants.JANKSON.load(new InlineGroovyAdaptedInputStream(optional.get()))
+                        JsonObject json = Constants.JANKSON.load(optional.get())
                         T resource = decoder.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
                         destination.put(newRl, resource)
                     } catch (RuntimeException | SyntaxError | IOException e) {
@@ -177,7 +179,7 @@ class ModConfig {
                 Map<ResourceLocation, TexSourceMap> set = [:]
                 resources.each { InputStream stream ->
                     try {
-                        JsonObject json = Constants.JANKSON.load(new InlineGroovyAdaptedInputStream(stream))
+                        JsonObject json = Constants.JANKSON.load(stream)
                         Map<ResourceLocation, TexSourceMap> resource = TEMPLATE_SET_CODEC.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
                         set.each { location, map ->
                             var innerMap = set.computeIfAbsent(location, {new TexSourceMap([:])})
@@ -203,7 +205,7 @@ class ModConfig {
                             new ResourceLocation(it.namespace,"${dirName}/${it.path}.json")))) {
                         Optional<? extends InputStream> optional = streams.findFirst()
                         if (optional.present) {
-                            JsonObject json = Constants.JANKSON.load(new InlineGroovyAdaptedInputStream(optional.get()))
+                            JsonObject json = Constants.JANKSON.load(optional.get())
                             return DataResult.<JsonElement>success(json)
                         }
                     } catch(Exception e) {

@@ -21,6 +21,9 @@ loom {
             runDir("run")
         }
     }
+    mixin {
+        defaultRefmapName = "modularmetals.refmap.json"
+    }
     accessWidenerPath = file('src/main/resources/modularmetals.accesswidener')
 }
 

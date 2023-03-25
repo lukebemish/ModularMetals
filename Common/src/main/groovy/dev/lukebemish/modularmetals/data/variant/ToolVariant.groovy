@@ -34,8 +34,7 @@ abstract class ToolVariant extends ItemVariant {
     }
 
     @Override
-    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map<ResourceLocation, ResourceLocation> variantLocations) {
-        Map props = fillProperties(new ResourceLocation(Constants.MOD_ID, location), metalRl, metal, variantLocations)
+    RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map props) {
         float attackModifier = getAttackModifier().apply(props).getOrThrow(false, {
             Constants.LOGGER.error("Speed modifier could not be parsed in variant ${variantRl} for metal ${metalRl}")
         })
@@ -44,7 +43,7 @@ abstract class ToolVariant extends ItemVariant {
         })
         ModularMetalsCommon.ITEMS.register(location, {->
             return getToolItemSupplier().getItem(getTier(metal, metalRl), attackModifier, speedModifier,
-                    new Item.Properties())
+                    makeProperties(props))
         })
     }
 

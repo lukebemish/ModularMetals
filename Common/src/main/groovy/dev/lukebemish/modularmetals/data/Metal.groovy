@@ -1,6 +1,8 @@
 package dev.lukebemish.modularmetals.data
 
 import com.mojang.datafixers.util.Either
+import dev.lukebemish.modularmetals.data.filter.string.AllStringFilter
+import dev.lukebemish.modularmetals.data.filter.string.StringFilter
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.groovymc.cgl.api.transform.codec.WithCodec
@@ -15,7 +17,7 @@ class Metal {
     final MetalTexturing texturing
     final Either<String,Map<String,String>> name
     final List<ResourceLocation> categories
-    final Optional<List<String>> requiredMods
+    final StringFilter requiredMods = AllStringFilter.instance
     final Optional<Map<ResourceLocation,ResourceLocation>> existingVariants
     final Optional<List<ResourceLocation>> banVariants
     final Optional<List<ResourceLocation>> banRecipes

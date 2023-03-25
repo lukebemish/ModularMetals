@@ -1,9 +1,13 @@
 package dev.lukebemish.modularmetals.forge.platform
 
 import com.google.auto.service.AutoService
+import com.google.common.base.Suppliers
+import dev.lukebemish.modularmetals.data.MobEffectProvider
+import groovy.transform.CompileStatic
 import groovy.transform.Memoized
 import dev.lukebemish.modularmetals.forge.ModularMetalsForge
 import dev.lukebemish.modularmetals.services.IPlatformHelper
+import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.fml.ModList
@@ -14,6 +18,7 @@ import java.nio.file.Path
 import java.util.function.Supplier
 
 @AutoService(IPlatformHelper)
+@CompileStatic
 class PlatformHelperImpl implements IPlatformHelper {
 
     @Override
@@ -43,7 +48,15 @@ class PlatformHelperImpl implements IPlatformHelper {
 
     @Override
     @Memoized
-    boolean isModPresent(String modid) {
-        return ModList.get().mods.any {it.modId == modid}
+    Set<String> modList() {
+        return ModList.get().mods.collect {it.modId}.toSet()
+    }
+
+    @Override
+    FoodProperties platformData(FoodProperties.Builder builder, List<MobEffectProvider> effects) {
+        for (MobEffectProvider effect : effects) {
+            builder = builder.effect(Suppliers.memoize {->effect.provide()}, effect.probability)
+        }
+        return builder.build()
     }
 }

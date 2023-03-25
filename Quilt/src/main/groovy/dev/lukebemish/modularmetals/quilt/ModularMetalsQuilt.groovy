@@ -2,6 +2,7 @@ package dev.lukebemish.modularmetals.quilt
 
 import dev.lukebemish.modularmetals.Constants
 import dev.lukebemish.modularmetals.ModularMetalsCommon
+import groovy.transform.CompileStatic
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab
@@ -12,6 +13,7 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer
 
 import java.util.function.Supplier
 
+@CompileStatic
 class ModularMetalsQuilt implements ModInitializer {
 
     static final List<Supplier<ItemStack>> TAB_ITEMS = new ArrayList<>()
@@ -28,5 +30,7 @@ class ModularMetalsQuilt implements ModInitializer {
     @Override
     void onInitialize(ModContainer mod) {
         ModularMetalsCommon.init()
+
+        Queues.process()
     }
 }

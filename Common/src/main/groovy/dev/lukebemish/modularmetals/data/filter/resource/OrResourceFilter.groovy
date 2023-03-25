@@ -1,4 +1,4 @@
-package dev.lukebemish.modularmetals.data.filter
+package dev.lukebemish.modularmetals.data.filter.resource
 
 import com.mojang.serialization.Codec
 import groovy.transform.Immutable
@@ -6,8 +6,8 @@ import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 
 @Immutable
 @CodecSerializable
-class AndFilter extends Filter {
-    List<Filter> values
+class OrResourceFilter extends ResourceFilter {
+    List<ResourceFilter> values
 
     @Override
     Codec getCodec() {
@@ -15,7 +15,7 @@ class AndFilter extends Filter {
     }
 
     @Override
-    <T> boolean matches(T thing, FilterFinder<T> checker) {
-        return values.every {it.matches(thing, checker)}
+    <T> boolean matches(T thing, ResourceFilterFinder<T> checker) {
+        return values.any {it.matches(thing, checker)}
     }
 }

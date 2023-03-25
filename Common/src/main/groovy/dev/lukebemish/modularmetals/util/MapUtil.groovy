@@ -1,9 +1,23 @@
 package dev.lukebemish.modularmetals.util
 
+import dev.lukebemish.modularmetals.TemplateEngine
+
 import java.util.function.Function
 import java.util.function.Predicate
 
 class MapUtil {
+    static Object replaceIn(Object object, Function<String, String> function) {
+        if (object instanceof Map)
+            return replaceInMap(object, function)
+        if (object instanceof List)
+            return replaceInList(object, function)
+        if (object instanceof String)
+            return function.apply(object)
+        if (object instanceof GString)
+            return function.apply(object as String)
+        return object
+    }
+
     static Map replaceInMap(Map map, Function<String, String> function) {
         map.collectEntries {key, value ->
             String strKey = key as String
@@ -19,12 +33,20 @@ class MapUtil {
         }
     }
 
+    static Object replaceInMapByTypeFull(Map map, Function<String, Object> mapper) {
+        if (map.containsKey(TemplateEngine.CODE_KEY)) {
+            String valueString = mapper.apply(map.get(TemplateEngine.CODE_KEY) as String)
+            return mapper.apply(valueString)
+        }
+        return replaceInMapByType(map, mapper)
+    }
+
     static Map replaceInMapByType(Map map, Function<String, Object> mapper) {
         map.collectEntries {key, value ->
             String strKey = key as String
             if (value instanceof Map) {
-                if (value.containsKey('__value__')) {
-                    String valueString = (value.get('__value__') ?: '') as String
+                if (value.containsKey(TemplateEngine.CODE_KEY)) {
+                    String valueString = value.get(TemplateEngine.CODE_KEY) as String
                     return [strKey, mapper.apply(valueString)]
                 }
                 return [strKey, replaceInMapByType(value, mapper)]
@@ -38,8 +60,8 @@ class MapUtil {
     static List replaceInListByType(List list, Function<String, Object> mapper) {
         list.collect {
             if (it instanceof Map) {
-                if (it.containsKey('__value__')) {
-                    String valueString = (it.get('__value__') ?: '') as String
+                if (it.containsKey(TemplateEngine.CODE_KEY)) {
+                    String valueString = it.get(TemplateEngine.CODE_KEY) as String
                     return mapper.apply(valueString)
                 }
                 return replaceInMapByType(it, mapper)

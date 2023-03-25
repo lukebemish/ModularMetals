@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.groovymc.cgl.api.transform.codec.WithCodec
-import dev.lukebemish.modularmetals.data.filter.Filter
-import dev.lukebemish.modularmetals.data.filter.FilterFinder
+import dev.lukebemish.modularmetals.data.filter.resource.ResourceFilter
+import dev.lukebemish.modularmetals.data.filter.resource.ResourceFilterFinder
 import net.minecraft.core.Holder
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
@@ -19,12 +19,12 @@ import net.minecraftforge.common.world.ModifiableBiomeInfo
 @TupleConstructor
 @CodecSerializable
 class FilterFeatureBiomeModifier implements BiomeModifier {
-    final Filter filter
+    final ResourceFilter filter
     @WithCodec({PlacedFeature.CODEC})
     final Holder<PlacedFeature> feature
     final Decoration decoration
 
-    static final FilterFinder<Holder<Biome>> BIOME_FINDER = new FilterFinder<Holder<Biome>>() {
+    static final ResourceFilterFinder<Holder<Biome>> BIOME_FINDER = new ResourceFilterFinder<Holder<Biome>>() {
         @Override
         boolean isTag(Holder<Biome> thing, ResourceLocation tag) {
             TagKey<Biome> key = TagKey.create(Registries.BIOME, tag)

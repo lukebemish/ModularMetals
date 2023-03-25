@@ -1,5 +1,6 @@
 {
   type: "modularmetals:shovel",
+  inherit: "modularmetals:metal_item",
   texturing: {
     template: "modularmetals:item/shovel_base",
     generator: {

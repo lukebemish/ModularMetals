@@ -1,5 +1,6 @@
 {
   type: "modularmetals:sword",
+  inherit: "modularmetals:metal_item",
   texturing: {
     template: "modularmetals:item/sword_base",
     generator: {

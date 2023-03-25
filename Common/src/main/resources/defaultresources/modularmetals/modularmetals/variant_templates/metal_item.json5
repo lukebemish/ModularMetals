@@ -1,0 +1,7 @@
+{
+  item_properties: {
+    fire_resistant: {
+      __code__: "properties['modularmetals:fire_resistant']?:false"
+    }
+  }
+}

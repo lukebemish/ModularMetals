@@ -1,5 +1,7 @@
 package dev.lukebemish.modularmetals.services
 
+import dev.lukebemish.modularmetals.data.MobEffectProvider
+import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.ItemStack
 
 import java.nio.file.Path
@@ -21,5 +23,7 @@ interface IPlatformHelper {
         QUILT
     }
 
-    boolean isModPresent(String modid)
+    Set<String> modList()
+
+    FoodProperties platformData(FoodProperties.Builder builder, List<MobEffectProvider> effects)
 }

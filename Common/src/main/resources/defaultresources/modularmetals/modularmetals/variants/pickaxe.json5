@@ -1,5 +1,6 @@
 {
   type: "modularmetals:pickaxe",
+  inherit: "modularmetals:metal_item",
   texturing: {
     template: "modularmetals:item/pickaxe_base",
     generator: {

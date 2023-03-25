@@ -21,6 +21,7 @@ class TemplateEngine {
             .addStaticStars('dev.lukebemish.modularmetals.TemplateEngine$Utils'))
     }
     public static final SimpleTemplateEngine ENGINE = new SimpleTemplateEngine(new GroovyShell(TemplateEngine.classLoader, COMPILER_CONFIGURATION))
+    public static final String CODE_KEY = '__code__'
 
     private TemplateEngine() {}
 
@@ -28,6 +29,9 @@ class TemplateEngine {
     static class Utils {
         private Utils() {}
 
+        /**
+         * Returns the tier tag for the metal at a given location.
+         */
         static ResourceLocation tierTag(ResourceLocation metalLocation) {
             Metal metal = ModularMetalsCommon.config.metals.get(metalLocation)
             if (metal == null) {
@@ -37,6 +41,13 @@ class TemplateEngine {
             return tier.getTag().location()
         }
 
+        static ResourceLocation tierTag(String metalLocation) {
+            return tierTag(resourceLocation(metalLocation))
+        }
+
+        /**
+         * Creates a resource location from a string
+         */
         static ResourceLocation resourceLocation(String location) {
             return new ResourceLocation(location)
         }
@@ -52,19 +63,21 @@ class TemplateEngine {
 
     static Map fillReplacements(Map map, Map replacements) {
         var shell = makeShell(replacements)
-        return fillReplacementsInner(map, shell, replacements)
+        if (map.containsKey(CODE_KEY))
+            return map
+        return (Map) fillReplacementsInner(map, shell, replacements)
     }
 
-    static Map fillReplacementsInner(Map map, Supplier<GroovyShell> shell, Map replacements) {
-        map = MapUtil.replaceInMapByType(map, {
+    static Object fillReplacementsInner(Map map, Supplier<GroovyShell> shell, Map replacements) {
+        Object out = MapUtil.replaceInMapByTypeFull(map, {
             return shell.get().evaluate(it)
         })
-        map = MapUtil.replaceInMap(map, {
+        out = MapUtil.replaceIn(out, {
             var writer = new StringBuilderWriter()
             ENGINE.createTemplate(it).make(replacements).writeTo(writer)
             return writer.builder.toString()
         })
-        return map
+        return out
     }
 
     static Object fillReplacements(Object obj, Map replacements) {

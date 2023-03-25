@@ -1,4 +1,4 @@
-package dev.lukebemish.modularmetals.data.filter
+package dev.lukebemish.modularmetals.data.filter.resource
 
 import com.mojang.serialization.Codec
 import groovy.transform.Immutable
@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation
 
 @Immutable(knownImmutableClasses = [ResourceLocation])
 @CodecSerializable
-class TagFilter extends Filter {
+class IsResourceFilter extends ResourceFilter {
     ResourceLocation value
 
     @Override
@@ -16,7 +16,7 @@ class TagFilter extends Filter {
     }
 
     @Override
-    <T> boolean matches(T thing, FilterFinder<T> checker) {
-        return checker.isTag(thing, value)
+    <T> boolean matches(T thing, ResourceFilterFinder<T> checker) {
+        return checker.isLocation(thing, value)
     }
 }

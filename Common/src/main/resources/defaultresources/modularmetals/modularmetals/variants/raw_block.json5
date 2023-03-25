@@ -1,5 +1,6 @@
 {
   type: "modularmetals:block",
+  inherit: "modularmetals:metal_item",
   texturing: {
     template: {
       "": {
@@ -75,6 +76,17 @@
     "forge:storage_blocks/raw_%s",
     "forge:storage_blocks",
     "c:raw_%s_blocks",
-    "c:blocks/raw_%s"
-  ]
+    "c:blocks/raw_%s",
+    "${properties['modularmetals:needed_material']?.with { tierTag(it) }?:'minecraft:needs_iron_tool'}",
+    "minecraft:mineable/pickaxe"
+  ],
+  block_properties: {
+    requires_correct_tool_for_drops: true,
+    destroy_time: {
+      __code__: "(properties['modularmetals:destroy_multiplier']?:1.0)*5.0"
+    },
+    explosion_resistance: {
+      __code__: "(properties['modularmetals:explosion_multiplier']?: properties['modularmetals:destroy_multiplier']?: 1.0)*6.0"
+    }
+  }
 }
