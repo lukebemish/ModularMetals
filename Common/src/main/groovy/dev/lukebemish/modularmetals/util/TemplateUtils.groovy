@@ -6,7 +6,7 @@ import com.mojang.serialization.JsonOps
 import io.github.groovymc.cgl.api.codec.ObjectOps
 import dev.lukebemish.modularmetals.Constants
 import dev.lukebemish.modularmetals.ModularMetalsCommon
-import dev.lukebemish.modularmetals.TemplateEngine
+import dev.lukebemish.modularmetals.template.TemplateEngine
 import dev.lukebemish.modularmetals.data.MapHolder
 import dev.lukebemish.modularmetals.data.Metal
 import net.minecraft.resources.ResourceLocation

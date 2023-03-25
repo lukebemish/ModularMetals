@@ -1,11 +1,12 @@
-package dev.lukebemish.modularmetals.util
+package dev.lukebemish.modularmetals.template
 
-import dev.lukebemish.modularmetals.TemplateEngine
+import groovy.transform.PackageScope
 
 import java.util.function.Function
 import java.util.function.Predicate
 
 class MapUtil {
+    @PackageScope
     static Object replaceIn(Object object, Function<String, String> function) {
         if (object instanceof Map)
             return replaceInMap(object, function)
@@ -18,6 +19,7 @@ class MapUtil {
         return object
     }
 
+    @PackageScope
     static Map replaceInMap(Map map, Function<String, String> function) {
         map.collectEntries {key, value ->
             String strKey = key as String
@@ -33,6 +35,7 @@ class MapUtil {
         }
     }
 
+    @PackageScope
     static Object replaceInMapByTypeFull(Map map, Function<String, Object> mapper) {
         if (map.containsKey(TemplateEngine.CODE_KEY)) {
             String valueString = mapper.apply(map.get(TemplateEngine.CODE_KEY) as String)
@@ -41,6 +44,7 @@ class MapUtil {
         return replaceInMapByType(map, mapper)
     }
 
+    @PackageScope
     static Map replaceInMapByType(Map map, Function<String, Object> mapper) {
         map.collectEntries {key, value ->
             String strKey = key as String
@@ -48,15 +52,28 @@ class MapUtil {
                 if (value.containsKey(TemplateEngine.CODE_KEY)) {
                     String valueString = value.get(TemplateEngine.CODE_KEY) as String
                     return [strKey, mapper.apply(valueString)]
+                } else if (value.containsKey(TemplateEngine.OPTIONAL_KEY)) {
+                    String valueString = value.get(TemplateEngine.OPTIONAL_KEY) as String
+                    var optionalValue = mapper.apply(valueString)
+                    if (optionalValue instanceof Optional) {
+                        if (optionalValue.isPresent()) {
+                            return [strKey, optionalValue.get()]
+                        } else {
+                            return [strKey, RemovalQueued.instance]
+                        }
+                    } else {
+                        return [strKey, optionalValue]
+                    }
                 }
                 return [strKey, replaceInMapByType(value, mapper)]
             }
             if (value instanceof List)
                 return [strKey, replaceInListByType(value, mapper)]
             return [strKey, value]
-        }
+        }.findAll { key, value -> value !== RemovalQueued.instance }
     }
 
+    @PackageScope
     static List replaceInListByType(List list, Function<String, Object> mapper) {
         list.collect {
             if (it instanceof Map) {
@@ -64,14 +81,33 @@ class MapUtil {
                     String valueString = it.get(TemplateEngine.CODE_KEY) as String
                     return mapper.apply(valueString)
                 }
+                if (it.containsKey(TemplateEngine.OPTIONAL_KEY)) {
+                    String valueString = it.get(TemplateEngine.OPTIONAL_KEY) as String
+                    var optionalValue = mapper.apply(valueString)
+                    if (optionalValue instanceof Optional) {
+                        if (optionalValue.isPresent()) {
+                            return optionalValue.get()
+                        } else {
+                            return RemovalQueued.instance
+                        }
+                    } else {
+                        return optionalValue
+                    }
+                }
                 return replaceInMapByType(it, mapper)
             }
             if (it instanceof List)
                 return replaceInListByType(it, mapper)
             return it
-        }
+        }.findAll {it !== RemovalQueued.instance}
     }
 
+    @Singleton
+    static class RemovalQueued {
+
+    }
+
+    @PackageScope
     static List replaceInList(List list, Function<String, String> function) {
         list.collect {
             if (it instanceof Map)

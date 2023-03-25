@@ -23,6 +23,15 @@
   ],
   block_properties: {
     requires_correct_tool_for_drops: true,
+    "material": {
+      __optional__: "properties['modularmetals:block_material'] ?: Optional.empty()"
+    },
+    "material_color": {
+      __optional__: "properties['modularmetals:block_material_color'] ?: Optional.empty()"
+    },
+    "sound_type": {
+      __optional__: "properties['modularmetals:block_sound_type'] ?: Optional.empty()"
+    },
     destroy_time: {
       __code__: "(properties['modularmetals:destroy_multiplier']?:1.0)*3.0"
     },

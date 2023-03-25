@@ -9,7 +9,7 @@ import dev.lukebemish.dynamicassetgenerator.api.client.generators.TexSourceDataH
 import dev.lukebemish.dynamicassetgenerator.api.client.generators.texsources.ErrorSource
 import dev.lukebemish.modularmetals.Constants
 import dev.lukebemish.modularmetals.ModularMetalsCommon
-import dev.lukebemish.modularmetals.TemplateEngine
+import dev.lukebemish.modularmetals.template.TemplateEngine
 import dev.lukebemish.modularmetals.client.planner.LangPlanner
 import dev.lukebemish.modularmetals.client.planner.ModelPlanner
 import dev.lukebemish.modularmetals.client.planner.TexturePlanner
@@ -20,11 +20,13 @@ import dev.lukebemish.modularmetals.data.texsources.ResolvedVariantSource
 import dev.lukebemish.modularmetals.data.texsources.VariantTemplateSource
 import dev.lukebemish.modularmetals.data.variant.ItemVariant
 import dev.lukebemish.modularmetals.data.variant.Variant
-import dev.lukebemish.modularmetals.util.MapUtil
+import dev.lukebemish.modularmetals.template.MapUtil
+import groovy.transform.CompileStatic
 import net.minecraft.resources.ResourceLocation
 
 import java.util.function.Supplier
 
+@CompileStatic
 class ItemClientVariantHandler implements ClientVariantHandler {
     static void language(Metal metal, ResourceLocation metalLocation, ResourceLocation variantLocation, ItemVariant variant) {
         ResourceLocation fullLocation = ModularMetalsCommon.assembleMetalVariantName(metalLocation, variantLocation)

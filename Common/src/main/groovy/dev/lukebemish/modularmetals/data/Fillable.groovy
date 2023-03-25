@@ -5,7 +5,7 @@ import com.mojang.serialization.DataResult
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.groovymc.cgl.api.transform.codec.ExposeCodecFactory
-import dev.lukebemish.modularmetals.TemplateEngine
+import dev.lukebemish.modularmetals.template.TemplateEngine
 import org.jetbrains.annotations.Nullable
 
 import java.util.function.Function

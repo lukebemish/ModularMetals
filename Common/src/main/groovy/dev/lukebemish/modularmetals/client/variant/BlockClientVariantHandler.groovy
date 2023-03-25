@@ -1,7 +1,7 @@
 package dev.lukebemish.modularmetals.client.variant
 
 import dev.lukebemish.modularmetals.Constants
-import dev.lukebemish.modularmetals.TemplateEngine
+import dev.lukebemish.modularmetals.template.TemplateEngine
 import dev.lukebemish.modularmetals.client.planner.BlockstatePlanner
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.variant.BlockVariant

@@ -1,11 +1,11 @@
-package dev.lukebemish.modularmetals
+package dev.lukebemish.modularmetals.template
 
 import com.google.common.base.Suppliers
+import dev.lukebemish.modularmetals.ModularMetalsCommon
 import groovy.text.SimpleTemplateEngine
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.tier.ModularTier
 import dev.lukebemish.modularmetals.data.variant.ToolVariant
-import dev.lukebemish.modularmetals.util.MapUtil
 import groovy.transform.CompileStatic
 import net.minecraft.resources.ResourceLocation
 import org.apache.groovy.io.StringBuilderWriter
@@ -18,10 +18,12 @@ import java.util.function.Supplier
 class TemplateEngine {
     public static final CompilerConfiguration COMPILER_CONFIGURATION = new CompilerConfiguration().tap {
         it.addCompilationCustomizers(new ImportCustomizer()
-            .addStaticStars('dev.lukebemish.modularmetals.TemplateEngine$Utils'))
+            .addStaticStars('dev.lukebemish.modularmetals.template.TemplateEngine$Utils')
+            .addImports('java.util.Optional'))
     }
     public static final SimpleTemplateEngine ENGINE = new SimpleTemplateEngine(new GroovyShell(TemplateEngine.classLoader, COMPILER_CONFIGURATION))
     public static final String CODE_KEY = '__code__'
+    public static final String OPTIONAL_KEY = '__optional__'
 
     private TemplateEngine() {}
 
