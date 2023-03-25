@@ -20,7 +20,7 @@ class ModularMetalsQuilt implements ModInitializer {
 
     static final CreativeModeTab TAB = FabricItemGroup.builder(new ResourceLocation(Constants.MOD_ID, "items"))
         .icon {-> Items.IRON_INGOT.defaultInstance}
-        .displayItems {flags, output, displayOp ->
+        .displayItems {flags, output ->
             for (Supplier<ItemStack> item : TAB_ITEMS) {
                 output.accept(item.get())
             }

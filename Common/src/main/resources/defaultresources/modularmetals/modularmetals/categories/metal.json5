@@ -9,7 +9,8 @@
     "modularmetals:raw",
     "modularmetals:raw_block",
     "modularmetals:block",
-    "modularmetals:nugget"
+    "modularmetals:nugget",
+    "modularmetals:helmet",
   ],
   recipes: [
     // crafting

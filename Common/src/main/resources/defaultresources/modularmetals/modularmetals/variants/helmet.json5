@@ -1,0 +1,17 @@
+{
+  type: 'modularmetals:armor',
+  inherit: 'modularmetals:metal_item',
+  texturing: {
+    template: {
+      "": {
+        type: "dynamic_asset_generator:palette_spread",
+        source: {
+          type: "dynamic_asset_generator:texture",
+          path: "minecraft:item/golden_helmet"
+        }
+      }
+    }
+  },
+  name: "Helmet",
+  armor_type: "helmet"
+}

@@ -23,7 +23,7 @@ import net.minecraft.world.item.Item
 
 @CompileStatic
 @CodecSerializable(property = 'ARMOR_CODEC')
-@TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
+@TupleConstructor(includeSuperProperties = true, callSuper = true, includeSuperFields = true)
 class ArmorVariant extends ItemVariant {
     @WithCodec(value = { MoreCodecs.ARMOR_TYPE_CODEC }, target = [0])
     Fillable<ArmorItem.Type> armorType

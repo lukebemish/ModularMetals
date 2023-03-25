@@ -61,11 +61,18 @@ final class ModularMetalsCommon {
             variantLocations.putAll(existingVariants)
             for (ResourceLocation variantRl : variantRls) {
                 Variant variant = config.variants.get(variantRl)
+                if (variant == null) {
+                    throw new RuntimeException("Variant ${variantRl} not found!")
+                }
                 variant.register(metal, metalRl, variantRl, variantLocations)
             }
             Set<ResourceLocation> recipeRls = getRecipes(metalRl)
             for (ResourceLocation recipeRl : recipeRls) {
-                config.recipes.get(recipeRl).register(metal, metalRl, recipeRl, variantLocations)
+                var recipe = config.recipes.get(recipeRl)
+                if (recipe == null) {
+                    throw new RuntimeException("Recipe ${recipeRl} not found!")
+                }
+                recipe.register(metal, metalRl, recipeRl, variantLocations)
             }
         }
     }
