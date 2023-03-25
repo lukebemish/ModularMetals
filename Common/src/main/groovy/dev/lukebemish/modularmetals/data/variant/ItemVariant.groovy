@@ -24,7 +24,7 @@ import net.minecraft.world.item.Rarity
 
 import java.util.function.Function
 
-@CodecSerializable
+@CodecSerializable(property = 'ITEM_CODEC')
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
 @CompileStatic
 class ItemVariant extends Variant {
@@ -76,7 +76,7 @@ class ItemVariant extends Variant {
 
     @Override
     Codec getCodec() {
-        return $CODEC
+        return ITEM_CODEC
     }
 
     ItemVariantTexturing getTexturing() {

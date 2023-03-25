@@ -12,7 +12,7 @@ class RegistryProvider {
     final ResourceLocation location
 
     @ExposeCodec
-    public static final Codec<RegistryProvider> CODEC = ResourceLocation.CODEC.xmap(RegistryProvider::new, RegistryProvider::getLocation)
+    public static final Codec<RegistryProvider> CODEC = ResourceLocation.CODEC.xmap(RegistryProvider::new, { it.location })
 
     @Memoized <T> T get(Registry<T> registry) {
         registry.containsKey(location) ? registry.get(location) : null

@@ -46,7 +46,7 @@ final class ModularMetalsCommon {
     }
 
     static ModConfig getConfig() {
-        PsuedoRegisters.registerCodecs()
+        PseudoRegisters.registerCodecs()
         return CONFIG.get()
     }
 

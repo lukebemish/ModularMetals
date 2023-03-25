@@ -1,16 +1,16 @@
-package dev.lukebemish.modularmetals.data.variant
-
+package dev.lukebemish.modularmetals.data.variant.tool
 
 import com.mojang.serialization.DataResult
-import groovy.transform.InheritConstructors
-import groovy.transform.Memoized
-import io.github.groovymc.cgl.api.codec.ObjectOps
-import io.github.groovymc.cgl.reg.RegistryObject
 import dev.lukebemish.modularmetals.Constants
 import dev.lukebemish.modularmetals.ModularMetalsCommon
 import dev.lukebemish.modularmetals.data.Fillable
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.tier.ModularTier
+import dev.lukebemish.modularmetals.data.variant.ItemVariant
+import groovy.transform.InheritConstructors
+import groovy.transform.Memoized
+import io.github.groovymc.cgl.api.codec.ObjectOps
+import io.github.groovymc.cgl.reg.RegistryObject
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Tier
@@ -36,7 +36,7 @@ abstract class ToolVariant extends ItemVariant {
     @Override
     RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map props) {
         float attackModifier = getAttackModifier().apply(props).getOrThrow(false, {
-            Constants.LOGGER.error("Speed modifier could not be parsed in variant ${variantRl} for metal ${metalRl}")
+            Constants.LOGGER.error("Attack modifier could not be parsed in variant ${variantRl} for metal ${metalRl}")
         })
         float speedModifier = getSpeedModifier().apply(props).getOrThrow(false, {
             Constants.LOGGER.error("Speed modifier could not be parsed in variant ${variantRl} for metal ${metalRl}")

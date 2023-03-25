@@ -5,7 +5,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import groovy.transform.KnownImmutable
 import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
-import dev.lukebemish.modularmetals.PsuedoRegisters
+import dev.lukebemish.modularmetals.PseudoRegisters
 import dev.lukebemish.modularmetals.util.CodecAware
 import dev.lukebemish.modularmetals.util.CodecMapCodec
 import net.minecraft.resources.ResourceLocation
@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation
 abstract class ResourceFilter implements CodecAware {
     @ExposeCodec
     static final Codec<ResourceFilter> CODEC = Codec.either(
-        Codec.either(CodecMapCodec.dispatch(PsuedoRegisters.RESOURCE_FILTER_TYPES, "filter", true),
+        Codec.either(CodecMapCodec.dispatch(PseudoRegisters.RESOURCE_FILTER_TYPES, "filter", true),
             ResourceLocation.CODEC.<IsResourceFilter>xmap({new IsResourceFilter(it)}, {it.value})).<ResourceFilter>xmap({
         it.map({it},{it})
     },{ it instanceof IsResourceFilter ? Either.right(it) : Either.left(it)}),

@@ -2,7 +2,7 @@ package dev.lukebemish.modularmetals.data.filter.string
 
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
-import dev.lukebemish.modularmetals.PsuedoRegisters
+import dev.lukebemish.modularmetals.PseudoRegisters
 import dev.lukebemish.modularmetals.util.CodecAware
 import dev.lukebemish.modularmetals.util.CodecMapCodec
 import groovy.transform.CompileStatic
@@ -13,7 +13,7 @@ import io.github.groovymc.cgl.api.transform.codec.ExposeCodec
 @CompileStatic
 abstract class StringFilter implements CodecAware {
     @ExposeCodec
-    static final Codec<StringFilter> CODEC = Codec.either(CodecMapCodec.dispatch(PsuedoRegisters.RESOURCE_FILTER_TYPES, "filter", true),
+    static final Codec<StringFilter> CODEC = Codec.either(CodecMapCodec.dispatch(PseudoRegisters.RESOURCE_FILTER_TYPES, "filter", true),
         Codec.STRING.<IsStringFilter>xmap({new IsStringFilter(it)}, {it.value})).<StringFilter>xmap({
         it.map({it},{it})
     },{ it instanceof IsStringFilter ? Either.right(it) : Either.left(it)})

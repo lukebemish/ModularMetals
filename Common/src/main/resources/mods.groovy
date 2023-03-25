@@ -50,6 +50,5 @@ ModsDotGroovy.make {
     }
     onQuilt {
         access_widener = 'modularmetals.accesswidener'
-        mixin = ['mixin.excavated_variants.json']
     }
 }

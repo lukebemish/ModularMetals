@@ -5,7 +5,7 @@ import dev.lukebemish.modularmetals.ModularMetalsCommon
 import groovy.text.SimpleTemplateEngine
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.tier.ModularTier
-import dev.lukebemish.modularmetals.data.variant.ToolVariant
+import dev.lukebemish.modularmetals.data.variant.tool.ToolVariant
 import groovy.transform.CompileStatic
 import net.minecraft.resources.ResourceLocation
 import org.apache.groovy.io.StringBuilderWriter

@@ -10,6 +10,7 @@ import com.mojang.serialization.JsonOps
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import dev.lukebemish.modularmetals.transform.InstanceMap
 import groovy.transform.CompileStatic
+import net.minecraft.world.item.ArmorItem
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.block.SoundType
@@ -99,6 +100,11 @@ final class MoreCodecs {
     @InstanceMap
     public static final BiMap<String, Rarity> RARITY_MAP
     public static final Codec<Rarity> RARITY_CODEC = ofMapCodec(RARITY_MAP, "rarity")
+
+    @SuppressWarnings('GrFinalVariableAccess')
+    @InstanceMap
+    public static final BiMap<String, ArmorItem.Type> ARMOR_TYPE_MAP
+    public static final Codec<ArmorItem.Type> ARMOR_TYPE_CODEC = ofMapCodec(ARMOR_TYPE_MAP, "armor_type")
 
     static <O> Codec<List<O>> singleOrList(Codec<O> codec) {
         return Codec.either(codec, codec.listOf()).<List<O>>xmap({ either ->

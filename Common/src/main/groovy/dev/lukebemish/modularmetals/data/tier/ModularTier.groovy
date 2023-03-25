@@ -30,7 +30,7 @@ class ModularTier implements Tier {
             Codec.FLOAT.optionalFieldOf('attack_bonus',0f).forGetter({ModularTier it -> it.attackDamageBonus}) as RecordCodecBuilder<ModularTier, Float>,
             Codec.INT.optionalFieldOf('level',0).forGetter({ModularTier it -> it.level}) as RecordCodecBuilder<ModularTier, Integer>,
             Codec.INT.optionalFieldOf('enchantment',14).forGetter({ModularTier it -> it.enchantmentValue}) as RecordCodecBuilder<ModularTier, Integer>,
-        MoreCodecs.INGREDIENT_CODEC.optionalFieldOf('repair_ingredient').forGetter({ ModularTier it -> it.repairIngredientSupplierOptional}) as RecordCodecBuilder<ModularTier, Optional<Supplier<Ingredient>>>,
+            MoreCodecs.INGREDIENT_CODEC.optionalFieldOf('repair_ingredient').forGetter({ ModularTier it -> it.repairIngredientSupplierOptional}) as RecordCodecBuilder<ModularTier, Optional<Supplier<Ingredient>>>,
             ResourceLocation.CODEC.listOf().optionalFieldOf('after',List.of(new ResourceLocation("wood"))).forGetter({ModularTier it -> it.after}) as RecordCodecBuilder<ModularTier, List<ResourceLocation>>,
             ResourceLocation.CODEC.listOf().optionalFieldOf('before',[]).forGetter({ModularTier it -> it.before}) as RecordCodecBuilder<ModularTier, List<ResourceLocation>>
     ).apply(i, ModularTier.&new))

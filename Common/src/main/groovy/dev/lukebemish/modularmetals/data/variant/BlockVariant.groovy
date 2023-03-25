@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
 import net.minecraft.world.level.material.MaterialColor
 
-@CodecSerializable
+@CodecSerializable(property = 'BLOCK_CODEC')
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
 @CompileStatic
 class BlockVariant extends ItemVariant {
@@ -115,7 +115,7 @@ class BlockVariant extends ItemVariant {
 
     @Override
     Codec getCodec() {
-        return $CODEC
+        return BLOCK_CODEC
     }
 
     @Override
