@@ -1,28 +1,40 @@
 package dev.lukebemish.modularmetals.util
 
+import com.google.common.base.Suppliers
 import com.google.common.collect.BiMap
-import com.google.common.collect.ImmutableBiMap
+import com.google.gson.JsonElement
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
+import com.mojang.serialization.JsonOps
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import dev.lukebemish.modularmetals.transform.InstanceMap
+import groovy.transform.CompileStatic
+import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.material.Material
 import net.minecraft.world.level.material.MaterialColor
 import net.minecraft.world.level.material.PushReaction
 
+import java.util.function.Supplier
+
+@CompileStatic
 final class MoreCodecs {
+    public static final Codec<Supplier<Ingredient>> INGREDIENT_CODEC = new OpsCodec<JsonElement>(JsonOps.INSTANCE).<Supplier<Ingredient>>xmap({ Suppliers.memoize({->Ingredient.fromJson(it)})},{it.get().toJson()})
+
     private MoreCodecs() {}
 
+    @SuppressWarnings('GrFinalVariableAccess')
     @InstanceMap
-    static final BiMap<String, Material> MATERIAL_MAP = ImmutableBiMap.of()
+    public static final BiMap<String, Material> MATERIAL_MAP
 
+    @SuppressWarnings('GrFinalVariableAccess')
     @InstanceMap
-    static final BiMap<String, MaterialColor> MATERIAL_COLOR_MAP = ImmutableBiMap.of()
+    public static final BiMap<String, MaterialColor> MATERIAL_COLOR_MAP
 
+    @SuppressWarnings('GrFinalVariableAccess')
     @InstanceMap
-    static final BiMap<String, PushReaction> PUSH_REACTION_MAP = ImmutableBiMap.of()
+    public static final BiMap<String, PushReaction> PUSH_REACTION_MAP
 
     static <T> Codec<T> ofMapCodec(BiMap<String, T> map, String name) {
         return Codec.STRING.<T>flatXmap({ it ->
@@ -40,14 +52,14 @@ final class MoreCodecs {
         })
     }
 
-    static final Codec<PushReaction> PUSH_REACTION_CODEC = ofMapCodec(PUSH_REACTION_MAP, "push_reaction")
-    static final Codec<MaterialColor> MATERIAL_COLOR_CODEC = Codec.<MaterialColor,MaterialColor>either(
+    public static final Codec<PushReaction> PUSH_REACTION_CODEC = ofMapCodec(PUSH_REACTION_MAP, "push_reaction")
+    public static final Codec<MaterialColor> MATERIAL_COLOR_CODEC = Codec.<MaterialColor,MaterialColor>either(
         ofMapCodec(MATERIAL_COLOR_MAP, "material_color"),
         intCodecBounded(0, 61).<MaterialColor>xmap({MaterialColor.byId(it)}, {it.id})
     ).<MaterialColor>xmap({ it.map({it},{it}) }, { Either.<MaterialColor,MaterialColor>left(it) })
 
-    static final Codec<Material> MATERIAL_NAMED_CODEC = ofMapCodec(MATERIAL_MAP, "material")
-    static final Codec<Material> MATERIAL_DIRECT_CODEC = RecordCodecBuilder.<Material>create {
+    public static final Codec<Material> MATERIAL_NAMED_CODEC = ofMapCodec(MATERIAL_MAP, "material")
+    public static final Codec<Material> MATERIAL_DIRECT_CODEC = RecordCodecBuilder.<Material>create {
         it.<MaterialColor, Boolean, Boolean, Boolean, Boolean, Boolean, Boolean, PushReaction>group(
             MATERIAL_COLOR_CODEC.optionalFieldOf("material_color", MaterialColor.NONE).forGetter(Material::getColor),
             Codec.BOOL.optionalFieldOf("flammable", false).forGetter(Material::isFlammable),
@@ -61,7 +73,7 @@ final class MoreCodecs {
             new Material(color, liquid, solid, blocksMotion, solidBlocking, flammable, replaceable, pushReaction)
         })
     }
-    static final Codec<Material> MATERIAL_CODEC = Codec.<Material, Material>either(MATERIAL_NAMED_CODEC, MATERIAL_DIRECT_CODEC).<Material>xmap({ it.map({it},{it}) }, { Either.<Material,Material>left(it) })
+    public static final Codec<Material> MATERIAL_CODEC = Codec.<Material, Material>either(MATERIAL_NAMED_CODEC, MATERIAL_DIRECT_CODEC).<Material>xmap({ it.map({it},{it}) }, { Either.<Material,Material>left(it) })
 
     static Codec<Integer> intCodecBounded(int min, int max) {
         return Codec.INT.<Integer>flatXmap({ it ->
@@ -77,8 +89,21 @@ final class MoreCodecs {
         })
     }
 
+    @SuppressWarnings('GrFinalVariableAccess')
     @InstanceMap
-    static final BiMap<String, SoundType> SOUND_TYPE_MAP = ImmutableBiMap.of()
+    public static final BiMap<String, SoundType> SOUND_TYPE_MAP
 
-    static final Codec<SoundType> SOUND_TYPE_NAMED_CODEC = ofMapCodec(SOUND_TYPE_MAP, "sound_type")
+    public static final Codec<SoundType> SOUND_TYPE_NAMED_CODEC = ofMapCodec(SOUND_TYPE_MAP, "sound_type")
+
+    static <O> Codec<List<O>> singleOrList(Codec<O> codec) {
+        return Codec.either(codec, codec.listOf()).<List<O>>xmap({ either ->
+            either.<List<O>>map({
+                List.of(it)
+            },{
+                it
+            })
+        },{
+            Either<O, List<O>>.right(it)
+        })
+    }
 }
