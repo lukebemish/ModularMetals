@@ -24,6 +24,7 @@ class TemplateEngine {
     public static final SimpleTemplateEngine ENGINE = new SimpleTemplateEngine(new GroovyShell(TemplateEngine.classLoader, COMPILER_CONFIGURATION))
     public static final String CODE_KEY = '__code__'
     public static final String OPTIONAL_KEY = '__optional__'
+    public static final String IF_KEY = '__if__'
 
     private TemplateEngine() {}
 

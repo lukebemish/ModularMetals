@@ -64,6 +64,16 @@ class MapUtil {
                     } else {
                         return [strKey, optionalValue]
                     }
+                } else if (value.containsKey(TemplateEngine.IF_KEY)) {
+                    String valueString = value.get(TemplateEngine.IF_KEY) as String
+                    var boolValue = mapper.apply(valueString)
+                    if (boolValue instanceof Boolean && boolValue) {
+                        Map newMap = new LinkedHashMap(value)
+                        newMap.remove(TemplateEngine.IF_KEY)
+                        return [strKey, newMap]
+                    } else {
+                        return [strKey, RemovalQueued.instance]
+                    }
                 }
                 return [strKey, replaceInMapByType(value, mapper)]
             }
@@ -92,6 +102,16 @@ class MapUtil {
                         }
                     } else {
                         return optionalValue
+                    }
+                } else if (it.containsKey(TemplateEngine.IF_KEY)) {
+                    String valueString = it.get(TemplateEngine.IF_KEY) as String
+                    var boolValue = mapper.apply(valueString)
+                    if (boolValue instanceof Boolean && boolValue) {
+                        Map map = new LinkedHashMap(it)
+                        map.remove(TemplateEngine.IF_KEY)
+                        return map
+                    } else {
+                        return RemovalQueued.instance
                     }
                 }
                 return replaceInMapByType(it, mapper)

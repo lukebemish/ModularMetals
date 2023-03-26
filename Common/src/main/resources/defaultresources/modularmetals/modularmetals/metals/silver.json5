@@ -16,7 +16,7 @@
     },
   },
   categories: [
-    "modularmetals:metal"
+    "modularmetals:stone_ore_metal"
   ],
   name: "Silver",
   properties: {

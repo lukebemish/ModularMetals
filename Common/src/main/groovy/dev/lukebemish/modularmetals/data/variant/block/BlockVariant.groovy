@@ -2,6 +2,7 @@ package dev.lukebemish.modularmetals.data.variant.block
 
 import com.mojang.serialization.Codec
 import dev.lukebemish.modularmetals.data.variant.ItemVariant
+import dev.lukebemish.modularmetals.objects.ModularMetalsBlock
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
@@ -19,6 +20,7 @@ import dev.lukebemish.modularmetals.util.MoreCodecs
 import dev.lukebemish.modularmetals.util.TemplateUtils
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.StringRepresentable
+import net.minecraft.util.valueproviders.IntProvider
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
@@ -38,6 +40,8 @@ class BlockVariant extends ItemVariant {
     Optional<MapHolder> lootTable
 
     Optional<Fillable<BlockProperties>> blockProperties
+
+    Optional<Fillable<IntProvider>> experienceOnDrop
 
     @TupleConstructor
     @CodecSerializable
@@ -168,14 +172,17 @@ class BlockVariant extends ItemVariant {
 
     RegistryObject<? extends Block> registerBlock(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map props) {
         return ModularMetalsCommon.BLOCKS.register(location, {->
-            Block block = createBlock(makeBlockProperties(props))
+            Block block = createBlock(makeBlockProperties(props), props)
             BLOCKS.put(location, block)
             return block
         })
     }
 
-    Block createBlock(BlockBehaviour.Properties props) {
-        return new Block(props)
+    Block createBlock(BlockBehaviour.Properties props, Map replacements) {
+        IntProvider experience = experienceOnDrop.flatMap {
+            it.apply(replacements).result()
+        }.orElse(null)
+        return new ModularMetalsBlock(props, experience)
     }
 
     BlockBehaviour.Properties makeBlockProperties(Map props) {

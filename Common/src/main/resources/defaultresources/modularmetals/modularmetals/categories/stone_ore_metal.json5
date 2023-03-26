@@ -1,0 +1,8 @@
+{
+  inherits: [
+    "modularmetals:ore_metal"
+  ],
+  variants: [
+    "modularmetals:stone_ore"
+  ]
+}

@@ -16,7 +16,7 @@
     },
   },
   categories: [
-    "modularmetals:ore_metal"
+    "modularmetals:metal"
   ],
   name: "Brass"
 }
