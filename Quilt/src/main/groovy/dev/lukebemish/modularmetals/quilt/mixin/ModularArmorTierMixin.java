@@ -1,6 +1,5 @@
 package dev.lukebemish.modularmetals.quilt.mixin;
 
-import dev.lukebemish.modularmetals.Constants;
 import dev.lukebemish.modularmetals.data.tier.ModularArmorTier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorMaterial;
@@ -13,6 +12,7 @@ public abstract class ModularArmorTierMixin implements ArmorMaterial {
 
     @Override
     public @ClientOnly @NotNull ResourceLocation getTexture() {
-        return new ResourceLocation(Constants.MOD_ID, "textures/models/armor/" + this.getName());
+        ResourceLocation name = new ResourceLocation(this.getName());
+        return new ResourceLocation(name.getNamespace(), "textures/models/armor/" + name.getPath());
     }
 }

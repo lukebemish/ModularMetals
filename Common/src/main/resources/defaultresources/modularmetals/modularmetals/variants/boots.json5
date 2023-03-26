@@ -7,7 +7,7 @@
         type: "dynamic_asset_generator:palette_spread",
         source: {
           type: "dynamic_asset_generator:texture",
-          path: "minecraft:item/golden_helmet"
+          path: "minecraft:item/golden_boots"
         }
       },
       armor1: {
@@ -23,13 +23,13 @@
           },
           total_size: 64,
           start_x: 0,
-          start_y: 0,
-          size_x: 64,
+          start_y: 16,
+          size_x: 16,
           size_y: 16
         },
-        total_size: 64,
+        total_size: 16,
         start_x: 0,
-        start_y: 0,
+        start_y: -16,
         size_x: 64,
         size_y: 64
       }
@@ -58,6 +58,6 @@
       }
     }
   },
-  name: "Helmet",
-  armor_type: "helmet"
+  name: "Boots",
+  armor_type: "boots"
 }

@@ -11,6 +11,9 @@
     "modularmetals:block",
     "modularmetals:nugget",
     "modularmetals:helmet",
+    "modularmetals:chestplate",
+    "modularmetals:leggings",
+    "modularmetals:boots"
   ],
   recipes: [
     // crafting

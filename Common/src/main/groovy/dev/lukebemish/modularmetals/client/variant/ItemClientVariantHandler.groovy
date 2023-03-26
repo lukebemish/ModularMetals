@@ -24,6 +24,7 @@ import dev.lukebemish.modularmetals.template.MapUtil
 import groovy.transform.CompileStatic
 import net.minecraft.resources.ResourceLocation
 
+import java.util.function.Function
 import java.util.function.Supplier
 
 @CompileStatic
@@ -52,6 +53,10 @@ class ItemClientVariantHandler implements ClientVariantHandler {
         return Map.<String, Map> of('', ['parent': 'item/generated', 'textures': ['layer0': '${textures[""]}']])
     }
 
+    boolean processSpecial(ResourceLocation metalRl, Variant variant, String name, Function<ResourceGenerationContext, NativeImage> imageSource) {
+        return false
+    }
+
     void registerPlanners(ResourceLocation metalRl,
                           ResourceLocation variantRl,
                           Supplier<ITexSource> metalTexSource,
@@ -63,8 +68,7 @@ class ItemClientVariantHandler implements ClientVariantHandler {
         ResourceLocation fullLocation = ModularMetalsCommon.assembleMetalVariantName(metalRl, variantRl)
         String header = getHeader()
 
-        Map<String, Supplier<ITexSource>> textures = variant.texturing.generator
-            .map(either -> ItemClientVariantHandler.<MapHolder> processEither(either))
+        Map<String, Supplier<ITexSource>> textures = variant.texturing.simplifiedGenerator
             .<Map<String, Supplier<ITexSource>>> map { mapHolders ->
                 return mapHolders.collectEntries { key, mapHolder ->
                     return [key, texSourceFromHolder(mapHolder, "Could not load texturing for variant ${variantRl}${key == '' ? '' : ", texture ${key}"}")]
@@ -75,6 +79,7 @@ class ItemClientVariantHandler implements ClientVariantHandler {
 
         templateMap.putAll(metal.texturing.getResolvedTemplateOverrides(variantRl))
 
+        Set<String> modelTextures = new HashSet<>()
         // iterate over variant texture generators
         for (Map.Entry<String, Supplier<ITexSource>> entry : textures) {
             String key = entry.key
@@ -85,20 +90,24 @@ class ItemClientVariantHandler implements ClientVariantHandler {
 
             ResourceLocation full = new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${key == '' ? '' : "_$key"}")
 
-            TexturePlanner.instance.plan(full, context -> generateTexture(context, metalTexSource, fullTexSource, templateMap, metalRl, variantRl, key, metal), sourceLocations)
+            Function<ResourceGenerationContext, NativeImage> imageSource = { ResourceGenerationContext context -> generateTexture(context, metalTexSource, fullTexSource, templateMap, metalRl, variantRl, key, metal) }
+
+            if (!processSpecial(metalRl, variant, key, imageSource)) {
+                TexturePlanner.instance.plan(full, imageSource, sourceLocations)
+
+                modelTextures.add(key)
+            }
         }
 
-        Map replacements = ['textures': textures.keySet().collectEntries {
+        Map replacements = ['textures': modelTextures.collectEntries {
             [it, new ResourceLocation(fullLocation.namespace, "$header/${fullLocation.path}${it == '' ? '' : "_$it"}").toString()]
         }]
         replacements += ModularMetalsCommon.sharedEnvMap
-        replacements += ['metal': metalRl, 'location': fullLocation] as Map
+        replacements += ['metal': metalRl, 'location': fullLocation, 'properties':metal.properties] as Map
 
         // get model map or make defaults if they're missing
-        Map<String, Map> models = variant.texturing.model.<Map<String, Map>> map {
-            processEither(it).collectEntries { key, holder ->
-                [key, holder.map]
-            }
+        Map<String, Map> models = variant.texturing.simplifiedModel.<Map<String, Map>> map {
+            it.collectEntries {key, holder -> [key, holder.map]}
         }.orElseGet({ ->
             defaultModel(fullLocation)
         })
@@ -151,13 +160,11 @@ class ItemClientVariantHandler implements ClientVariantHandler {
     static List<String> extractSourceTextures(String textureKey, Map<String, MapHolder> templateMap, Metal metal, ItemVariant variant) {
         List<String> sourceLocations = []
         sourceLocations.addAll(MapUtil.findFieldsFromMatching('path', metal.texturing.generator.map, { it.get('type') == 'dynamic_asset_generator:texture' }))
-        sourceLocations.addAll((Collection<String>) variant.texturing.generator.orElse(Either.<MapHolder, Map<String, MapHolder>> right([:])).<Collection<String>> map({ map ->
-            MapUtil.findFieldsFromMatching('path', map.map, { it.get('type') == 'dynamic_asset_generator:texture' })
-        }, {
+        sourceLocations.addAll(variant.texturing.simplifiedGenerator.<Collection<String>> map {
             it.values().collectMany { map ->
                 MapUtil.findFieldsFromMatching('path', map.map, { it.get('type') == 'dynamic_asset_generator:texture' })
             }
-        }))
+        }.orElse([]))
 
         // Add from variants
         List<String> usedKeys = [textureKey]

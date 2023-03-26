@@ -70,7 +70,7 @@ class ModularArmorTier implements ArmorMaterial {
         repairIngredientFinal = repairIngredient.orElse(Suppliers.memoize {->
             Ingredient.of(TagKey.create(Registries.ITEM, new ResourceLocation(Constants.MOD_ID,"ingots/${location.path}")))
         })
-        name = "${location.namespace}_${location.path}"
+        name = location.toString()
         return this
     }
 

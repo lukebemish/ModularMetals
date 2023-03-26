@@ -3,10 +3,10 @@ package dev.lukebemish.modularmetals.forge.platform
 import com.google.auto.service.AutoService
 import com.google.common.base.Suppliers
 import dev.lukebemish.modularmetals.data.MobEffectProvider
-import groovy.transform.CompileStatic
-import groovy.transform.Memoized
 import dev.lukebemish.modularmetals.forge.ModularMetalsForge
 import dev.lukebemish.modularmetals.services.IPlatformHelper
+import groovy.transform.CompileStatic
+import groovy.transform.Memoized
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist

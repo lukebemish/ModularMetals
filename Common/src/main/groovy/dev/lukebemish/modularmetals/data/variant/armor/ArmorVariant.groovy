@@ -5,6 +5,8 @@ import com.mojang.serialization.DataResult
 import com.mojang.serialization.Decoder
 import dev.lukebemish.modularmetals.Constants
 import dev.lukebemish.modularmetals.ModularMetalsCommon
+import dev.lukebemish.modularmetals.client.variant.ArmorClientVariantHandler
+import dev.lukebemish.modularmetals.client.variant.ClientVariantHandler
 import dev.lukebemish.modularmetals.data.Fillable
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.tier.ModularArmorTier
@@ -53,5 +55,10 @@ class ArmorVariant extends ItemVariant {
     @Override
     Codec getCodec() {
         return ARMOR_CODEC
+    }
+
+    @Override
+    ClientVariantHandler getClientHandler() {
+        return new ArmorClientVariantHandler()
     }
 }

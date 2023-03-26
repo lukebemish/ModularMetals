@@ -34,6 +34,7 @@ class ModularMetalsClient {
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "property_capture"), PropertyCaptureSource.CODEC)
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "property_check"), PropertyCheckSource.$CODEC)
         ITexSource.register(new ResourceLocation(Constants.MOD_ID, "with_template"), WithTemplateSource.$CODEC)
+        ITexSource.register(new ResourceLocation(Constants.MOD_ID, "cacheless"), CachelessSource.CODEC)
 
         ASSET_CACHE.planSource(TexturePlanner.instance)
         ASSET_CACHE.planSource(ModelPlanner.instance)

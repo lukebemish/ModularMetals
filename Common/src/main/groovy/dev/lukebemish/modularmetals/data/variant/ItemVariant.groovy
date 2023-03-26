@@ -22,8 +22,6 @@ import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Rarity
 
-import java.util.function.Function
-
 @CodecSerializable(property = 'ITEM_CODEC')
 @TupleConstructor(includeSuperProperties = true, callSuper = true, includeFields = true)
 @CompileStatic
@@ -86,13 +84,38 @@ class ItemVariant extends Variant {
     @TupleConstructor
     @CodecSerializable
     static class ItemVariantTexturing {
-        final Optional<Either<MapHolder,Map<String,MapHolder>>> generator
-        final Optional<Either<MapHolder,Map<String,MapHolder>>> model
+        final Optional<MapHolder> generator
+        final Optional<Map<String,MapHolder>> generators
+        final Optional<MapHolder> model
+        final Optional<Map<String,MapHolder>> models
         final TexSourceMap template
 
         Optional<Map<String, MapHolder>> getSimplifiedGenerator() {
-            return generator
-                .<Map<String, MapHolder>>map(either -> either.<Map<String,MapHolder>>map(holder -> ['':holder], Function.identity()))
+            if (!generator.isPresent() && !generators.isPresent()) {
+                return Optional.empty()
+            }
+            Map<String, MapHolder> out = [:]
+            if (generator.isPresent()) {
+                out[''] = generator.get()
+            }
+            if (generators.isPresent()) {
+                out.putAll(generators.get())
+            }
+            return Optional.of(out)
+        }
+
+        Optional<Map<String, MapHolder>> getSimplifiedModel() {
+            if (!model.isPresent() && !models.isPresent()) {
+                return Optional.empty()
+            }
+            Map<String, MapHolder> out = [:]
+            if (model.isPresent()) {
+                out[''] = model.get()
+            }
+            if (models.isPresent()) {
+                out.putAll(models.get())
+            }
+            return Optional.of(out)
         }
     }
 
