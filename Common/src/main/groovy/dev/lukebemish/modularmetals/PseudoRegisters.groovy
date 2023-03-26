@@ -8,13 +8,11 @@ import dev.lukebemish.modularmetals.data.filter.string.*
 import dev.lukebemish.modularmetals.data.recipe.Recipe
 import dev.lukebemish.modularmetals.data.recipe.RecipeRecipe
 import dev.lukebemish.modularmetals.data.recipe.WorldgenRecipe
-import dev.lukebemish.modularmetals.data.variant.*
+import dev.lukebemish.modularmetals.data.variant.ItemVariant
+import dev.lukebemish.modularmetals.data.variant.Variant
 import dev.lukebemish.modularmetals.data.variant.armor.ArmorVariant
-import dev.lukebemish.modularmetals.data.variant.tool.AxeVariant
-import dev.lukebemish.modularmetals.data.variant.tool.HoeVariant
-import dev.lukebemish.modularmetals.data.variant.tool.PickaxeVariant
-import dev.lukebemish.modularmetals.data.variant.tool.ShovelVariant
-import dev.lukebemish.modularmetals.data.variant.tool.SwordVariant
+import dev.lukebemish.modularmetals.data.variant.block.BlockVariant
+import dev.lukebemish.modularmetals.data.variant.tool.*
 import groovy.transform.Memoized
 import groovy.transform.PackageScope
 import net.minecraft.resources.ResourceLocation

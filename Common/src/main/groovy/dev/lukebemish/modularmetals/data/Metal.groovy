@@ -11,16 +11,22 @@ import dev.lukebemish.modularmetals.ModularMetalsCommon
 import net.minecraft.resources.ResourceLocation
 import org.jetbrains.annotations.Nullable
 
-@CodecSerializable(allowDefaultValues = true)
-@TupleConstructor
+@CodecSerializable
+@TupleConstructor(post = {
+    categories = new ArrayList<>(categories)
+    existingVariants = new HashMap<>(existingVariants)
+    banVariants = new ArrayList<>(banVariants)
+    banRecipes = new ArrayList<>(banRecipes)
+    properties = new HashMap<>(properties)
+})
 class Metal {
     final MetalTexturing texturing
     final Either<String,Map<String,String>> name
-    final List<ResourceLocation> categories
+    List<ResourceLocation> categories
     final StringFilter requiredMods = AllStringFilter.instance
-    final Optional<Map<ResourceLocation,ResourceLocation>> existingVariants
-    final Optional<List<ResourceLocation>> banVariants
-    final Optional<List<ResourceLocation>> banRecipes
+    Map<ResourceLocation,ResourceLocation> existingVariants = [:]
+    List<ResourceLocation> banVariants = []
+    List<ResourceLocation> banRecipes = []
     Map<ResourceLocation,ObjectHolder> properties = [:]
 
     @Nullable ObjectHolder getPropertyFromMap(ResourceLocation rl) {
@@ -49,5 +55,13 @@ class Metal {
             built.putAll(templateOverrides.get(location)?.value?:[:])
             return built
         }
+    }
+
+    void mergeProperties(MetalProperties props) {
+        categories.addAll(props.categories)
+        existingVariants.putAll(props.existingVariants)
+        banVariants.addAll(props.banVariants)
+        banRecipes.addAll(props.banRecipes)
+        properties.putAll(props.properties)
     }
 }

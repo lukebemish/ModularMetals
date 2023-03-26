@@ -1,6 +1,7 @@
-package dev.lukebemish.modularmetals.data.variant
+package dev.lukebemish.modularmetals.data.variant.block
 
 import com.mojang.serialization.Codec
+import dev.lukebemish.modularmetals.data.variant.ItemVariant
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
@@ -167,17 +168,24 @@ class BlockVariant extends ItemVariant {
 
     RegistryObject<? extends Block> registerBlock(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map props) {
         return ModularMetalsCommon.BLOCKS.register(location, {->
-            BlockBehaviour.Properties properties = blockProperties.flatMap {
-                it.apply(props).result()
-            }.map {
-                it.asProperties()
-            }.orElseGet {
-                new BlockProperties().asProperties()
-            }
-            Block block = new Block(properties)
+            Block block = createBlock(makeBlockProperties(props))
             BLOCKS.put(location, block)
             return block
         })
+    }
+
+    Block createBlock(BlockBehaviour.Properties props) {
+        return new Block(props)
+    }
+
+    BlockBehaviour.Properties makeBlockProperties(Map props) {
+        return blockProperties.flatMap {
+            it.apply(props).result()
+        }.map {
+            it.asProperties()
+        }.orElseGet {
+            new BlockProperties().asProperties()
+        }
     }
 
     String makeTranslationKey(String path) {

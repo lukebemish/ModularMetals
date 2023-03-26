@@ -4,7 +4,7 @@ import dev.lukebemish.modularmetals.Constants
 import dev.lukebemish.modularmetals.template.TemplateEngine
 import dev.lukebemish.modularmetals.client.planner.BlockstatePlanner
 import dev.lukebemish.modularmetals.data.Metal
-import dev.lukebemish.modularmetals.data.variant.BlockVariant
+import dev.lukebemish.modularmetals.data.variant.block.BlockVariant
 import dev.lukebemish.modularmetals.data.variant.ItemVariant
 import net.minecraft.resources.ResourceLocation
 

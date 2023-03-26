@@ -9,6 +9,7 @@ import dev.lukebemish.modularmetals.client.variant.ItemClientVariantHandler
 import dev.lukebemish.modularmetals.data.Fillable
 import dev.lukebemish.modularmetals.data.MapHolder
 import dev.lukebemish.modularmetals.data.Metal
+import dev.lukebemish.modularmetals.data.MobEffectProvider
 import dev.lukebemish.modularmetals.data.TexSourceMap
 import dev.lukebemish.modularmetals.services.Services
 import dev.lukebemish.modularmetals.util.MoreCodecs
@@ -56,9 +57,10 @@ class ItemVariant extends Variant {
         static class ItemFoodPropertiesBuilder {
             final int nutrition
             final int saturation
-            final boolean meat
-            final boolean fast
-            final boolean alwaysEat
+            final boolean meat = false
+            final boolean fast = false
+            final boolean alwaysEat = false
+            final List<MobEffectProvider> effects = []
 
             FoodProperties makeProperties() {
                 var builder = new FoodProperties.Builder()
@@ -67,7 +69,7 @@ class ItemVariant extends Variant {
                 if (meat) builder = builder.meat()
                 if (fast) builder = builder.fast()
                 if (alwaysEat) builder = builder.alwaysEat()
-                return builder.build()
+                return Services.PLATFORM.platformData(builder, effects)
             }
         }
     }

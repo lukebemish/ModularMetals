@@ -32,10 +32,11 @@ final class ModularMetalsCommon {
 
     static void init() {
         if (Services.PLATFORM.isDevelopmentEnvironment()) {
-            println MoreCodecs.MATERIAL_COLOR_MAP
-            println MoreCodecs.MATERIAL_MAP
-            println MoreCodecs.PUSH_REACTION_MAP
-            println MoreCodecs.SOUND_TYPE_MAP
+            Constants.LOGGER.info 'Testing generated maps for vanilla codecs...'
+            Constants.LOGGER.info MoreCodecs.MATERIAL_COLOR_MAP.keySet().toString()
+            Constants.LOGGER.info MoreCodecs.MATERIAL_MAP.keySet().toString()
+            Constants.LOGGER.info MoreCodecs.PUSH_REACTION_MAP.keySet().toString()
+            Constants.LOGGER.info MoreCodecs.SOUND_TYPE_MAP.keySet().toString()
         }
 
         register()
@@ -52,7 +53,7 @@ final class ModularMetalsCommon {
 
     static void register() {
         config.metals.each { metalRl, metal ->
-            var existingVariants = metal.existingVariants.orElse(Map.of())
+            var existingVariants = metal.existingVariants
             Set<ResourceLocation> variantRls = getVariants(metalRl)
             Map<ResourceLocation, ResourceLocation> variantLocations = new HashMap<>()
             for (ResourceLocation variantRl : variantRls) {
@@ -85,8 +86,8 @@ final class ModularMetalsCommon {
             variants.addAll(category.fullVariants)
         }
 
-        variants.removeAll(m.banVariants.orElse(List.of()))
-        variants.removeAll(m.existingVariants.orElse(Map.of()).keySet())
+        variants.removeAll(m.banVariants)
+        variants.removeAll(m.existingVariants.keySet())
 
         return variants
     }
@@ -99,7 +100,7 @@ final class ModularMetalsCommon {
             recipes.addAll(category.fullRecipes)
         }
 
-        recipes.removeAll(m.banRecipes.orElse(List.of()))
+        recipes.removeAll(m.banRecipes)
 
         return recipes
     }

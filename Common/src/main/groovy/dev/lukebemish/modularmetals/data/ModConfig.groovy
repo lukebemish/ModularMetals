@@ -104,18 +104,18 @@ class ModConfig {
             ResourceLocation jsonRl = new ResourceLocation(rl.namespace, rl.path + '.json')
             ResourceLocation json5Rl = new ResourceLocation(rl.namespace, rl.path + '.json5')
             try (Stream<? extends InputStream> resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, [json5Rl, jsonRl])) {
-                Map props = [:]
+                MetalProperties props = new MetalProperties()
                 resources.each { InputStream stream ->
                     try {
                         JsonObject json = Constants.JANKSON.load(stream)
-                        Map read = MapHolder.CODEC.parse(JanksonOps.COMMENTED, json).getOrThrow(false, {}).map
-                        props.putAll(read)
+                        MetalProperties read = ((Decoder<MetalProperties>) MetalProperties.$CODEC).parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
+                        props.mergeProperties(read)
                     } catch (RuntimeException | SyntaxError | IOException e) {
                         Constants.LOGGER.error("Issues loading resource: {}", rl, e)
                     }
                 }
                 if (metals.containsKey(newRl)) {
-                    metals.get(newRl).properties += props
+                    metals.get(newRl).mergeProperties(props)
                 } else {
                     Constants.LOGGER.error("Issues loading resource: {} - no metal found for properties", rl)
                 }

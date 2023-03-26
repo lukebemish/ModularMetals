@@ -3,16 +3,22 @@ package dev.lukebemish.modularmetals.quilt.platform
 import com.google.auto.service.AutoService
 import com.mojang.datafixers.util.Pair
 import dev.lukebemish.modularmetals.data.MobEffectProvider
+import dev.lukebemish.modularmetals.data.recipe.WorldgenRecipe
+import dev.lukebemish.modularmetals.quilt.ModularMetalsQuilt
 import dev.lukebemish.modularmetals.quilt.Queues
+import dev.lukebemish.modularmetals.quilt.QuiltBiomes
+import dev.lukebemish.modularmetals.services.IPlatformHelper
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
-import dev.lukebemish.modularmetals.quilt.ModularMetalsQuilt
-import dev.lukebemish.modularmetals.services.IPlatformHelper
 import net.fabricmc.api.EnvType
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.ItemStack
 import org.quiltmc.loader.api.QuiltLoader
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader
+import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications
 
 import java.nio.file.Path
 import java.util.function.Supplier
@@ -57,5 +63,14 @@ class PlatformHelperImpl implements IPlatformHelper {
         var built = builder.build()
         Queues.FOOD_QUEUE.add(Pair.of(built, effects))
         return built
+    }
+
+    @Override
+    void addFeatureToBiomes(ResourceLocation feature, WorldgenRecipe recipe) {
+        BiomeModifications.addFeature(
+            {context -> recipe.biomeFilter.matches(context, QuiltBiomes.BIOME_FINDER)},
+            recipe.decoration,
+            ResourceKey.create(Registries.PLACED_FEATURE, feature)
+        )
     }
 }

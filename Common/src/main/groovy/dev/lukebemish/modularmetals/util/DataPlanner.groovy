@@ -24,6 +24,10 @@ class DataPlanner implements IPathAwareInputStreamSource {
         sources[new ResourceLocation(location.namespace, "worldgen/configured_feature/${location.path}.json")] = configured
     }
 
+    void misc(ResourceLocation location, JsonElement json) {
+        sources[new ResourceLocation(location.namespace, "${location.path}.json")] = json
+    }
+
     @Override
     Set<ResourceLocation> getLocations() {
         return sources.keySet()

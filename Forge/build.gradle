@@ -89,6 +89,13 @@ dependencies {
     compileOnly project(path: ":Common", configuration: "namedElements")
 }
 
+mixin {
+    add sourceSets.main, 'modularmetals.refmap.json'
+    config 'mixin.modularmetals.forge.json'
+    //add project(":Common").sourceSets.main, 'excavated_variants.refmap.json'
+    //config 'mixin.modularmetals.json'
+}
+
 tasks.withType(GroovyCompile) {
     source project(":Common").sourceSets.main.allGroovy
 }
