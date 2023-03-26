@@ -1,0 +1,23 @@
+{
+  type: "modularmetals:recipe",
+  template: {
+    type: "minecraft:crafting_shaped",
+    category: "equipment",
+    key: {
+      "#": {
+        tag: "${platform == 'forge' ? ('forge:ingots/'+metal.path) : ('c:'+metal.path+'_ingots')}"
+      }
+    },
+    pattern: [
+      "###",
+      "# #",
+      "# #"
+    ],
+    result: {
+      item: "${variants['modularmetals:leggings']}"
+    }
+  },
+  required_variants: [
+    "modularmetals:leggings"
+  ]
+}

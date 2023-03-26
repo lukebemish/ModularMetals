@@ -79,8 +79,8 @@ class ModConfig {
                     } catch (RuntimeException | SyntaxError | IOException e) {
                         Constants.LOGGER.error("Issues loading resource: {}", rl, e)
                     }
-                    categories.put(newRl, category)
                 }
+                categories.put(newRl, category)
             }
         }
     }

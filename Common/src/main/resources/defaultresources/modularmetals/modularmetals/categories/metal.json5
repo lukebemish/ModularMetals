@@ -6,8 +6,6 @@
     "modularmetals:shovel",
     "modularmetals:sword",
     "modularmetals:ingot",
-    "modularmetals:raw",
-    "modularmetals:raw_block",
     "modularmetals:block",
     "modularmetals:nugget",
     "modularmetals:helmet",
@@ -25,6 +23,10 @@
     "modularmetals:shovel_from_ingots",
     "modularmetals:sword_from_ingots",
     "modularmetals:ingots_from_block",
-    "modularmetals:block_from_ingots"
+    "modularmetals:block_from_ingots",
+    "modularmetals:helmet_from_ingots",
+    "modularmetals:chestplate_from_ingots",
+    "modularmetals:leggings_from_ingots",
+    "modularmetals:boots_from_ingots"
   ]
 }

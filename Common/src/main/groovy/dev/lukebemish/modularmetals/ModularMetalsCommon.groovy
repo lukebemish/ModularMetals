@@ -82,7 +82,7 @@ final class ModularMetalsCommon {
         Metal m = config.metals.get(metal)
         m.categories.each {
             Category category = config.categories.getOrDefault(it, Category.EMPTY)
-            variants.addAll(category.variants)
+            variants.addAll(category.fullVariants)
         }
 
         variants.removeAll(m.banVariants.orElse(List.of()))
@@ -96,7 +96,7 @@ final class ModularMetalsCommon {
         Metal m = config.metals.get(metal)
         m.categories.each {
             Category category = config.categories.getOrDefault(it, Category.EMPTY)
-            recipes.addAll(category.recipes)
+            recipes.addAll(category.fullRecipes)
         }
 
         recipes.removeAll(m.banRecipes.orElse(List.of()))

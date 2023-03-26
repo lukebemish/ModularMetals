@@ -1,0 +1,9 @@
+{
+  inherits: [
+    "modularmetals:metal"
+  ],
+  variants: [
+    "modularmetals:raw",
+    "modularmetals:raw_block"
+  ]
+}
