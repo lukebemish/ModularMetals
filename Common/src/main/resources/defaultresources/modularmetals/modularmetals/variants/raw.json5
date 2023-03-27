@@ -28,7 +28,14 @@
       sources: {
         base: {
           source: {
-            type: "modularmetals:resolved"
+            type: "modularmetals:property_or_default",
+            backup: {
+              type: "modularmetals:resolved"
+            },
+            property: "modularmetals:ore_generator",
+            source: {
+              type: "modularmetals:property_capture"
+            }
           },
           scale: 1
         },

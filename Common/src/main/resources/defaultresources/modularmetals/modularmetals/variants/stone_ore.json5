@@ -2,13 +2,125 @@
   type: "modularmetals:block",
   inherit: "modularmetals:metal_item",
   texturing: {
-    //TODO: this stuff
     template: {
       "": {
+        type: "modularmetals:property_check",
+        absent: {
+          type: "dynamic_asset_generator:palette_spread",
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "modularmetals:block/ore_overlay"
+          }
+        },
+        property: "modularmetals:oxide_generator",
+        present: {
+          type: "dynamic_asset_generator:palette_spread",
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "modularmetals:block/base_ore_overlay"
+          }
+        }
+      },
+      "oxide_overlay": {
         type: "dynamic_asset_generator:palette_spread",
         source: {
           type: "dynamic_asset_generator:texture",
-          path: "minecraft:block/gold_block"
+          path: "modularmetals:block/oxide_ore_overlay"
+        },
+        lower_bound: 0.5
+      },
+    },
+    generator: {
+      type: "dynamic_asset_generator:animation_splitter",
+      sources: {
+        "modularmetals:stone": {
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "minecraft:block/stone"
+          },
+          scale: 1
+        },
+        "modularmetals:ore_palette": {
+          source: {
+            type: "modularmetals:property_check",
+            absent: {
+              type: "dynamic_asset_generator:palette_spread",
+              source: {
+                type: "dynamic_asset_generator:texture",
+                path: "modularmetals:block/ore_palette"
+              }
+            },
+            property: "modularmetals:oxide_generator",
+            present: {
+              type: "dynamic_asset_generator:palette_spread",
+              source: {
+                type: "dynamic_asset_generator:texture",
+                path: "modularmetals:block/oxide_ore_palette"
+              }
+            }
+          },
+          scale: 1
+        },
+        "modularmetals:ore_overlay": {
+          source: {
+            type: "modularmetals:property_or_default",
+            backup: {
+              type: "modularmetals:resolved"
+            },
+            property: "modularmetals:ore_generator",
+            source: {
+              type: "modularmetals:property_capture"
+            }
+          },
+          scale: 1
+        },
+        "modularmetals:ore_overlay_overlay": {
+          source: {
+            type: "modularmetals:with_template",
+            source: {
+              type: "modularmetals:property_or_default",
+              backup: {
+                type: "dynamic_asset_generator:texture",
+                path: "dynamic_asset_generator:empty"
+              },
+              property: "modularmetals:oxide_generator",
+              source: {
+                type: "modularmetals:property_capture"
+              }
+            },
+            template: {
+              type: "modularmetals:template",
+              template: "oxide_overlay"
+            },
+          },
+          scale: 1
+        }
+      },
+      generator: {
+        type: "dynamic_asset_generator:combined_paletted_image",
+        extend_palette_size: 6,
+        include_background: true,
+        stretch_paletted: false,
+        overlay: {
+          type: "dynamic_asset_generator:overlay",
+          inputs: [
+            {
+              type: "dynamic_asset_generator:frame_capture",
+              capture: "modularmetals:ore_overlay"
+            },
+            {
+              type: "dynamic_asset_generator:frame_capture",
+              capture: "modularmetals:ore_overlay_overlay"
+            }
+          ]
+        },
+        background: {
+          type: "dynamic_asset_generator:frame_capture",
+          capture: "modularmetals:stone"
+        },
+        paletted: {
+          type: "dynamic_asset_generator:frame_capture",
+          capture: "modularmetals:ore_palette"
         }
       }
     }

@@ -41,6 +41,7 @@ class BlockVariant extends ItemVariant {
 
     Optional<Fillable<BlockProperties>> blockProperties
 
+    @WithCodec(value = { IntProvider.NON_NEGATIVE_CODEC }, target = [0,0])
     Optional<Fillable<IntProvider>> experienceOnDrop
 
     @TupleConstructor
@@ -129,7 +130,7 @@ class BlockVariant extends ItemVariant {
     }
 
     @TupleConstructor(includeSuperProperties = true, callSuper = true)
-    @CodecSerializable
+    @CodecSerializable(property = 'BLOCK_CODEC')
     static class BlockVariantTexturing extends ItemVariant.ItemVariantTexturing {
         final Optional<MapHolder> blockstate
     }

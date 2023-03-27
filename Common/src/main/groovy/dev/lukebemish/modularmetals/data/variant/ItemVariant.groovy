@@ -84,7 +84,7 @@ class ItemVariant extends Variant {
     }
 
     @TupleConstructor
-    @CodecSerializable
+    @CodecSerializable(property = 'ITEM_CODEC')
     static class ItemVariantTexturing {
         final Optional<MapHolder> generator
         final Optional<Map<String,MapHolder>> generators

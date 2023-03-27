@@ -32,11 +32,13 @@ final class ModularMetalsCommon {
 
     static void init() {
         if (Services.PLATFORM.isDevelopmentEnvironment()) {
-            Constants.LOGGER.info 'Testing generated maps for vanilla codecs...'
-            Constants.LOGGER.info MoreCodecs.MATERIAL_COLOR_MAP.keySet().toString()
-            Constants.LOGGER.info MoreCodecs.MATERIAL_MAP.keySet().toString()
-            Constants.LOGGER.info MoreCodecs.PUSH_REACTION_MAP.keySet().toString()
-            Constants.LOGGER.info MoreCodecs.SOUND_TYPE_MAP.keySet().toString()
+            Constants.LOGGER.info '[DEV ONLY] Testing generated maps for vanilla codecs...'
+            Constants.LOGGER.info "MatieralColor: ${MoreCodecs.MATERIAL_COLOR_MAP.keySet()}"
+            Constants.LOGGER.info "Material: ${MoreCodecs.MATERIAL_MAP.keySet()}"
+            Constants.LOGGER.info "PushReaction: ${MoreCodecs.PUSH_REACTION_MAP.keySet()}"
+            Constants.LOGGER.info "SoundType: ${MoreCodecs.SOUND_TYPE_MAP.keySet()}"
+            Constants.LOGGER.info "Rarity: ${MoreCodecs.RARITY_MAP.keySet()}"
+            Constants.LOGGER.info "ArmorItem.Type: ${MoreCodecs.ARMOR_TYPE_MAP.keySet()}"
         }
 
         register()

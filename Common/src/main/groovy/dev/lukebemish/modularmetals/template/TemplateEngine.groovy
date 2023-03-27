@@ -2,10 +2,10 @@ package dev.lukebemish.modularmetals.template
 
 import com.google.common.base.Suppliers
 import dev.lukebemish.modularmetals.ModularMetalsCommon
-import groovy.text.SimpleTemplateEngine
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.tier.ModularTier
 import dev.lukebemish.modularmetals.data.variant.tool.ToolVariant
+import groovy.text.SimpleTemplateEngine
 import groovy.transform.CompileStatic
 import net.minecraft.resources.ResourceLocation
 import org.apache.groovy.io.StringBuilderWriter
@@ -18,8 +18,8 @@ import java.util.function.Supplier
 class TemplateEngine {
     public static final CompilerConfiguration COMPILER_CONFIGURATION = new CompilerConfiguration().tap {
         it.addCompilationCustomizers(new ImportCustomizer()
-            .addStaticStars('dev.lukebemish.modularmetals.template.TemplateEngine$Utils')
-            .addImports('java.util.Optional'))
+            .addStaticStars(Utils.name)
+            .addImports(Optional.name))
     }
     public static final SimpleTemplateEngine ENGINE = new SimpleTemplateEngine(new GroovyShell(TemplateEngine.classLoader, COMPILER_CONFIGURATION))
     public static final String CODE_KEY = '__code__'
@@ -35,24 +35,14 @@ class TemplateEngine {
         /**
          * Returns the tier tag for the metal at a given location.
          */
-        static ResourceLocation tierTag(ResourceLocation metalLocation) {
+        static ResourceLocation tierTag(String location) {
+            ResourceLocation metalLocation = new ResourceLocation(location)
             Metal metal = ModularMetalsCommon.config.metals.get(metalLocation)
             if (metal == null) {
                 throw new IllegalArgumentException("No metal found for location ${metalLocation}")
             }
             ModularTier tier = ToolVariant.getTier(metal, metalLocation)
             return tier.getTag().location()
-        }
-
-        static ResourceLocation tierTag(String metalLocation) {
-            return tierTag(resourceLocation(metalLocation))
-        }
-
-        /**
-         * Creates a resource location from a string
-         */
-        static ResourceLocation resourceLocation(String location) {
-            return new ResourceLocation(location)
         }
     }
 
