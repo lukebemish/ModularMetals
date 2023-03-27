@@ -1,0 +1,16 @@
+{
+  type: "modularmetals:recipe",
+  template: {
+    type: "minecraft:smelting",
+    category: "misc",
+    cookingtime: 200,
+    experience: 0.1,
+    ingredient: {
+      tag: "${'modularmetals:recyclable/'+metal.path}"
+    },
+    result: "${variants['modularmetals:nugget']}"
+  },
+  required_variants: [
+    "modularmetals:nugget",
+  ]
+}

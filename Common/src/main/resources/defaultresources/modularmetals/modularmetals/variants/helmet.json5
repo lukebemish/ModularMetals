@@ -58,6 +58,9 @@
       }
     }
   },
+  tags: [
+    "modularmetals:recyclable/%s"
+  ],
   name: "Helmet",
   armor_type: "helmet"
 }

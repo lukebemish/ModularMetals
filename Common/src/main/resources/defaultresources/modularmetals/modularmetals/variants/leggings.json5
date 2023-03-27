@@ -50,6 +50,9 @@
       }
     }
   },
+  tags: [
+    "modularmetals:recyclable/%s"
+  ],
   name: "Leggings",
   armor_type: "leggings"
 }

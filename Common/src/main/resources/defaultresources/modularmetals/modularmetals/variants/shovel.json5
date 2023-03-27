@@ -44,7 +44,8 @@
   name: "Shovel",
   tags: [
     "fabric:shovels",
-    "minecraft:shovels"
+    "minecraft:shovels",
+    "modularmetals:recyclable/%s"
   ],
   attack_modifier: 1.5,
   speed_modifier: -3.0,

@@ -1,5 +1,3 @@
-package src
-
 ModsDotGroovy.make {
     modLoader = 'lowcode'
     loaderVersion = '[1,)'

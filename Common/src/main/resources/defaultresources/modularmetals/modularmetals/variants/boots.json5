@@ -58,6 +58,9 @@
       }
     }
   },
+  tags: [
+    "modularmetals:recyclable/%s"
+  ],
   name: "Boots",
   armor_type: "boots"
 }

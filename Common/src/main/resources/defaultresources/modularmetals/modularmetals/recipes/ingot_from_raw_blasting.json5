@@ -1,0 +1,17 @@
+{
+  type: "modularmetals:recipe",
+  template: {
+    type: "minecraft:blasting",
+    category: "misc",
+    cookingtime: 100,
+    experience: 0.7,
+    group: "${metal.path}_ingot",
+    ingredient: {
+      tag: "${platform == 'forge' ? ('forge:raw_materials/'+metal.path) : ('c:raw_'+metal.path+'_ores')}"
+    },
+    result: "${variants['modularmetals:ingot']}"
+  },
+  required_variants: [
+    "modularmetals:ingot",
+  ]
+}

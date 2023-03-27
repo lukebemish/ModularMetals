@@ -5,5 +5,11 @@
   variants: [
     "modularmetals:raw",
     "modularmetals:raw_block"
+  ],
+  recipes: [
+    'modularmetals:ingot_from_ore_blasting',
+    'modularmetals:ingot_from_ore_smelting',
+    'modularmetals:ingot_from_raw_blasting',
+    'modularmetals:ingot_from_raw_smelting',
   ]
 }

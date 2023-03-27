@@ -44,7 +44,8 @@
   name: "Pickaxe",
   tags: [
     "fabric:pickaxes",
-    "minecraft:pickaxes"
+    "minecraft:pickaxes",
+    "modularmetals:recyclable/%s"
   ],
   attack_modifier: 1,
   speed_modifier: -2.8,

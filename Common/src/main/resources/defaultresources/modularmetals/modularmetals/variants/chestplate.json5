@@ -58,6 +58,9 @@
       }
     }
   },
+  tags: [
+    "modularmetals:recyclable/%s"
+  ],
   name: "Chestplate",
   armor_type: "chestplate"
 }

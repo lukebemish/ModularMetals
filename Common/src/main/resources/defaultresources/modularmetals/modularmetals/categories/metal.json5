@@ -27,6 +27,9 @@
     "modularmetals:helmet_from_ingots",
     "modularmetals:chestplate_from_ingots",
     "modularmetals:leggings_from_ingots",
-    "modularmetals:boots_from_ingots"
+    "modularmetals:boots_from_ingots",
+    // smelting/blasting
+    "modularmetals:nugget_from_smelting",
+    "modularmetals:nugget_from_blasting",
   ]
 }

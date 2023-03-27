@@ -44,7 +44,8 @@
   name: "Axe",
   tags: [
     "fabric:axes",
-    "minecraft:axes"
+    "minecraft:axes",
+    "modularmetals:recyclable/%s"
   ],
   attack_modifier: 6.0,
   speed_modifier: -3.2,

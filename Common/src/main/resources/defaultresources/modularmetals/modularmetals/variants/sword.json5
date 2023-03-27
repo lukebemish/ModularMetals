@@ -44,7 +44,8 @@
   name: "Sword",
   tags: [
     "fabric:swords",
-    "minecraft:swords"
+    "minecraft:swords",
+    "modularmetals:recyclable/%s"
   ],
   attack_modifier: 3,
   speed_modifier: -2.4,
