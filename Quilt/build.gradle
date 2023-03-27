@@ -24,6 +24,17 @@ loom {
     accessWidenerPath = file('src/main/resources/modularmetals.accesswidener')
 }
 
+configurations {
+    instrumentedJars {
+        canBeConsumed = true
+        canBeResolved = false
+    }
+}
+
+artifacts {
+    instrumentedJars(jar)
+}
+
 dependencies {
     minecraft libs.minecraft
     mappings loom.layered() {
@@ -35,26 +46,14 @@ dependencies {
 
     modImplementation libs.qfapi
 
-    modImplementation(libs.cgl.quilt) {
-        exclude group: 'org.quiltmc'
-    }
+    modImplementation(libs.cgl.quilt)
 
-    runtimeOnly(libs.groovyduvet.groovy) {
-        exclude group: 'org.quiltmc'
-    }
-    modImplementation(libs.groovyduvet.all) {
-        exclude group: 'org.quiltmc'
-    }
+    runtimeOnly(libs.groovyduvet.groovy)
+    modImplementation(libs.groovyduvet.all)
 
-    modImplementation(libs.dynassetgen.quilt) {
-        exclude group: 'org.quiltmc'
-    }
-    modImplementation(libs.defaultresources.quilt) {
-        exclude group: 'org.quiltmc'
-    }
-    include(libs.defaultresources.quilt) {
-        exclude group: 'org.quiltmc'
-    }
+    modImplementation(libs.dynassetgen.quilt)
+    modImplementation(libs.defaultresources.quilt)
+    include(libs.defaultresources.quilt)
 
     modCompileOnly(libs.excavatedvariants.quilt) {
         transitive = false

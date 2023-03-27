@@ -39,3 +39,7 @@ rootProject.name = 'ModularMetals'
 include 'Common'
 include 'Quilt'
 include 'Forge'
+
+['Test'].each {
+    include "Addons:Quilt-$it"
+}

@@ -1,12 +1,9 @@
 plugins {
-    id 'io.github.groovymc.modsdotgroovy' version '1.1.2'
+    alias libs.plugins.mdg
     alias libs.plugins.quilt.loom apply false
-    alias libs.plugins.logfilter
 }
 
-logfilter {
-    removeLine(/.*unknown invokedynamic bsm: org\/codehaus\/groovy\/vmplugin\/v[0-9]\/IndyInterface\/bootstrap.*/)
-}
+var normal = ['Quilt', 'Common', 'Forge']
 
 modsDotGroovy {
     dslVersion = '1.3.0'
@@ -14,11 +11,7 @@ modsDotGroovy {
 }
 
 subprojects {
-    apply plugin: 'groovy'
-    apply plugin: 'maven-publish'
-
-    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-    java.withSourcesJar()
+    apply plugin: 'java'
 
     repositories {
         mavenCentral()
@@ -36,6 +29,17 @@ subprojects {
         // For Excavated Variants
         mavenLocal()
     }
+}
+
+subprojects {
+    if (!normal.contains(project.name))
+        return
+
+    apply plugin: 'groovy'
+    apply plugin: 'maven-publish'
+
+    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+    java.withSourcesJar()
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = 'UTF-8'
@@ -78,5 +82,69 @@ subprojects {
         annotationProcessor libs.autoservice
         compileOnly libs.autoextension
         compileOnly libs.autoservice
+    }
+}
+
+subprojects {
+    if (normal.contains(project.name))
+        return
+    if (!project.name.startsWith('Quilt'))
+        return
+
+    var rootName = project.name.substring(6)
+
+    apply plugin: libs.plugins.quilt.loom.get().pluginId
+    apply plugin: libs.plugins.mdg.get().pluginId
+
+    if (project.file("../$rootName/properties.gradle").exists())
+        apply from: "../$rootName/properties.gradle"
+
+    sourceSets {
+        main {
+            resources {
+                srcDirs = ["../$rootName/src"]
+            }
+        }
+    }
+
+    loom {
+        runs {
+            client {
+                client()
+                setConfigName("(Addons) $rootName Quilt Client")
+                ideConfigGenerated(true)
+                runDir("run")
+            }
+            server {
+                server()
+                setConfigName("(Addons) $rootName Quilt Server")
+                ideConfigGenerated(true)
+                runDir("run")
+            }
+        }
+    }
+
+    modsDotGroovy {
+        dslVersion = '1.3.0'
+        platforms 'quilt'
+        arguments['modularMetalsVersion'] = rootProject.version
+    }
+
+    dependencies {
+        minecraft libs.minecraft
+        mappings loom.layered() {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-${libs.versions.parchment.minecraft.get()}:${libs.versions.parchment.mappings.get()}@zip")
+        }
+
+        modImplementation libs.quilt.loader
+        modImplementation libs.qfapi
+        modImplementation libs.cgl.quilt
+        runtimeOnly libs.groovyduvet.groovy
+        modImplementation libs.groovyduvet.all
+        modImplementation libs.dynassetgen.quilt
+        modImplementation libs.defaultresources.quilt
+
+        implementation project(path: ":Quilt", configuration: 'instrumentedJars')
     }
 }
