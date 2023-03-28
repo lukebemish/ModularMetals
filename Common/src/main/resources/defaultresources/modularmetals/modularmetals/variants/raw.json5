@@ -9,7 +9,7 @@
           type: "dynamic_asset_generator:palette_spread",
           source: {
             type: "dynamic_asset_generator:texture",
-            path: "minecraft:item/raw_iron"
+            path: "minecraft:item/raw_gold"
           }
         },
         property: "modularmetals:oxide_generator",

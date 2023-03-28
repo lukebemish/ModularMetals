@@ -8,7 +8,11 @@
         source: {
           type: "dynamic_asset_generator:texture",
           path: "minecraft:item/golden_leggings"
-        }
+        },
+        range: [
+          [0.0, 0.2],
+          [0.5, 1.0]
+        ]
       },
       armor2: {
         type: "dynamic_asset_generator:crop",
@@ -17,7 +21,8 @@
           source: {
             type: "dynamic_asset_generator:texture",
             path: "minecraft:models/armor/gold_layer_2"
-          }
+          },
+          range: [0.5, 1],
         },
         total_size: 64,
         start_x: 0,

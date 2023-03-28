@@ -12,7 +12,7 @@
       }
     }
   },
-  name: "Block",
+  name: "Block of %s",
   tags: [
     "forge:storage_blocks/%s",
     "forge:storage_blocks",

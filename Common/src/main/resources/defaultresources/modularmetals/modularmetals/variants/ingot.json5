@@ -8,7 +8,8 @@
         source: {
           type: "dynamic_asset_generator:texture",
           path: "minecraft:item/gold_ingot"
-        }
+        },
+        range: [0.05, 1]
       }
     }
   },

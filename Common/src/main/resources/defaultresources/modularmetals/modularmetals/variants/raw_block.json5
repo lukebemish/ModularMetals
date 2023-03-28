@@ -6,13 +6,23 @@
       "": {
         type: "modularmetals:property_check",
         absent: {
-          type: "dynamic_asset_generator:palette_spread",
-          source: {
-            type: "dynamic_asset_generator:texture",
-            path: "minecraft:block/raw_iron_block"
+          type: "modularmetals:property_check",
+          property: "modularmetals:ore_generator",
+          absent: {
+            type: "dynamic_asset_generator:palette_spread",
+            source: {
+              type: "dynamic_asset_generator:texture",
+              path: "minecraft:block/raw_gold_block"
+            },
+            range: [0.15, 0.85],
           },
-          lower_bound: 0.15,
-          upper_bound: 0.85
+          present: {
+            type: "dynamic_asset_generator:palette_spread",
+            source: {
+              type: "dynamic_asset_generator:texture",
+              path: "minecraft:block/raw_gold_block"
+            }
+          }
         },
         property: "modularmetals:oxide_generator",
         present: {
@@ -78,7 +88,7 @@
       }
     }
   },
-  name: "Raw %s Block",
+  name: "Block of Raw %s",
   tags: [
     "forge:storage_blocks/raw_%s",
     "forge:storage_blocks",

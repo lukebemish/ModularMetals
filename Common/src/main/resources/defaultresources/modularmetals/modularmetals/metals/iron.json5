@@ -1,0 +1,64 @@
+{
+  texturing: {
+    generator: {
+      type: "modularmetals:easy_recolor",
+      color: [
+        0xff181818,
+        0xff353535,
+        0xff5e5e5e,
+        0xff6b6b6b,
+        0xff727272,
+        0xff828282,
+        0xffa8a8a8,
+        0xffd8d8d8,
+        0xffffffff,
+      ],
+    },
+    template_sets: [
+      "modularmetals:iron"
+    ]
+  },
+  properties: {
+    "modularmetals:ore_generator": {
+      type: "modularmetals:easy_recolor",
+      color: [
+        0xff3b3429,
+        0xff574d39,
+        0xff887455,
+        0xffaf8e77,
+        0xffd8af93,
+        0xffe9c8b1,
+        0xfffedec8,
+        0xfffef4ed,
+      ],
+    }
+  },
+  categories: [
+    "modularmetals:stone_ore_metal"
+  ],
+  name: "Iron",
+  ban_variants: {
+    "type": "modularmetals:all"
+  },
+  ban_recipes: {
+    "type": "modularmetals:all"
+  },
+  existing_variants: {
+    "modularmetals:axe": "minecraft:iron_axe",
+    "modularmetals:block": "minecraft:iron_block",
+    "modularmetals:boot": "minecraft:iron_boots",
+    "modularmetals:chestplate": "minecraft:iron_chestplate",
+    "modularmetals:helmet": "minecraft:iron_helmet",
+    "modularmetals:horse_armor": "minecraft:iron_horse_armor",
+    "modularmetals:hoe": "minecraft:iron_hoe",
+    "modularmetals:ingot": "minecraft:iron_ingot",
+    "modularmetals:leggings": "minecraft:iron_leggings",
+    "modularmetals:nugget": "minecraft:iron_nugget",
+    "modularmetals:pickaxe": "minecraft:iron_pickaxe",
+    "modularmetals:raw": "minecraft:raw_iron",
+    "modularmetals:raw_block": "minecraft:raw_iron_block",
+    "modularmetals:shovel": "minecraft:iron_shovel",
+    "modularmetals:stone_ore": "minecraft:iron_ore",
+    "modularmetals:sword": "minecraft:iron_sword"
+  }
+}

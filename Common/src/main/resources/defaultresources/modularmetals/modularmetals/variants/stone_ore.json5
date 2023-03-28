@@ -27,7 +27,7 @@
           type: "dynamic_asset_generator:texture",
           path: "modularmetals:block/oxide_ore_overlay"
         },
-        lower_bound: 0.5
+        range: [0.5, 1]
       },
     },
     generator: {

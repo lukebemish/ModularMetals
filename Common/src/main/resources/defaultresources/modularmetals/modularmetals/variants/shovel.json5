@@ -2,7 +2,19 @@
   type: "modularmetals:shovel",
   inherit: "modularmetals:metal_item",
   texturing: {
-    template: "modularmetals:item/shovel_base",
+    template: {
+      "": {
+        type: "dynamic_asset_generator:palette_spread",
+        source: {
+          type: "dynamic_asset_generator:texture",
+          path: "modularmetals:item/shovel_base"
+        },
+        range: [
+          [0.0, 0.2],
+          [0.4, 1.0]
+        ]
+      }
+    },
     generator: {
       type: "dynamic_asset_generator:animation_splitter",
       sources: {

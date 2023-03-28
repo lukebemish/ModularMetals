@@ -10,6 +10,8 @@ import com.mojang.serialization.DataResult
 import com.mojang.serialization.Decoder
 import dev.lukebemish.defaultresources.api.ResourceProvider
 import dev.lukebemish.modularmetals.Constants
+import dev.lukebemish.modularmetals.data.filter.resource.ResourceFilter
+import dev.lukebemish.modularmetals.data.filter.resource.ResourceFilterFinder
 import dev.lukebemish.modularmetals.data.filter.string.StringFilter
 import dev.lukebemish.modularmetals.data.recipe.Recipe
 import dev.lukebemish.modularmetals.data.variant.Variant
@@ -29,6 +31,30 @@ class ModConfig {
     HashBiMap<ResourceLocation, Category> categories = HashBiMap.create()
     HashBiMap<ResourceLocation, Map<ResourceLocation, TexSourceMap>> templateSets = HashBiMap.create()
 
+    final ResourceFilterFinder<ResourceLocation> recipeFilterFinder = new ResourceFilterFinder<ResourceLocation>() {
+        @Override
+        boolean isTag(ResourceLocation thing, ResourceLocation tag) {
+            return categories.get(tag)?.fullRecipes?.contains(thing)?:false
+        }
+
+        @Override
+        boolean isLocation(ResourceLocation thing, ResourceLocation location) {
+            return thing == location
+        }
+    }
+
+    ResourceFilterFinder<ResourceLocation> variantFilterFinder = new ResourceFilterFinder<ResourceLocation>() {
+        @Override
+        boolean isTag(ResourceLocation thing, ResourceLocation tag) {
+            return categories.get(tag)?.fullVariants?.contains(thing)?:false
+        }
+
+        @Override
+        boolean isLocation(ResourceLocation thing, ResourceLocation location) {
+            return thing == location
+        }
+    }
+
     static final Codec<Map<ResourceLocation, TexSourceMap>> TEMPLATE_SET_CODEC = Codec.unboundedMap(ResourceLocation.CODEC, TexSourceMap.NONEMPTY_CODEC)
 
     static ModConfig getDefaultConfig() {
@@ -41,10 +67,10 @@ class ModConfig {
 
             config.loadTemplateSets()
             config.loadMetals()
+            config.loadCategories()
             config.loadMetalProperties()
             config.loadVariants()
             config.loadRecipes()
-            config.loadCategories()
 
             return config
         } catch (IOException e) {
@@ -100,7 +126,6 @@ class ModConfig {
         var rls = processResources(ResourceProvider.instance().getResources(Constants.MOD_ID, "properties", ModConfig::isResource))
 
         for (ResourceLocation rl : rls) {
-            ResourceLocation newRl = new ResourceLocation(rl.namespace, rl.path.substring('properties/'.length()))
             ResourceLocation jsonRl = new ResourceLocation(rl.namespace, rl.path + '.json')
             ResourceLocation json5Rl = new ResourceLocation(rl.namespace, rl.path + '.json5')
             try (Stream<? extends InputStream> resources = ResourceProvider.instance().getResourceStreams(Constants.MOD_ID, [json5Rl, jsonRl])) {
@@ -109,15 +134,15 @@ class ModConfig {
                     try {
                         JsonObject json = Constants.JANKSON.load(stream)
                         MetalProperties read = ((Decoder<MetalProperties>) MetalProperties.$CODEC).parse(JanksonOps.COMMENTED, json).getOrThrow(false, {})
-                        props.mergeProperties(read)
+                        props = props.mergeProperties(read)
                     } catch (RuntimeException | SyntaxError | IOException e) {
                         Constants.LOGGER.error("Issues loading resource: {}", rl, e)
                     }
                 }
-                if (metals.containsKey(newRl)) {
-                    metals.get(newRl).mergeProperties(props)
-                } else {
-                    Constants.LOGGER.error("Issues loading resource: {} - no metal found for properties", rl)
+                metals.each { key,val ->
+                    if (props.metals.matches(key, ResourceFilter.SIMPLE_FINDER)) {
+                        val.mergeProperties(props)
+                    }
                 }
             }
         }

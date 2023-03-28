@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers
 import dev.lukebemish.dynamicassetgenerator.api.DataResourceCache
 import dev.lukebemish.dynamicassetgenerator.api.ResourceCache
 import dev.lukebemish.modularmetals.util.MoreCodecs
+import groovy.transform.CompileStatic
 import io.github.groovymc.cgl.reg.RegistrationProvider
 import dev.lukebemish.modularmetals.client.ModularMetalsClient
 import dev.lukebemish.modularmetals.data.Category
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.Block
 
 import java.util.function.Supplier
 
+@CompileStatic
 final class ModularMetalsCommon {
     private static final Supplier<ModConfig> CONFIG = Suppliers.memoize({ModConfig.load()})
 
@@ -88,7 +90,9 @@ final class ModularMetalsCommon {
             variants.addAll(category.fullVariants)
         }
 
-        variants.removeAll(m.banVariants)
+        variants.removeIf {
+            m.banVariants.matches(it, config.variantFilterFinder)
+        }
         variants.removeAll(m.existingVariants.keySet())
 
         return variants
@@ -102,7 +106,9 @@ final class ModularMetalsCommon {
             recipes.addAll(category.fullRecipes)
         }
 
-        recipes.removeAll(m.banRecipes)
+        recipes.removeIf {
+            m.banRecipes.matches(it, config.recipeFilterFinder)
+        }
 
         return recipes
     }

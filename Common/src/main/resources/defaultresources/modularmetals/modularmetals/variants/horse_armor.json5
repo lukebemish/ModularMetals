@@ -1,0 +1,100 @@
+{
+  type: "modularmetals:horse_armor",
+  inherit: 'modularmetals:metal_item',
+  texturing: {
+    template: {
+      "": {
+        type: "dynamic_asset_generator:palette_spread",
+        source: {
+          type: "dynamic_asset_generator:mask",
+          input: {
+            type: "dynamic_asset_generator:texture",
+            path: "minecraft:item/golden_horse_armor"
+          },
+          mask: {
+            type: "dynamic_asset_generator:mask/invert",
+            source: {
+              type: "dynamic_asset_generator:texture",
+              path: "modularmetals:mask/item/horse_armor"
+            },
+          }
+        },
+        range: [
+          [0.4, 1]
+        ]
+      },
+      armor: {
+        type: "dynamic_asset_generator:overlay",
+        inputs: [
+          {
+            type: "dynamic_asset_generator:palette_spread",
+            source: {
+              type: "dynamic_asset_generator:mask",
+              input: {
+                type: "dynamic_asset_generator:texture",
+                path: "minecraft:entity/horse/armor/horse_armor_gold"
+              },
+              mask: {
+                type: "dynamic_asset_generator:mask/invert",
+                source: {
+                  type: "dynamic_asset_generator:texture",
+                  path: "modularmetals:mask/entity/horse/armor/horse_armor"
+                },
+              }
+            },
+            range: [
+              [0.4, 1]
+            ]
+          }
+        ]
+      },
+    },
+    generators: {
+      "": {
+        type: "dynamic_asset_generator:overlay",
+        inputs: [
+          {
+            type: "modularmetals:resolved"
+          },
+          {
+            type: "dynamic_asset_generator:mask",
+            mask: {
+              type: "dynamic_asset_generator:texture",
+              path: "modularmetals:mask/item/horse_armor"
+            },
+            input: {
+              type: "dynamic_asset_generator:texture",
+              path: "minecraft:item/golden_horse_armor"
+            }
+          }
+        ],
+      },
+      armor: {
+        type: "dynamic_asset_generator:overlay",
+        inputs: [
+          {
+            type: "modularmetals:resolved"
+          },
+          {
+            type: "dynamic_asset_generator:mask",
+            mask: {
+              type: "dynamic_asset_generator:texture",
+              path: "modularmetals:mask/entity/horse/armor/horse_armor"
+            },
+            input: {
+              type: "dynamic_asset_generator:texture",
+              path: "minecraft:entity/horse/armor/horse_armor_gold"
+            }
+          }
+        ],
+      }
+    }
+  },
+  tags: [
+    "modularmetals:recyclable/%s"
+  ],
+  item_properties: {
+    max_stack_size: 1
+  },
+  name: "Horse Armor"
+}

@@ -1,0 +1,224 @@
+{
+  "modularmetals:ingot": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/iron_ingot"
+      }
+    }
+  },
+  "modularmetals:nugget": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/iron_nugget"
+      }
+    }
+  },
+  "modularmetals:block": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:block/iron_block",
+      },
+      range: [0.5, 1]
+    }
+  },
+  "modularmetals:raw": {
+    "": {
+      type: "modularmetals:property_check",
+      absent: {
+        type: "dynamic_asset_generator:palette_spread",
+        source: {
+          type: "dynamic_asset_generator:texture",
+          path: "minecraft:item/raw_iron"
+        }
+      },
+      property: "modularmetals:oxide_generator",
+      present: {
+        type: "dynamic_asset_generator:texture",
+        path: "modularmetals:item/base_raw"
+      }
+    }
+  },
+  "modularmetals:raw_block": {
+    "": {
+      type: "modularmetals:property_check",
+      absent: {
+        type: "modularmetals:property_check",
+        absent: {
+          type: "modularmetals:property_check",
+          property: "modularmetals:ore_generator",
+          absent: {
+            type: "dynamic_asset_generator:palette_spread",
+            source: {
+              type: "dynamic_asset_generator:texture",
+              path: "minecraft:block/raw_iron_block"
+            },
+            range: [0.15, 0.85]
+          },
+          present: {
+            type: "dynamic_asset_generator:palette_spread",
+            source: {
+              type: "dynamic_asset_generator:texture",
+              path: "minecraft:block/raw_iron_block"
+            }
+          }
+        },
+        property: "modularmetals:oxide_generator",
+        present: {
+          type: "dynamic_asset_generator:texture",
+          path: "modularmetals:block/base_raw_block"
+        }
+      },
+      property: "modularmetals:oxide_generator",
+      present: {
+        type: "dynamic_asset_generator:texture",
+        path: "modularmetals:block/base_raw_block"
+      }
+    }
+  },
+  "modularmetals:helmet": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/iron_helmet"
+      },
+      range: [
+        [0.0, 0.2],
+        [0.5, 1.0]
+      ]
+    },
+    armor1: {
+      type: "dynamic_asset_generator:crop",
+      input: {
+        type: "dynamic_asset_generator:crop",
+        input: {
+          type: "dynamic_asset_generator:palette_spread",
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "minecraft:models/armor/iron_layer_1"
+          },
+          range: [0.5, 1]
+        },
+        total_size: 64,
+        start_x: 0,
+        start_y: 0,
+        size_x: 64,
+        size_y: 16
+      },
+      total_size: 64,
+      start_x: 0,
+      start_y: 0,
+      size_x: 64,
+      size_y: 64
+    }
+  },
+  "modularmetals:chestplate": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/iron_chestplate"
+      },
+      range: [
+        [0.0, 0.2],
+        [0.5, 1.0]
+      ]
+    },
+    armor1: {
+      type: "dynamic_asset_generator:crop",
+      input: {
+        type: "dynamic_asset_generator:crop",
+        input: {
+          type: "dynamic_asset_generator:palette_spread",
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "minecraft:models/armor/iron_layer_1"
+          },
+          range: [0.5, 1]
+        },
+        total_size: 64,
+        start_x: 16,
+        start_y: 16,
+        size_x: 48,
+        size_y: 16
+      },
+      total_size: 48,
+      start_x: -16,
+      start_y: -16,
+      size_x: 64,
+      size_y: 64
+    }
+  },
+  "modularmetals:leggings": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/iron_leggings"
+      },
+      range: [
+        [0.0, 0.2],
+        [0.5, 1.0]
+      ]
+    },
+    armor2: {
+      type: "dynamic_asset_generator:crop",
+      input: {
+        type: "dynamic_asset_generator:palette_spread",
+        source: {
+          type: "dynamic_asset_generator:texture",
+          path: "minecraft:models/armor/iron_layer_2"
+        },
+        range: [0.5, 1]
+      },
+      total_size: 64,
+      start_x: 0,
+      start_y: 0,
+      size_x: 64,
+      size_y: 64
+    }
+  },
+  "modularmetals:boots": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/iron_boots"
+      },
+      range: [
+        [0.0, 0.2],
+        [0.5, 1.0]
+      ]
+    },
+    armor1: {
+      type: "dynamic_asset_generator:crop",
+      input: {
+        type: "dynamic_asset_generator:crop",
+        input: {
+          type: "dynamic_asset_generator:palette_spread",
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "minecraft:models/armor/iron_layer_1"
+          },
+          range: [0.5, 1]
+        },
+        total_size: 64,
+        start_x: 0,
+        start_y: 16,
+        size_x: 16,
+        size_y: 16
+      },
+      total_size: 16,
+      start_x: 0,
+      start_y: -16,
+      size_x: 64,
+      size_y: 64
+    }
+  }
+}

@@ -37,8 +37,8 @@ class CodecMapCodec<O extends CodecAware<O>> implements Codec<Codec<? extends O>
                 return DataResult.<Pair<Codec<? extends O>, T>>success(Pair.of(lookup.get(key), it.second))
             } else if (key.namespace == 'minecraft' &&
                 allowSelfWithoutNamespace &&
-                lookup.containsKey(key = new ResourceLocation(Constants.MOD_ID, it.first.path))) {
-                return DataResult.<Pair<Codec<? extends O>, T>>success(Pair.of(lookup.get(key), it.second))
+                lookup.containsKey(new ResourceLocation(Constants.MOD_ID, it.first.path))) {
+                return DataResult.<Pair<Codec<? extends O>, T>>success(Pair.of(lookup.get(new ResourceLocation(Constants.MOD_ID, it.first.path)), it.second))
             }
             return DataResult.<Pair<Codec<? extends O>, T>>error {->"Unknown ${name} type: ${key}"}
         }

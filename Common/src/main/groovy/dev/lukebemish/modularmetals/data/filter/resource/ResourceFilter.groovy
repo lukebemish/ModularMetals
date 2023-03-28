@@ -20,7 +20,7 @@ abstract class ResourceFilter implements CodecAware {
     },{ it instanceof IsResourceFilter ? Either.right(it) : Either.left(it)}),
     Codec.STRING.<TagResourceFilter>flatXmap({
         if (it.startsWith('#')) {
-            ResourceLocation.read(it.substring(1)).map({new TagResourceFilter(it)})
+            return ResourceLocation.read(it.substring(1)).map({new TagResourceFilter(it)})
         }
         return DataResult.<TagResourceFilter>error {->"Not a tag filter: ${it}"}
     },{

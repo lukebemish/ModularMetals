@@ -1,0 +1,140 @@
+{
+  "modularmetals:ingot": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/netherite_ingot"
+      }
+    }
+  },
+  "modularmetals:block": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:block/netherite_block"
+      }
+    }
+  },
+  "modularmetals:helmet": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/netherite_helmet"
+      }
+    },
+    armor1: {
+      type: "dynamic_asset_generator:crop",
+      input: {
+        type: "dynamic_asset_generator:crop",
+        input: {
+          type: "dynamic_asset_generator:palette_spread",
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "minecraft:models/armor/netherite_layer_1"
+          }
+        },
+        total_size: 64,
+        start_x: 0,
+        start_y: 0,
+        size_x: 64,
+        size_y: 16
+      },
+      total_size: 64,
+      start_x: 0,
+      start_y: 0,
+      size_x: 64,
+      size_y: 64
+    }
+  },
+  "modularmetals:chestplate": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/netherite_chestplate"
+      }
+    },
+    armor1: {
+      type: "dynamic_asset_generator:crop",
+      input: {
+        type: "dynamic_asset_generator:crop",
+        input: {
+          type: "dynamic_asset_generator:palette_spread",
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "minecraft:models/armor/netherite_layer_1"
+          }
+        },
+        total_size: 64,
+        start_x: 16,
+        start_y: 16,
+        size_x: 48,
+        size_y: 16
+      },
+      total_size: 48,
+      start_x: -16,
+      start_y: -16,
+      size_x: 64,
+      size_y: 64
+    }
+  },
+  "modularmetals:leggings": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/netherite_leggings"
+      }
+    },
+    armor2: {
+      type: "dynamic_asset_generator:crop",
+      input: {
+        type: "dynamic_asset_generator:palette_spread",
+        source: {
+          type: "dynamic_asset_generator:texture",
+          path: "minecraft:models/armor/netherite_layer_2"
+        }
+      },
+      total_size: 64,
+      start_x: 0,
+      start_y: 0,
+      size_x: 64,
+      size_y: 64
+    }
+  },
+  "modularmetals:boots": {
+    "": {
+      type: "dynamic_asset_generator:palette_spread",
+      source: {
+        type: "dynamic_asset_generator:texture",
+        path: "minecraft:item/netherite_boots"
+      }
+    },
+    armor1: {
+      type: "dynamic_asset_generator:crop",
+      input: {
+        type: "dynamic_asset_generator:crop",
+        input: {
+          type: "dynamic_asset_generator:palette_spread",
+          source: {
+            type: "dynamic_asset_generator:texture",
+            path: "minecraft:models/armor/netherite_layer_1"
+          }
+        },
+        total_size: 64,
+        start_x: 0,
+        start_y: 16,
+        size_x: 16,
+        size_y: 16
+      },
+      total_size: 16,
+      start_x: 0,
+      start_y: -16,
+      size_x: 64,
+      size_y: 64
+    }
+  }
+}

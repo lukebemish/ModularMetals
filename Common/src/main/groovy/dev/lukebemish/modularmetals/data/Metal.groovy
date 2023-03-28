@@ -1,8 +1,13 @@
 package dev.lukebemish.modularmetals.data
 
 import com.mojang.datafixers.util.Either
+import dev.lukebemish.modularmetals.data.filter.resource.AndResourceFilter
+import dev.lukebemish.modularmetals.data.filter.resource.NoneResourceFilter
+import dev.lukebemish.modularmetals.data.filter.resource.OrResourceFilter
+import dev.lukebemish.modularmetals.data.filter.resource.ResourceFilter
 import dev.lukebemish.modularmetals.data.filter.string.AllStringFilter
 import dev.lukebemish.modularmetals.data.filter.string.StringFilter
+import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.groovymc.cgl.api.transform.codec.WithCodec
@@ -15,18 +20,17 @@ import org.jetbrains.annotations.Nullable
 @TupleConstructor(post = {
     categories = new ArrayList<>(categories)
     existingVariants = new HashMap<>(existingVariants)
-    banVariants = new ArrayList<>(banVariants)
-    banRecipes = new ArrayList<>(banRecipes)
     properties = new HashMap<>(properties)
 })
+@CompileStatic
 class Metal {
     final MetalTexturing texturing
     final Either<String,Map<String,String>> name
     List<ResourceLocation> categories
     final StringFilter requiredMods = AllStringFilter.instance
     Map<ResourceLocation,ResourceLocation> existingVariants = [:]
-    List<ResourceLocation> banVariants = []
-    List<ResourceLocation> banRecipes = []
+    ResourceFilter banVariants = NoneResourceFilter.instance
+    ResourceFilter banRecipes = NoneResourceFilter.instance
     Map<ResourceLocation,ObjectHolder> properties = [:]
 
     @Nullable ObjectHolder getPropertyFromMap(ResourceLocation rl) {
@@ -58,10 +62,24 @@ class Metal {
     }
 
     void mergeProperties(MetalProperties props) {
-        categories.addAll(props.categories)
-        existingVariants.putAll(props.existingVariants)
-        banVariants.addAll(props.banVariants)
-        banRecipes.addAll(props.banRecipes)
-        properties.putAll(props.properties)
+        if (props.replace == MetalProperties.MergeType.REPLACE) {
+            categories = props.categories
+            existingVariants = props.existingVariants
+            banVariants = props.banVariants
+            banRecipes = props.banRecipes
+            properties = props.properties
+        } else {
+            categories.addAll(props.categories)
+            existingVariants.putAll(props.existingVariants)
+            properties.putAll(props.properties)
+
+            if (props.replace == MetalProperties.MergeType.OR) {
+                banVariants = new OrResourceFilter(List.of(banVariants, props.banVariants))
+                banRecipes = new OrResourceFilter(List.of(banRecipes, props.banRecipes))
+            } else {
+                banVariants = new AndResourceFilter(List.of(banVariants, props.banVariants))
+                banRecipes = new AndResourceFilter(List.of(banRecipes, props.banRecipes))
+            }
+        }
     }
 }

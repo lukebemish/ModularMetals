@@ -53,7 +53,7 @@ class ItemClientVariantHandler implements ClientVariantHandler {
         return Map.<String, Map> of('', ['parent': 'item/generated', 'textures': ['layer0': '${textures[""]}']])
     }
 
-    boolean processSpecial(ResourceLocation metalRl, Variant variant, String name, Function<ResourceGenerationContext, NativeImage> imageSource) {
+    boolean processSpecial(ResourceLocation fullLocation, ResourceLocation metalRl, Variant variant, String name, Function<ResourceGenerationContext, NativeImage> imageSource) {
         return false
     }
 
@@ -92,7 +92,7 @@ class ItemClientVariantHandler implements ClientVariantHandler {
 
             Function<ResourceGenerationContext, NativeImage> imageSource = { ResourceGenerationContext context -> generateTexture(context, metalTexSource, fullTexSource, templateMap, metalRl, variantRl, key, metal) }
 
-            if (!processSpecial(metalRl, variant, key, imageSource)) {
+            if (!processSpecial(fullLocation, metalRl, variant, key, imageSource)) {
                 TexturePlanner.instance.plan(full, imageSource, sourceLocations)
 
                 modelTextures.add(key)
