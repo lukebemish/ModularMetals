@@ -37,6 +37,14 @@ ModsDotGroovy.make {
             quiltLoader {
                 versionRange = ">=${this.quiltLoaderVersion}"
             }
+
+            mod('dynamic_asseet_generator') {
+                versionRange = ">=${this.libs.versions.dynassetgen}"
+            }
+
+            mod('defaultresources') {
+                versionRange = ">=${this.libs.versions.defaultresources}"
+            }
         }
 
         entrypoints {
@@ -49,6 +57,10 @@ ModsDotGroovy.make {
         }
     }
     onQuilt {
+        mixin = [
+            'mixin.modularmetals.quilt.json',
+            'mixin.modularmetals.json'
+        ]
         access_widener = 'modularmetals.accesswidener'
     }
 }

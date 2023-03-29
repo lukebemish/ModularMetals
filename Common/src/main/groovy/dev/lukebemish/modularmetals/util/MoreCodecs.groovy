@@ -2,7 +2,9 @@ package dev.lukebemish.modularmetals.util
 
 import com.google.common.base.Suppliers
 import com.google.common.collect.BiMap
+import com.google.gson.Gson
 import com.google.gson.JsonElement
+import com.google.gson.JsonSyntaxException
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
@@ -17,6 +19,8 @@ import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.material.Material
 import net.minecraft.world.level.material.MaterialColor
 import net.minecraft.world.level.material.PushReaction
+import net.minecraft.world.level.storage.loot.Deserializers
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition
 
 import java.util.function.Supplier
 
@@ -117,4 +121,22 @@ final class MoreCodecs {
             Either<O, List<O>>.right(it)
         })
     }
+
+
+    private static Gson LOOT_CONDITION_SERIALIZER = Deserializers.createFunctionSerializer().create()
+
+    static Codec<LootItemCondition> LOOT_CONDITION_CODEC = new OpsCodec<JsonElement>(JsonOps.INSTANCE).<LootItemCondition>flatXmap({
+        try {
+            return DataResult.success(LOOT_CONDITION_SERIALIZER.<LootItemCondition>fromJson(it, LootItemCondition))
+        } catch (JsonSyntaxException e) {
+            return DataResult.error({->e.message})
+        }
+    }, {
+        try {
+            JsonElement element = LOOT_CONDITION_SERIALIZER.toJsonTree(it)
+            return DataResult.success(element)
+        } catch (JsonSyntaxException e) {
+            return DataResult.error({->e.message})
+        }
+    })
 }

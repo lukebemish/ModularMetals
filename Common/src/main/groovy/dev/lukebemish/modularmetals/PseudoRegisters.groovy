@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap
 import com.mojang.serialization.Codec
 import dev.lukebemish.modularmetals.data.filter.resource.*
 import dev.lukebemish.modularmetals.data.filter.string.*
+import dev.lukebemish.modularmetals.data.recipe.LootRecipe
 import dev.lukebemish.modularmetals.data.recipe.Recipe
 import dev.lukebemish.modularmetals.data.recipe.RecipeRecipe
 import dev.lukebemish.modularmetals.data.recipe.WorldgenRecipe
@@ -56,6 +57,7 @@ final class PseudoRegisters {
 
         RECIPE_TYPES.put(new ResourceLocation(Constants.MOD_ID, "recipe"), RecipeRecipe.$CODEC)
         RECIPE_TYPES.put(new ResourceLocation(Constants.MOD_ID, "feature"), WorldgenRecipe.$CODEC)
+        RECIPE_TYPES.put(new ResourceLocation(Constants.MOD_ID, "loot"), LootRecipe.$CODEC)
 
         return null
     }

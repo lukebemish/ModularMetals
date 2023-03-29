@@ -126,7 +126,7 @@ class ItemClientVariantHandler implements ClientVariantHandler {
         models.each { key, map ->
             try {
                 ResourceLocation full = new ResourceLocation(fullLocation.namespace, "${key == 'item' ? 'item' : header}/${fullLocation.path}${key == '' || key == 'item' ? '' : "_$key"}")
-                Map out = TemplateEngine.fillReplacements(map, replacements)
+                Map out = TemplateEngine.fillReplacements(map+ModularMetalsCommon.sharedEnvMap, replacements)
                 ModelPlanner.instance.plan(full, out)
             } catch (Exception e) {
                 Constants.LOGGER.error("Error writing model '${key}' for metal '${metalRl}', variant '${variantRl}':", e)

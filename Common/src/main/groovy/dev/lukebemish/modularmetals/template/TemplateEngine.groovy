@@ -61,7 +61,7 @@ class TemplateEngine {
         return (Map) fillReplacementsInner(map, shell, replacements)
     }
 
-    static Object fillReplacementsInner(Map map, Supplier<GroovyShell> shell, Map replacements) {
+    private static Object fillReplacementsInner(Map map, Supplier<GroovyShell> shell, Map replacements) {
         Object out = MapUtil.replaceInMapByTypeFull(map, {
             return shell.get().evaluate(it)
         })

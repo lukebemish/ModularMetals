@@ -32,5 +32,7 @@
     // smelting/blasting
     "modularmetals:nugget_from_smelting",
     "modularmetals:nugget_from_blasting",
+    // loot
+    "modularmetals:horse_armor_loot"
   ]
 }

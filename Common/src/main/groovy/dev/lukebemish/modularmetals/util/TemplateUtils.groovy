@@ -18,10 +18,7 @@ final class TemplateUtils {
         if (!variantLocations.keySet().containsAll(requiredVariants))
             return null
         Map map = template.map
-        Map replacements = initial + ['variants':requiredVariants.collectEntries {
-            [it.toString(), variantLocations[it].toString()]
-        },'metal':metalLocation,'properties':metal.properties.collectEntries {[it.key.toString(), it.value.obj]}]
-        replacements += ModularMetalsCommon.sharedEnvMap
+        Map replacements = makeMap(initial, requiredVariants, variantLocations, metalLocation, metal)
         Map out
         try {
             out = TemplateEngine.fillReplacements(map, replacements)
@@ -32,6 +29,14 @@ final class TemplateUtils {
         ResourceLocation outputLocation = new ResourceLocation(Constants.MOD_ID, "${metalLocation.namespace}_${metalLocation.path}_${recipeLocation.namespace}_${recipeLocation.path}")
         JsonElement json = ObjectOps.instance.convertTo(JsonOps.INSTANCE,out)
         return new Pair<>(outputLocation, json)
+    }
+
+    static Map makeMap(Map initial, List<ResourceLocation> requiredVariants, Map<ResourceLocation, ResourceLocation> variantLocations, ResourceLocation metalLocation, Metal metal) {
+        Map replacements = initial + ['variants': requiredVariants.collectEntries {
+            [it.toString(), variantLocations[it].toString()]
+        }, 'metal' : metalLocation, 'properties': metal.properties.collectEntries { [it.key.toString(), it.value.obj] }]
+        replacements += ModularMetalsCommon.sharedEnvMap
+        return replacements
     }
 
     static Pair<ResourceLocation, JsonElement> init(MapHolder template, Metal metal, ResourceLocation metalLocation, ResourceLocation recipeLocation, Map<ResourceLocation, ResourceLocation> variantLocations, List<ResourceLocation> requiredVariants) {

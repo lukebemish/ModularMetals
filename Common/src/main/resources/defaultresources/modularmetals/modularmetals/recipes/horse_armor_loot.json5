@@ -1,0 +1,26 @@
+{
+  type: "modularmetals:loot",
+  injects: [
+    "chests/simple_dungeon",
+    "chests/desert_pyramid",
+    "chests/end_city_treasure",
+    "chests/jungle_temple",
+    "chests/stronghold_corridor",
+    "chests/nether_bridge",
+    "chests/village/village_weaponsmith",
+  ],
+  required_variants: [
+    "modularmetals:horse_armor"
+  ],
+  predicate: {
+    type: "minecraft:item",
+    name: "minecraft:iron_horse_armor"
+  },
+  entry: {
+    type: "minecraft:item",
+    name: "${variants['modularmetals:horse_armor']}",
+    weight: {
+      __code__: "(properties['modularmetals:relative_loot_weight']?:1)*(entry['weight']?:1)"
+    }
+  }
+}
