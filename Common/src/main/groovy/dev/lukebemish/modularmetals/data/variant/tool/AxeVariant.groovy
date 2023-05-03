@@ -1,11 +1,11 @@
 package dev.lukebemish.modularmetals.data.variant.tool
 
 import com.mojang.serialization.Codec
+import dev.lukebemish.modularmetals.data.Fillable
+import dev.lukebemish.modularmetals.objects.MMAxeItem
+import dev.lukebemish.modularmetals.objects.MMItemProps
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
-import dev.lukebemish.modularmetals.data.Fillable
-import net.minecraft.world.item.AxeItem
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.Tier
 
 @CodecSerializable(property = "AXE_CODEC")
@@ -16,7 +16,7 @@ class AxeVariant extends ToolVariant {
 
     @Override
     ToolItemSupplier getToolItemSupplier() {
-        return { Tier tier, float attack, float speed, Item.Properties properties -> new AxeItem(tier, attack, speed, properties) }
+        return { Tier tier, float attack, float speed, MMItemProps properties -> new MMAxeItem(tier, attack, speed, properties) }
     }
 
     @Override

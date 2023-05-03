@@ -2,11 +2,11 @@ package dev.lukebemish.modularmetals.data.variant.tool
 
 import com.mojang.serialization.Codec
 import dev.lukebemish.modularmetals.data.Fillable
+import dev.lukebemish.modularmetals.objects.MMItemProps
+import dev.lukebemish.modularmetals.objects.MMPickaxeItem
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.groovymc.cgl.api.transform.codec.WithCodec
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.PickaxeItem
 import net.minecraft.world.item.Tier
 
 @CodecSerializable(property = "PICKAXE_CODEC", camelToSnake = true)
@@ -18,7 +18,7 @@ class PickaxeVariant extends ToolVariant {
 
     @Override
     ToolItemSupplier getToolItemSupplier() {
-        return { Tier tier, float attack, float speed, Item.Properties properties -> new PickaxeItem(tier, (int) attack, speed, properties) }
+        return { Tier tier, float attack, float speed, MMItemProps properties -> new MMPickaxeItem(tier, (int) attack, speed, properties) }
     }
 
     @Override

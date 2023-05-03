@@ -10,12 +10,14 @@ import dev.lukebemish.modularmetals.quilt.QuiltBiomes
 import dev.lukebemish.modularmetals.services.IPlatformHelper
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
+import io.github.lukebemish.groovyduvet.core.api.RemappingCustomizer
 import net.fabricmc.api.EnvType
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.ItemStack
+import org.codehaus.groovy.control.CompilerConfiguration
 import org.quiltmc.loader.api.QuiltLoader
 import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader
 import org.quiltmc.qsl.worldgen.biome.api.BiomeModifications
@@ -50,6 +52,11 @@ class PlatformHelperImpl implements IPlatformHelper {
     @Override
     Platform getPlatform() {
         return Platform.QUILT
+    }
+
+    @Override
+    void customize(CompilerConfiguration compilerConfiguration) {
+        compilerConfiguration.addCompilationCustomizers(new RemappingCustomizer())
     }
 
     @Override

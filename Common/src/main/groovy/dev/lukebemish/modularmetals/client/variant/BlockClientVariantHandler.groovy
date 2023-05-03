@@ -2,11 +2,11 @@ package dev.lukebemish.modularmetals.client.variant
 
 import dev.lukebemish.modularmetals.Constants
 import dev.lukebemish.modularmetals.ModularMetalsCommon
-import dev.lukebemish.modularmetals.template.TemplateEngine
 import dev.lukebemish.modularmetals.client.planner.BlockstatePlanner
 import dev.lukebemish.modularmetals.data.Metal
-import dev.lukebemish.modularmetals.data.variant.block.BlockVariant
 import dev.lukebemish.modularmetals.data.variant.ItemVariant
+import dev.lukebemish.modularmetals.data.variant.block.BlockVariant
+import dev.lukebemish.modularmetals.template.MapUtil
 import net.minecraft.resources.ResourceLocation
 
 import java.util.concurrent.atomic.AtomicReference
@@ -44,7 +44,7 @@ class BlockClientVariantHandler extends ItemClientVariantHandler {
                 'model': mainModel.get().toString()
             ]]]}
         try {
-            Map out = TemplateEngine.fillReplacements(map+ ModularMetalsCommon.sharedEnvMap, replacements)
+            Map out = MapUtil.evaluateEntries(map, replacements + ModularMetalsCommon.sharedEnvMap)
             BlockstatePlanner.instance.plan(fullLocation, out)
         } catch (Exception e) {
             Constants.LOGGER.error("Error writing blockstate for metal '${metalRl}', variant '${variantRl}':", e)

@@ -11,6 +11,7 @@ import dev.lukebemish.modularmetals.data.Fillable
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.tier.ModularArmorTier
 import dev.lukebemish.modularmetals.data.variant.ItemVariant
+import dev.lukebemish.modularmetals.objects.MMArmorItem
 import dev.lukebemish.modularmetals.util.MoreCodecs
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
@@ -48,7 +49,7 @@ class ArmorVariant extends ItemVariant {
             Constants.LOGGER.error("Armor type could not be parsed in variant ${variantRl} for metal ${metalRl}")
         })
         return ModularMetalsCommon.ITEMS.register(location, {->
-            new ArmorItem(getArmorTier(metal, metalRl), armorType, makeProperties(props))
+            new MMArmorItem(getArmorTier(metal, metalRl), armorType, makeProperties(props))
         })
     }
 

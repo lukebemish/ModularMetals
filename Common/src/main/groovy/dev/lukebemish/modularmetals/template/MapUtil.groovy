@@ -1,145 +1,115 @@
 package dev.lukebemish.modularmetals.template
 
-import groovy.transform.PackageScope
 
-import java.util.function.Function
+import groovy.transform.TupleConstructor
+import org.apache.groovy.io.StringBuilderWriter
+
 import java.util.function.Predicate
 
 class MapUtil {
-    @PackageScope
-    static Object replaceIn(Object object, Function<String, String> function) {
-        if (object instanceof Map)
-            return replaceInMap(object, function)
-        if (object instanceof List)
-            return replaceInList(object, function)
-        if (object instanceof String)
-            return function.apply(object)
-        if (object instanceof GString)
-            return function.apply(object as String)
-        return object
-    }
+    @TupleConstructor
+    static class MapEvalEnvironment {
+        Map replacements
 
-    @PackageScope
-    static Map replaceInMap(Map map, Function<String, String> function) {
-        map.collectEntries {key, value ->
-            String strKey = key as String
-            if (value instanceof Map)
-                return [function.apply(strKey), replaceInMap(value, function)]
-            if (value instanceof List)
-                return [function.apply(strKey), replaceInList(value, function)]
-            if (value instanceof String)
-                return [function.apply(strKey), function.apply(value)]
-            if (value instanceof GString)
-                return [function.apply(strKey), function.apply(value as String)]
-            return [function.apply(strKey), value]
+        String evaluateTemplate(String initial, Map additional) {
+            var writer = new StringBuilderWriter()
+            TemplateEngine.ENGINE.createTemplate(initial).make(replacements+additional).writeTo(writer)
+            return writer.builder.toString()
+        }
+
+        String evaluateTemplate(String initial) {
+            return evaluateTemplate(initial, [:])
+        }
+
+        Object evaluateShell(String initial, Map additional) {
+            return TemplateEngine.createShell(replacements+additional).evaluate(initial)
+        }
+
+        Object evaluateShell(String initial) {
+            return evaluateShell(initial, [:])
         }
     }
 
-    @PackageScope
-    static Object replaceInMapByTypeFull(Map map, Function<String, Object> mapper) {
-        if (map.containsKey(TemplateEngine.CODE_KEY)) {
-            String valueString = mapper.apply(map.get(TemplateEngine.CODE_KEY) as String)
-            return mapper.apply(valueString)
+    static Object evaluate(Object obj, Map replacements) {
+        return evaluate(obj, new MapEvalEnvironment(replacements))
+    }
+
+    static Map evaluateEntries(Map map, Map replacements) {
+        return evaluateEntries(map, new MapEvalEnvironment(replacements))
+    }
+
+    static Object evaluate(Object obj, MapEvalEnvironment env) {
+        if (obj instanceof Map)
+            return evaluateInner((Map) obj, env)
+        if (obj instanceof List)
+            return evaluateInner((List) obj, env)
+        if (obj instanceof String)
+            return env.evaluateTemplate(obj)
+        if (obj instanceof GString)
+            return env.evaluateTemplate(obj as String)
+        return obj
+    }
+
+    private static Object evaluateInner(Map map, MapEvalEnvironment env) {
+        if (map.containsKey(TemplateEngine.IF_KEY)) {
+            String valueString = map.get(TemplateEngine.IF_KEY) as String
+            Map extra = new HashMap(map)
+            extra.removeAll {key, value -> TemplateEngine.RESERVED.contains(key)}
+            Object value = env.evaluateShell(valueString, extra)
+            if (value !instanceof Boolean || !value) {
+                if (map.containsKey(TemplateEngine.ELSE_KEY)) {
+                    return evaluate(map.get(TemplateEngine.ELSE_KEY), env)
+                } else {
+                    return RemovalQueued.instance
+                }
+            }
+            Map newMap = new HashMap(map)
+            newMap.remove(TemplateEngine.IF_KEY)
+            newMap.remove(TemplateEngine.ELSE_KEY)
+            return evaluate(newMap, env)
+        } else if (map.containsKey(TemplateEngine.OPTIONAL_KEY)) {
+            String valueString = map.get(TemplateEngine.OPTIONAL_KEY) as String
+            Map extra = new HashMap(map)
+            extra.removeAll {key, value -> TemplateEngine.RESERVED.contains(key)}
+            Object optionalValue = env.evaluateShell(valueString, extra)
+            if (optionalValue instanceof Optional)
+                if (optionalValue.present)
+                    return optionalValue.get()
+                else
+                    return RemovalQueued.instance
+            return optionalValue
+        } else if (map.containsKey(TemplateEngine.CODE_KEY)) {
+            String valueString = map.get(TemplateEngine.CODE_KEY) as String
+            Map extra = new HashMap(map)
+            extra.removeAll {key, value -> TemplateEngine.RESERVED.contains(key)}
+            return env.evaluateShell(valueString, extra)
         }
-        return replaceInMapByType(map, mapper)
+        Map out = map.collectEntries {key, value ->
+            [evaluate(key, env), evaluate(value, env)]
+        }
+        out.removeAll {key, value -> value === RemovalQueued.instance}
+        return out
     }
 
-    @PackageScope
-    static Map replaceInMapByType(Map map, Function<String, Object> mapper) {
-        map.collectEntries {key, value ->
-            String strKey = key as String
-            if (value instanceof Map) {
-                if (value.containsKey(TemplateEngine.CODE_KEY)) {
-                    String valueString = value.get(TemplateEngine.CODE_KEY) as String
-                    return [strKey, mapper.apply(valueString)]
-                } else if (value.containsKey(TemplateEngine.OPTIONAL_KEY)) {
-                    String valueString = value.get(TemplateEngine.OPTIONAL_KEY) as String
-                    var optionalValue = mapper.apply(valueString)
-                    if (optionalValue instanceof Optional) {
-                        if (optionalValue.isPresent()) {
-                            return [strKey, optionalValue.get()]
-                        } else {
-                            return [strKey, RemovalQueued.instance]
-                        }
-                    } else {
-                        return [strKey, optionalValue]
-                    }
-                } else if (value.containsKey(TemplateEngine.IF_KEY)) {
-                    String valueString = value.get(TemplateEngine.IF_KEY) as String
-                    var boolValue = mapper.apply(valueString)
-                    if (boolValue instanceof Boolean && boolValue) {
-                        Map newMap = new LinkedHashMap(value)
-                        newMap.remove(TemplateEngine.IF_KEY)
-                        return [strKey, newMap]
-                    } else {
-                        return [strKey, RemovalQueued.instance]
-                    }
-                }
-                return [strKey, replaceInMapByType(value, mapper)]
-            }
-            if (value instanceof List)
-                return [strKey, replaceInListByType(value, mapper)]
-            return [strKey, value]
-        }.findAll { key, value -> value !== RemovalQueued.instance }
+    private static Object evaluateInner(List list, MapEvalEnvironment env) {
+        List out = list.collect {value ->
+            evaluate(value, env)
+        }
+        out.removeAll {value -> value === RemovalQueued.instance}
+        return out
     }
 
-    @PackageScope
-    static List replaceInListByType(List list, Function<String, Object> mapper) {
-        list.collect {
-            if (it instanceof Map) {
-                if (it.containsKey(TemplateEngine.CODE_KEY)) {
-                    String valueString = it.get(TemplateEngine.CODE_KEY) as String
-                    return mapper.apply(valueString)
-                }
-                if (it.containsKey(TemplateEngine.OPTIONAL_KEY)) {
-                    String valueString = it.get(TemplateEngine.OPTIONAL_KEY) as String
-                    var optionalValue = mapper.apply(valueString)
-                    if (optionalValue instanceof Optional) {
-                        if (optionalValue.isPresent()) {
-                            return optionalValue.get()
-                        } else {
-                            return RemovalQueued.instance
-                        }
-                    } else {
-                        return optionalValue
-                    }
-                } else if (it.containsKey(TemplateEngine.IF_KEY)) {
-                    String valueString = it.get(TemplateEngine.IF_KEY) as String
-                    var boolValue = mapper.apply(valueString)
-                    if (boolValue instanceof Boolean && boolValue) {
-                        Map map = new LinkedHashMap(it)
-                        map.remove(TemplateEngine.IF_KEY)
-                        return map
-                    } else {
-                        return RemovalQueued.instance
-                    }
-                }
-                return replaceInMapByType(it, mapper)
-            }
-            if (it instanceof List)
-                return replaceInListByType(it, mapper)
-            return it
-        }.findAll {it !== RemovalQueued.instance}
+    static Map evaluateEntries(Map map, MapEvalEnvironment env) {
+        Map out = map.collectEntries {key, value ->
+            [evaluate(key, env), evaluate(value, env)]
+        }
+        out.removeAll {key, value -> value === RemovalQueued.instance}
+        return out
     }
 
     @Singleton
     static class RemovalQueued {
 
-    }
-
-    @PackageScope
-    static List replaceInList(List list, Function<String, String> function) {
-        list.collect {
-            if (it instanceof Map)
-                return replaceInMap(it, function)
-            if (it instanceof List)
-                return replaceInList(it, function)
-            if (it instanceof String)
-                return function.apply(it)
-            if (it instanceof GString)
-                return function.apply(it as String)
-            return it
-        }
     }
 
     static List<String> findFieldsFromMatching(String field, Map mapToSearch, Predicate<Map> checkMap) {

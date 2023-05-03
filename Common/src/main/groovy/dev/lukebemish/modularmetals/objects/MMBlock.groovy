@@ -9,10 +9,10 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 
 @CompileStatic
-class ModularMetalsBlock extends Block {
+class MMBlock extends Block {
     final IntProvider experience
 
-    ModularMetalsBlock(Properties properties, IntProvider experience = null) {
+    MMBlock(Properties properties, IntProvider experience = null) {
         super(properties)
         this.experience = experience
     }

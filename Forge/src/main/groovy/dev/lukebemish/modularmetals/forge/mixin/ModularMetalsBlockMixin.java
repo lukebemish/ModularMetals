@@ -1,6 +1,6 @@
 package dev.lukebemish.modularmetals.forge.mixin;
 
-import dev.lukebemish.modularmetals.objects.ModularMetalsBlock;
+import dev.lukebemish.modularmetals.objects.MMBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -12,7 +12,7 @@ import net.minecraftforge.common.extensions.IForgeBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@Mixin(ModularMetalsBlock.class)
+@Mixin(MMBlock.class)
 public abstract class ModularMetalsBlockMixin extends Block implements IForgeBlock {
     public ModularMetalsBlockMixin(Properties props) {
         super(props);
@@ -30,7 +30,7 @@ public abstract class ModularMetalsBlockMixin extends Block implements IForgeBlo
     @Override
     public int getExpDrop(BlockState state, LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
         //noinspection DataFlowIssue
-        var experience = ((ModularMetalsBlock) (Object) this).getExperience();
+        var experience = ((MMBlock) (Object) this).getExperience();
         return silkTouchLevel == 0 ? experience.sample(randomSource) : 0;
     }
 }

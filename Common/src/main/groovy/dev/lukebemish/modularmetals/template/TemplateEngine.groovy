@@ -1,22 +1,23 @@
 package dev.lukebemish.modularmetals.template
 
-import com.google.common.base.Suppliers
+
 import dev.lukebemish.modularmetals.ModularMetalsCommon
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.tier.ModularTier
 import dev.lukebemish.modularmetals.data.variant.tool.ToolVariant
+import dev.lukebemish.modularmetals.services.Services
 import groovy.text.SimpleTemplateEngine
 import groovy.transform.CompileStatic
+import groovy.transform.Memoized
+import groovy.transform.PackageScope
 import net.minecraft.resources.ResourceLocation
-import org.apache.groovy.io.StringBuilderWriter
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
-
-import java.util.function.Supplier
 
 @CompileStatic
 class TemplateEngine {
     public static final CompilerConfiguration COMPILER_CONFIGURATION = new CompilerConfiguration().tap {
+        Services.PLATFORM.customize(it)
         it.addCompilationCustomizers(new ImportCustomizer()
             .addStaticStars(Utils.name)
             .addImports(Optional.name))
@@ -25,6 +26,8 @@ class TemplateEngine {
     public static final String CODE_KEY = '__code__'
     public static final String OPTIONAL_KEY = '__optional__'
     public static final String IF_KEY = '__if__'
+    public static final String ELSE_KEY = '__else__'
+    public static final Set<String> RESERVED = Set.of(CODE_KEY, OPTIONAL_KEY, IF_KEY, ELSE_KEY)
 
     private TemplateEngine() {}
 
@@ -46,50 +49,9 @@ class TemplateEngine {
         }
     }
 
-    static Supplier<GroovyShell> makeShell(Map replacements) {
-        var shell = Suppliers.memoize {->
-            Binding binding = new Binding(replacements)
-            new GroovyShell(TemplateEngine.classLoader, binding, COMPILER_CONFIGURATION)
-        }
-        return shell
-    }
-
-    static Map fillReplacements(Map map, Map replacements) {
-        var shell = makeShell(replacements)
-        if (map.containsKey(CODE_KEY))
-            return map
-        return (Map) fillReplacementsInner(map, shell, replacements)
-    }
-
-    private static Object fillReplacementsInner(Map map, Supplier<GroovyShell> shell, Map replacements) {
-        Object out = MapUtil.replaceInMapByTypeFull(map, {
-            return shell.get().evaluate(it)
-        })
-        out = MapUtil.replaceIn(out, {
-            var writer = new StringBuilderWriter()
-            ENGINE.createTemplate(it).make(replacements).writeTo(writer)
-            return writer.builder.toString()
-        })
-        return out
-    }
-
-    static Object fillReplacements(Object obj, Map replacements) {
-        var shell = makeShell(replacements)
-        if (obj instanceof Map) {
-            return fillReplacementsInner((Map) obj, shell, replacements)
-        }
-        if (obj instanceof List) {
-            List out = []
-            for (Object item : (List) obj) {
-                out.add(fillReplacements(item, replacements))
-            }
-            return out
-        }
-        if (obj instanceof String || obj instanceof GString) {
-            var writer = new StringBuilderWriter()
-            ENGINE.createTemplate(obj.toString()).make(replacements).writeTo(writer)
-            return writer.builder.toString()
-        }
-        return obj
+    @PackageScope
+    @Memoized static GroovyShell createShell(Map replacements) {
+        Binding binding = new Binding(replacements)
+        return new GroovyShell(TemplateEngine.classLoader, binding, COMPILER_CONFIGURATION)
     }
 }

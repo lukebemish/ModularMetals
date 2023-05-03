@@ -7,6 +7,7 @@ import dev.lukebemish.modularmetals.data.Fillable
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.tier.ModularTier
 import dev.lukebemish.modularmetals.data.variant.ItemVariant
+import dev.lukebemish.modularmetals.objects.MMItemProps
 import groovy.transform.InheritConstructors
 import groovy.transform.Memoized
 import io.github.groovymc.cgl.api.codec.ObjectOps
@@ -52,6 +53,6 @@ abstract class ToolVariant extends ItemVariant {
     abstract ToolItemSupplier getToolItemSupplier()
 
     interface ToolItemSupplier {
-        TieredItem getItem(Tier tier, float attackModifier, float speedModifier, Item.Properties properties)
+        TieredItem getItem(Tier tier, float attackModifier, float speedModifier, MMItemProps properties)
     }
 }

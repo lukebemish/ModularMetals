@@ -9,7 +9,6 @@ import dev.lukebemish.dynamicassetgenerator.api.client.generators.TexSourceDataH
 import dev.lukebemish.dynamicassetgenerator.api.client.generators.texsources.ErrorSource
 import dev.lukebemish.modularmetals.Constants
 import dev.lukebemish.modularmetals.ModularMetalsCommon
-import dev.lukebemish.modularmetals.template.TemplateEngine
 import dev.lukebemish.modularmetals.client.planner.LangPlanner
 import dev.lukebemish.modularmetals.client.planner.ModelPlanner
 import dev.lukebemish.modularmetals.client.planner.TexturePlanner
@@ -126,7 +125,7 @@ class ItemClientVariantHandler implements ClientVariantHandler {
         models.each { key, map ->
             try {
                 ResourceLocation full = new ResourceLocation(fullLocation.namespace, "${key == 'item' ? 'item' : header}/${fullLocation.path}${key == '' || key == 'item' ? '' : "_$key"}")
-                Map out = TemplateEngine.fillReplacements(map+ModularMetalsCommon.sharedEnvMap, replacements)
+                Map out = MapUtil.evaluateEntries(map, replacements+ModularMetalsCommon.sharedEnvMap)
                 ModelPlanner.instance.plan(full, out)
             } catch (Exception e) {
                 Constants.LOGGER.error("Error writing model '${key}' for metal '${metalRl}', variant '${variantRl}':", e)

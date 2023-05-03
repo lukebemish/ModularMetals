@@ -1,13 +1,6 @@
 package dev.lukebemish.modularmetals.data.variant.block
 
 import com.mojang.serialization.Codec
-import dev.lukebemish.modularmetals.data.variant.ItemVariant
-import dev.lukebemish.modularmetals.objects.ModularMetalsBlock
-import groovy.transform.CompileStatic
-import groovy.transform.TupleConstructor
-import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
-import io.github.groovymc.cgl.api.transform.codec.WithCodec
-import io.github.groovymc.cgl.reg.RegistryObject
 import dev.lukebemish.modularmetals.Constants
 import dev.lukebemish.modularmetals.ModularMetalsCommon
 import dev.lukebemish.modularmetals.client.variant.BlockClientVariantHandler
@@ -15,13 +8,20 @@ import dev.lukebemish.modularmetals.client.variant.ClientVariantHandler
 import dev.lukebemish.modularmetals.data.Fillable
 import dev.lukebemish.modularmetals.data.MapHolder
 import dev.lukebemish.modularmetals.data.Metal
+import dev.lukebemish.modularmetals.data.variant.ItemVariant
+import dev.lukebemish.modularmetals.objects.MMBlock
+import dev.lukebemish.modularmetals.objects.MMBlockItem
 import dev.lukebemish.modularmetals.util.DataPlanner
 import dev.lukebemish.modularmetals.util.MoreCodecs
 import dev.lukebemish.modularmetals.util.TemplateUtils
+import groovy.transform.CompileStatic
+import groovy.transform.TupleConstructor
+import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
+import io.github.groovymc.cgl.api.transform.codec.WithCodec
+import io.github.groovymc.cgl.reg.RegistryObject
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.StringRepresentable
 import net.minecraft.util.valueproviders.IntProvider
-import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.SoundType
@@ -139,7 +139,7 @@ class BlockVariant extends ItemVariant {
     RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map props) {
         ModularMetalsCommon.ITEMS.register(location, {->
             Block block = BLOCKS.get(location)
-            return new BlockItem(block, makeProperties(props))
+            return new MMBlockItem(block, makeProperties(props))
         })
     }
 
@@ -183,7 +183,7 @@ class BlockVariant extends ItemVariant {
         IntProvider experience = experienceOnDrop.flatMap {
             it.apply(replacements).result()
         }.orElse(null)
-        return new ModularMetalsBlock(props, experience)
+        return new MMBlock(props, experience)
     }
 
     BlockBehaviour.Properties makeBlockProperties(Map props) {

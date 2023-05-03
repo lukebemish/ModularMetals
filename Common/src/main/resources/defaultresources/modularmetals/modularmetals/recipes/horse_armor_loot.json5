@@ -20,7 +20,7 @@
     type: "minecraft:item",
     name: "${variants['modularmetals:horse_armor']}",
     weight: {
-      __code__: "(properties['modularmetals:relative_loot_weight']?:1)*(entry['weight']?:1)"
+      __code__: "java.lang.Math.round(properties['modularmetals:relative_loot_weight']?:1)*(entry['weight']?:1)) as int"
     }
   }
 }

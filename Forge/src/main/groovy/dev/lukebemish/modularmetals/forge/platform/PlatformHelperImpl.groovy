@@ -20,6 +20,7 @@ import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.loading.FMLLoader
 import net.minecraftforge.fml.loading.FMLPaths
+import org.codehaus.groovy.control.CompilerConfiguration
 
 import java.nio.file.Path
 import java.util.function.Supplier
@@ -51,6 +52,11 @@ class PlatformHelperImpl implements IPlatformHelper {
     @Override
     Platform getPlatform() {
         return Platform.FORGE
+    }
+
+    @Override
+    void customize(CompilerConfiguration compilerConfiguration) {
+        // Does nothing
     }
 
     @Override

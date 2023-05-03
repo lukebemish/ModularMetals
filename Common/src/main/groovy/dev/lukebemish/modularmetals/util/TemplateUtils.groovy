@@ -3,12 +3,12 @@ package dev.lukebemish.modularmetals.util
 import com.google.gson.JsonElement
 import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.JsonOps
-import io.github.groovymc.cgl.api.codec.ObjectOps
 import dev.lukebemish.modularmetals.Constants
 import dev.lukebemish.modularmetals.ModularMetalsCommon
-import dev.lukebemish.modularmetals.template.TemplateEngine
 import dev.lukebemish.modularmetals.data.MapHolder
 import dev.lukebemish.modularmetals.data.Metal
+import dev.lukebemish.modularmetals.template.MapUtil
+import io.github.groovymc.cgl.api.codec.ObjectOps
 import net.minecraft.resources.ResourceLocation
 
 final class TemplateUtils {
@@ -21,7 +21,7 @@ final class TemplateUtils {
         Map replacements = makeMap(initial, requiredVariants, variantLocations, metalLocation, metal)
         Map out
         try {
-            out = TemplateEngine.fillReplacements(map, replacements)
+            out = MapUtil.evaluateEntries(map, replacements)
         } catch (Exception e) {
             Constants.LOGGER.error("Error filling out templated string for recipe ${recipeLocation}, metal ${metalLocation}: ",e)
             return null

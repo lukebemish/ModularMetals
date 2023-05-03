@@ -11,6 +11,8 @@ import dev.lukebemish.modularmetals.data.MapHolder
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.MobEffectProvider
 import dev.lukebemish.modularmetals.data.TexSourceMap
+import dev.lukebemish.modularmetals.objects.MMItem
+import dev.lukebemish.modularmetals.objects.MMItemProps
 import dev.lukebemish.modularmetals.services.Services
 import dev.lukebemish.modularmetals.util.MoreCodecs
 import groovy.transform.CompileStatic
@@ -18,6 +20,7 @@ import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.groovymc.cgl.api.transform.codec.WithCodec
 import io.github.groovymc.cgl.reg.RegistryObject
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.Item
@@ -31,6 +34,7 @@ class ItemVariant extends Variant {
     final Either<String,Map<String,String>> name
     final Optional<Fillable<List<String>>> tags
     final Optional<Fillable<ItemPropertiesBuilder>> itemProperties
+    final Optional<Fillable<CompoundTag>> defaultItemTag
 
     @CodecSerializable
     @TupleConstructor
@@ -141,14 +145,18 @@ class ItemVariant extends Variant {
     }
 
     RegistryObject<? extends Item> registerItem(String location, ResourceLocation variantRl, ResourceLocation metalRl, Metal metal, Map props) {
-        return ModularMetalsCommon.ITEMS.register(location, {->new Item(makeProperties(props))})
+        return ModularMetalsCommon.ITEMS.register(location, {->new MMItem(makeProperties(props))})
     }
 
-    Item.Properties makeProperties(Map props) {
-        return itemProperties
-            .flatMap {it.apply(props).result()}
-            .map { it.makeProperties() }
-            .orElse(new Item.Properties())
+    MMItemProps makeProperties(Map props) {
+        return new MMItemProps(
+            itemProperties
+                .flatMap {it.apply(props).result()}
+                .map { it.makeProperties() }
+                .orElse(new Item.Properties()),
+            defaultItemTag
+                .flatMap {it.apply(props).result()}
+        )
     }
 
     List<ResourceLocation> getTags(ResourceLocation metalRl, Map props) {

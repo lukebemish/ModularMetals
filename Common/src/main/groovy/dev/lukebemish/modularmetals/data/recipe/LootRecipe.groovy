@@ -1,8 +1,6 @@
 package dev.lukebemish.modularmetals.data.recipe
 
-import com.google.gson.JsonElement
 import com.mojang.serialization.Codec
-import com.mojang.serialization.JsonOps
 import dev.lukebemish.modularmetals.data.Fillable
 import dev.lukebemish.modularmetals.data.MapHolder
 import dev.lukebemish.modularmetals.data.Metal
@@ -11,7 +9,6 @@ import dev.lukebemish.modularmetals.util.ObjPredicate
 import dev.lukebemish.modularmetals.util.TemplateUtils
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
-import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import net.minecraft.resources.ResourceLocation
 
@@ -47,10 +44,9 @@ class LootRecipe extends Recipe {
         Fillable<MapHolder> entry
         ObjPredicate predicate
 
-        JsonElement modify(JsonElement jsonElement) {
-            Object obj = JsonOps.INSTANCE.convertTo(ObjectOps.instance, jsonElement)
+        Object modify(Object obj) {
             if (!obj instanceof Map) {
-                return jsonElement
+                return obj
             }
             Map map = (Map) obj
             Object pools = map['pools']
@@ -74,7 +70,7 @@ class LootRecipe extends Recipe {
                     }
                 }
             }
-            return ObjectOps.instance.convertTo(JsonOps.INSTANCE, map)
+            return map
         }
     }
 }

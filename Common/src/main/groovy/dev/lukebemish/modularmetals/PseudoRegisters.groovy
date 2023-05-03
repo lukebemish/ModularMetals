@@ -47,6 +47,7 @@ final class PseudoRegisters {
         RESOURCE_FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "all"), AllResourceFilter.ALL_CODEC)
         RESOURCE_FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "none"), NoneResourceFilter.NONE_CODEC)
         RESOURCE_FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "tag"), TagResourceFilter.$CODEC)
+        RESOURCE_FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "at_least"), AtLeastResourceFilter.$CODEC)
 
         STRING_FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "and"), AndStringFilter.$CODEC)
         STRING_FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "or"), OrStringFilter.$CODEC)
@@ -54,6 +55,7 @@ final class PseudoRegisters {
         STRING_FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "is"), IsStringFilter.$CODEC)
         STRING_FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "all"), AllStringFilter.ALL_CODEC)
         STRING_FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "none"), NoneStringFilter.NONE_CODEC)
+        STRING_FILTER_TYPES.put(new ResourceLocation(Constants.MOD_ID, "at_least"), AtLeastStringFilter.$CODEC)
 
         RECIPE_TYPES.put(new ResourceLocation(Constants.MOD_ID, "recipe"), RecipeRecipe.$CODEC)
         RECIPE_TYPES.put(new ResourceLocation(Constants.MOD_ID, "feature"), WorldgenRecipe.$CODEC)

@@ -2,10 +2,10 @@ package dev.lukebemish.modularmetals.data
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
+import dev.lukebemish.modularmetals.template.MapUtil
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.codec.ObjectOps
 import io.github.groovymc.cgl.api.transform.codec.ExposeCodecFactory
-import dev.lukebemish.modularmetals.template.TemplateEngine
 import org.jetbrains.annotations.Nullable
 
 import java.util.function.Function
@@ -39,7 +39,7 @@ abstract class Fillable<T> implements Function<Map, DataResult<T>> {
         @Override
         @Nullable
         DataResult<T> apply(Map replacements) {
-            Object map = TemplateEngine.fillReplacements(initial.obj, replacements)
+            Object map = MapUtil.evaluate(initial.obj, replacements)
             return codec.parse(ObjectOps.instance, map)
         }
 

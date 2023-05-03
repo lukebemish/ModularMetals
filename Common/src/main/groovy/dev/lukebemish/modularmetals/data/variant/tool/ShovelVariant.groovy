@@ -1,11 +1,11 @@
 package dev.lukebemish.modularmetals.data.variant.tool
 
 import com.mojang.serialization.Codec
+import dev.lukebemish.modularmetals.data.Fillable
+import dev.lukebemish.modularmetals.objects.MMItemProps
+import dev.lukebemish.modularmetals.objects.MMShovelItem
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
-import dev.lukebemish.modularmetals.data.Fillable
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.ShovelItem
 import net.minecraft.world.item.Tier
 
 @CodecSerializable(property = "SHOVEL_CODEC")
@@ -16,7 +16,7 @@ class ShovelVariant extends ToolVariant {
 
     @Override
     ToolItemSupplier getToolItemSupplier() {
-        return { Tier tier, float attack, float speed, Item.Properties properties -> new ShovelItem(tier, attack, speed, properties) }
+        return { Tier tier, float attack, float speed, MMItemProps properties -> new MMShovelItem(tier, attack, speed, properties) }
     }
 
     @Override

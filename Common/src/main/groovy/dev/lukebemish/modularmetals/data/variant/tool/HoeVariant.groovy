@@ -2,11 +2,11 @@ package dev.lukebemish.modularmetals.data.variant.tool
 
 import com.mojang.serialization.Codec
 import dev.lukebemish.modularmetals.data.Fillable
+import dev.lukebemish.modularmetals.objects.MMHoeItem
+import dev.lukebemish.modularmetals.objects.MMItemProps
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.groovymc.cgl.api.transform.codec.WithCodec
-import net.minecraft.world.item.HoeItem
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.Tier
 
 @CodecSerializable(property = "HOE_CODEC")
@@ -18,7 +18,7 @@ class HoeVariant extends ToolVariant {
 
     @Override
     ToolItemSupplier getToolItemSupplier() {
-        return { Tier tier, float attack, float speed, Item.Properties properties -> new HoeItem(tier, (int)attack, speed, properties) }
+        return { Tier tier, float attack, float speed, MMItemProps properties -> new MMHoeItem(tier, (int)attack, speed, properties) }
     }
 
     @Override

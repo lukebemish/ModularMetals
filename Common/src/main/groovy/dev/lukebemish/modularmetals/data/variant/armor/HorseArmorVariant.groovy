@@ -7,13 +7,13 @@ import dev.lukebemish.modularmetals.client.variant.ClientVariantHandler
 import dev.lukebemish.modularmetals.client.variant.HorseArmorClientVariantHandler
 import dev.lukebemish.modularmetals.data.Metal
 import dev.lukebemish.modularmetals.data.variant.ItemVariant
+import dev.lukebemish.modularmetals.objects.MMHorseArmorItem
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
 import io.github.groovymc.cgl.api.transform.codec.CodecSerializable
 import io.github.groovymc.cgl.reg.RegistryObject
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ArmorItem
-import net.minecraft.world.item.HorseArmorItem
 import net.minecraft.world.item.Item
 
 @CompileStatic
@@ -26,7 +26,7 @@ class HorseArmorVariant extends ItemVariant {
         return ModularMetalsCommon.ITEMS.register(location, {->
             var armorTier = ArmorVariant.getArmorTier(metal, metalRl)
             int protection = armorTier.getDefenseForType(ArmorItem.Type.CHESTPLATE)
-            new HorseArmorItem(protection, "${Constants.MOD_ID}__$location", makeProperties(props))
+            new MMHorseArmorItem(protection, "${Constants.MOD_ID}__$location", makeProperties(props))
         })
     }
 
